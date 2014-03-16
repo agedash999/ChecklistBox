@@ -3,8 +3,12 @@
 
     <string name="app_name">ChecklistBox</string>
     <string name="action_settings">Settings</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_section1">進行中</string>
+    <string name="title_section2">一覧</string>
+    <string name="title_section3">履歴</string>
+    <string name="drawer_open">開く</string>
+    <string name="drawer_close">閉じる</string>
+    <string name="checklist_expdate">実施日：</string>
+    <string name="checklist_findate">完了日：</string>
 
 </resources>
