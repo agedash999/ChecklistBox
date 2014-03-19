@@ -11,4 +11,10 @@
         android:text="Stock"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <ExpandableListView
+        android:id="@+id/list_stock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ExpandableListView>
+
 </LinearLayout>

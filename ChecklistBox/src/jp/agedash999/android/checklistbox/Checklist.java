@@ -1,5 +1,6 @@
 package jp.agedash999.android.checklistbox;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class Checklist {
 	private int id;
 	private int cltype;
 	private String title;
-	private int categoryID;
+	private int categoryID;//TODO カテゴリIDは不要だろう
 	private Date date;//期限または完了日
 	private List<ChecklistNode> checklist;
 
@@ -22,6 +23,19 @@ public class Checklist {
 		this.categoryID = categoryID;
 		this.date = date;
 		this.checklist = checklist;
+	}
+
+	public Checklist(int id,int cltype, String title,int categoryID,Date date){
+		this.id = id;
+		this.cltype = cltype;
+		this.title = title;
+		this.categoryID = categoryID;
+		this.date = date;
+		this.checklist = new ArrayList<ChecklistNode>();
+	}
+
+	public int getID(){
+		return this.id;
 	}
 
 	public String getTitle(){

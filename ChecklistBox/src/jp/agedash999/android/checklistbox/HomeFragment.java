@@ -18,22 +18,14 @@ public class HomeFragment extends Fragment{
 	private ListView listHome;
 	private ChecklistListAdapter mCLAdapter;
 
-//	private IFragmentReplaceListener mFragmentListener;
-
 	public HomeFragment(){
 		super();
 	}
-
-//	public HomeFragment(IFragmentReplaceListener listener) {
-//		mFragmentListener = listener;
-//	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		this.rootView = inflater.inflate(R.layout.fragment_home, container, false);
-//		TextView dummyTextView = (TextView) rootView.findViewById(R.id.section);
-//		dummyTextView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
 
 		listHome = (ListView)rootView.findViewById(R.id.list_home);
 
@@ -56,18 +48,6 @@ public class HomeFragment extends Fragment{
                 //TODO チェックリスト内容のフラグメントに切り替え clistを使う
             }
         });
-
-//		Button button = (Button)rootView.findViewById(R.id.button1);
-//		button.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				ChecklistFragment clf = new ChecklistFragment();
-//				FragmentTransaction tx = getChildFragmentManager().beginTransaction();
-//				tx.addToBackStack(null);
-//				tx.replace(R.id.home_linear, clf).commit();
-//				mFragmentListener.onSwitchToNextFragment();
-//			}
-//		});
 
 		return rootView;
 	}
