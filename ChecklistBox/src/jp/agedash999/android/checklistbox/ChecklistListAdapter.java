@@ -11,15 +11,22 @@ import android.widget.TextView;
 
 public class ChecklistListAdapter extends ArrayAdapter<Checklist> {
 
+	private Context context;
 	private List<Checklist> mList;
 	private LayoutInflater mInflater;
 	private int mLayout;
+	private int dialogType;
 
-	public ChecklistListAdapter(Context context, int resource, List<Checklist> objects) {
+	public static final int DIALOG_HOME = 0;
+	public static final int DIALOG_HISTORY = 1;
+
+	public ChecklistListAdapter(Context context, int resource, List<Checklist> objects, int dialogType) {
 		super(context, resource, objects);
+		this.context = context;
 		this.mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.mLayout = resource;
 		this.mList = objects;
+		this.dialogType = dialogType;
 	}
 
 	@Override
@@ -31,9 +38,21 @@ public class ChecklistListAdapter extends ArrayAdapter<Checklist> {
 		}
 		clist = mList.get(position);
 		((TextView)view.findViewById(R.id.title_checklist)).setText(clist.getTitle());
-		((TextView)view.findViewById(R.id.date)).setText(clist.getDate().toString());
+		((TextView)view.findViewById(R.id.date)).setText(clist.getDateFormated());
+
+		switch (dialogType) {
+		case DIALOG_HOME:
+			((TextView)view.findViewById(R.id.label_date)).setText(context.getString(R.string.checklist_row_expdate));
+			break;
+		case DIALOG_HISTORY:
+			((TextView)view.findViewById(R.id.label_date)).setText(context.getString(R.string.checklist_row_findate));
+			break;
+		}
 
 		return view;
 	}
 
+	public Checklist getChecklist(int position){
+		return mList.get(position);
+	}
 }

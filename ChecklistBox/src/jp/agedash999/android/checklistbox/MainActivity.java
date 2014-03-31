@@ -88,7 +88,7 @@ public class MainActivity extends FragmentActivity{
 		getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, mFragmentAtPos0)
 		.commit();
 
-		mCLManager = new ChecklistManager();
+		mCLManager = new ChecklistManager(this);
 	}
 
 	public ChecklistManager getChecklistManager(){

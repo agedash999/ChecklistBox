@@ -2,13 +2,45 @@
 <resources>
 
     <string name="app_name">ChecklistBox</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_add">新規追加</string>
+    <string name="action_settings">設定</string>
+    <string name="category_undefined">カテゴリ未指定</string>
     <string name="title_section1">進行中</string>
     <string name="title_section2">一覧</string>
     <string name="title_section3">履歴</string>
     <string name="drawer_open">開く</string>
     <string name="drawer_close">閉じる</string>
-    <string name="checklist_expdate">実施日：</string>
-    <string name="checklist_findate">完了日：</string>
+    <string name="checklist_row_expdate">実施日：</string>
+    <string name="checklist_row_credate">作成日：</string>
+    <string name="checklist_row_findate">完了日：</string>
+    <string name="conmenu_home_title">メニュー</string>
+    <string name="conmenu_edit">編集</string>
+    <string name="conmenu_delete">削除</string>
+    <string name="conmenu_stock">保存</string>
+    <string name="conmenu_tohome">ホームに追加</string>
+    <string name="dialog_edit_home_title"></string>
+    <string name="dialog_edit_stock_title"></string>
+    <string name="dialog_title_clist_edit_home">編集（ホーム）</string>
+    <string name="dialog_title_clist_edit_stock">編集（ストック）</string>
+    <string name="dialog_title_clist_delete_home">削除（ホーム）</string>
+    <string name="dialog_title_clist_delete_stock">削除（ストック）</string>
+    <string name="dialog_title_clist_delete_history">削除（履歴）</string>
+    <string name="dialog_title_clist_create_home">新規作成（ホーム）</string>
+    <string name="dialog_title_clist_create_stock">新規作成（ストック）</string>
+    <string name="dialog_title_clist_store_home">保存（ホーム）</string>
+    <string name="dialog_title_clist_store_history">保存（履歴）</string>
+    <string name="dialog_title_clist_copy_stock">ホームに追加（ストック）</string>
+    <string name="dialog_title_clist_copy_history">ホームに追加（履歴）</string>
+    <string name="dialog_message_clist_delete">削除しますか？</string>
+    <string name="dialog_label_clist_title">タイトル</string>
+    <string name="dialog_label_clist_memo">メモ</string>
+    <string name="dialog_label_clist_expdate">実施日</string>
+    <string name="dialog_label_clist_credate">作成日</string>
+    <string name="dialog_label_clist_findate">完了日</string>
+    <string name="dialog_label_clist_category">カテゴリ</string>
+    <string name="dialog_button_clist_save">保存</string>
+    <string name="dialog_button_clist_delete">削除</string>
+    <string name="dialog_button_clist_cansel">キャンセル</string>
+    <string name="dialog_button_clist_change">変更</string>
 
 </resources>

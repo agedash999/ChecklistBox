@@ -7,6 +7,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,10 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 
 public class StockFragment extends Fragment{
+
+	private final int CONTEXT_MENUID_EDIT = 0;
+	private final int CONTEXT_MENUID_DELETE = 1;
+	private final int CONTEXT_MENUID_TOHOME = 3;
 
 	private MainActivity activity;
 	private View rootView;
@@ -61,8 +67,20 @@ public class StockFragment extends Fragment{
 
 		});
 
+		registerForContextMenu(listStock);
+
 		return rootView;
 	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		menu.setHeaderTitle(getString(R.string.conmenu_home_title));
+		menu.add(0, CONTEXT_MENUID_EDIT, 0, R.string.conmenu_edit);
+		menu.add(0, CONTEXT_MENUID_DELETE, 0, R.string.conmenu_delete);
+		menu.add(0, CONTEXT_MENUID_TOHOME, 0, R.string.conmenu_tohome);
+	}
+
 
 	@Override
 	public void onAttach(Activity activity) {

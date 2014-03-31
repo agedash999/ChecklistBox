@@ -49,7 +49,7 @@ public class StockListAdapter extends BaseExpandableListAdapter {
 		.setText(clist.getTitle());
 
 		((TextView)view.findViewById(R.id.summery_stocklist))
-		.setText(clist.getDate().toString());
+		.setText(clist.getDateFormated());
 
 		return view;
 	}
