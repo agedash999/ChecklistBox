@@ -2,19 +2,25 @@
 
 
     <item
-        android:id="@+id/action_add"
+        android:id="@+id/menu_add"
         android:icon="@android:drawable/ic_menu_add"
         android:showAsAction="always"
         android:title="@string/action_add"
         />
     <item
-        android:id="@+id/action_rotate"
+        android:id="@+id/menu_move"
         android:icon="@android:drawable/ic_menu_rotate"
         android:showAsAction="always"
-        android:title="@string/action_add"
+        android:title="@string/action_move"
         />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/menu_sort"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:showAsAction="always"
+        android:title="@string/action_sort"
+        />
+    <item
+        android:id="@+id/menu_settings"
         android:icon="@android:drawable/ic_menu_preferences"
         android:showAsAction="always"
         android:title="@string/action_settings"

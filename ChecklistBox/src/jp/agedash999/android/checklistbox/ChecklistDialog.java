@@ -144,7 +144,8 @@ public class ChecklistDialog extends DialogFragment {
 		etx_memo.setText(mChecklist.getMemo());
 		spn_category = (Spinner)view.findViewById(R.id.spn_category);
 
-		if(mDialogType == FOR_HISTORY_STORE || mDialogType == FOR_HOME_STORE){
+		if(mDialogType == FOR_HISTORY_STORE || mDialogType == FOR_HOME_STORE
+				|| mDialogType == FOR_STOCK_NEW){
 			((TextView)view.findViewById(R.id.tv_label_category)).setVisibility(TextView.VISIBLE);
 			spn_category.setVisibility(Spinner.VISIBLE);
 			spn_category.setAdapter(new ArrayAdapter<String>(

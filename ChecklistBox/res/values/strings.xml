@@ -3,6 +3,8 @@
 
     <string name="app_name">ChecklistBox</string>
     <string name="action_add">新規追加</string>
+    <string name="action_move">順番移動</string>
+    <string name="action_sort">表示順変更</string>
     <string name="action_settings">設定</string>
     <string name="category_undefined">カテゴリ未指定</string>
     <string name="title_section1">進行中</string>
@@ -13,6 +15,7 @@
     <string name="checklist_row_expdate">実施日：</string>
     <string name="checklist_row_credate">作成日：</string>
     <string name="checklist_row_findate">完了日：</string>
+    <string name="checklist_addview_hint">決定ボタンで追加</string>
     <string name="conmenu_home_title">メニュー</string>
     <string name="conmenu_edit">編集</string>
     <string name="conmenu_delete">削除</string>

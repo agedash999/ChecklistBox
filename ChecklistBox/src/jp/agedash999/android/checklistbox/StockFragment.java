@@ -3,6 +3,7 @@ package jp.agedash999.android.checklistbox;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -20,7 +21,8 @@ import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnChildClickListener;
 
 public class StockFragment extends Fragment
-	implements ChecklistDialog.ChecklistDialogListener{
+	implements ChecklistDialog.ChecklistDialogListener
+	,ChecklistBoxChildFragment {
 
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -190,4 +192,30 @@ public class StockFragment extends Fragment
 
 	}
 
+	@Override
+	public void onClickMenu(int menuId) {
+		ChecklistDialog dialog;
+		switch (menuId) {
+		case MainActivity.MENU_ADD_ID:
+			dialog = ChecklistDialog.getDialogBlank(ChecklistDialog.FOR_STOCK_NEW);
+			dialog.setChecklistDialogListener(this);
+			dialog.show(getFragmentManager(), "create");
+			break;
+		case MainActivity.MENU_MOVE_ID:
+			//TODO チェックリストを移動可能にする？
+
+			break;
+		case MainActivity.MENU_SORT_ID:
+			//TODO ソート順ダイアログ表示処理
+
+			break;
+		case MainActivity.MENU_SETTINGS_ID:
+			//TODO 設定の場合はここでは処理しない？
+
+			break;
+//		default:
+//			break;
+		}
+
+	}
 }

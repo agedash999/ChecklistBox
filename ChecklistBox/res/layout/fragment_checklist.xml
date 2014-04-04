@@ -9,7 +9,16 @@
         android:id="@+id/button_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:text="@string/app_name" />
+
+    <EditText
+        android:id="@+id/etx_checklist_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/checklist_addview_hint"
+        android:visibility="gone"
+        android:ems="10" >
+    </EditText>
 
     <ListView
         android:id="@+id/list_checklist"

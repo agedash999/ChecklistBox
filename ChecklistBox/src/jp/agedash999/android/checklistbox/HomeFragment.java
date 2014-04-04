@@ -1,5 +1,6 @@
 package jp.agedash999.android.checklistbox;
 
+import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -18,7 +19,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class HomeFragment extends Fragment
-implements ChecklistDialog.ChecklistDialogListener{
+implements ChecklistDialog.ChecklistDialogListener
+,ChecklistBoxChildFragment {
 
 	private MainActivity activity;
 	private View rootView;
@@ -52,9 +54,10 @@ implements ChecklistDialog.ChecklistDialogListener{
                 ListView listView = (ListView) parent;
                 Checklist clist = (Checklist)listView.getItemAtPosition(position);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                Fragment fragment = ChecklistFragment.newInstance(clist);
+                ChecklistFragment fragment = ChecklistFragment.newInstance(clist);
                 ft.replace(R.id.main_layout, fragment);
                 ft.addToBackStack(null);
+                activity.notifyChangeFragment(fragment);
                 ft.commit();
             }
         });
@@ -160,5 +163,31 @@ implements ChecklistDialog.ChecklistDialogListener{
 
 	private void onDeleteCanseled(){
 
+	}
+
+	@Override
+	public void onClickMenu(int menuId) {
+		ChecklistDialog dialog;
+		switch (menuId) {
+		case MainActivity.MENU_ADD_ID:
+			dialog = ChecklistDialog.getDialogBlank(ChecklistDialog.FOR_HOME_NEW);
+			dialog.setChecklistDialogListener(this);
+			dialog.show(getFragmentManager(), "create");
+			break;
+		case MainActivity.MENU_MOVE_ID:
+			//TODO チェックリストを移動可能にする？
+
+			break;
+		case MainActivity.MENU_SORT_ID:
+			//TODO ソート順ダイアログ表示処理
+
+			break;
+		case MainActivity.MENU_SETTINGS_ID:
+			//TODO 設定の場合はここでは処理しない？
+
+			break;
+//		default:
+//			break;
+		}
 	}
 }

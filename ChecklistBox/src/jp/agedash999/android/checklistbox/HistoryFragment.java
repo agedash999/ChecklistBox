@@ -1,5 +1,6 @@
 package jp.agedash999.android.checklistbox;
 
+import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -18,7 +19,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class HistoryFragment extends Fragment
-implements ChecklistDialog.ChecklistDialogListener{
+implements ChecklistDialog.ChecklistDialogListener
+,ChecklistBoxChildFragment {
 
 	private MainActivity activity;
 	private View rootView;
@@ -159,5 +161,29 @@ implements ChecklistDialog.ChecklistDialogListener{
 
 	private void onDeleteCanseled(){
 
+	}
+
+	@Override
+	public void onClickMenu(int menuId) {
+		switch (menuId) {
+		case MainActivity.MENU_ADD_ID:
+			//TODO ここには入らない
+
+			break;
+		case MainActivity.MENU_MOVE_ID:
+			//TODO ここには入らない
+
+			break;
+		case MainActivity.MENU_SORT_ID:
+			//TODO ソート順ダイアログ表示処理
+
+			break;
+		case MainActivity.MENU_SETTINGS_ID:
+			//TODO ここには入らない
+
+			break;
+//		default:
+//			break;
+		}
 	}
 }

@@ -16,9 +16,16 @@ import android.widget.ListView;
 
 public class MainActivity extends FragmentActivity{
 
-	private Fragment mFragmentAtPos0 = null;
-	private Fragment mFragmentAtPos1 = null;
-	private Fragment mFragmentAtPos2 = null;
+	public static final int MENU_ADD_ID = R.id.menu_add;
+	public static final int MENU_MOVE_ID = R.id.menu_move;
+	public static final int MENU_SORT_ID = R.id.menu_sort;
+	public static final int MENU_SETTINGS_ID = R.id.menu_settings;
+
+	private ChecklistBoxChildFragment homeFragment = null;
+	private ChecklistBoxChildFragment stockFragment = null;
+	private ChecklistBoxChildFragment historyFragment = null;
+
+	private ChecklistBoxChildFragment childFragment;
 
 	private DrawerLayout mDrawerLayout;
 	private LinearLayout mLeftDrawer;
@@ -38,9 +45,11 @@ public class MainActivity extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		mFragmentAtPos0 = new HomeFragment();
-		mFragmentAtPos1 = new StockFragment();
-		mFragmentAtPos2 = new HistoryFragment();
+		homeFragment = new HomeFragment();
+		stockFragment = new StockFragment();
+		historyFragment = new HistoryFragment();
+
+		childFragment = homeFragment;
 
 		// ドロワー関連のUI取得
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -85,7 +94,7 @@ public class MainActivity extends FragmentActivity{
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// 起動時のFragmentとしてホーム画面をセットする
-		getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, mFragmentAtPos0)
+		getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
 		.commit();
 
 		mCLManager = new ChecklistManager(this);
@@ -116,16 +125,38 @@ public class MainActivity extends FragmentActivity{
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// If the nav drawer is open, hide action items related to the content view
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mLeftDrawer);
-		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+		menu.findItem(R.id.menu_settings).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// アプリアイコンタップ
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			// アプリアイコンがタップされた場合
 			return true;
 		}
+
+		switch (item.getItemId()) {
+//		case MENU_ADD_ID:
+//
+//			break;
+//		case MENU_MOVE_ID:
+//			int a =1;
+//
+//			break;
+//		case MENU_SORT_ID:
+//			int b =1;
+//
+//			break;
+		case MENU_SETTINGS_ID:
+			//設定の場合はここで捌く
+
+			break;
+		default:
+			childFragment.onClickMenu(item.getItemId());
+			break;
+		}
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -142,29 +173,27 @@ public class MainActivity extends FragmentActivity{
 
 		private void changeFragment(int position) {
 			// Create a new fragment and specify the planet to show based on position
-			Fragment fragment;
 			switch (position) {
 			case 0:
-				fragment = mFragmentAtPos0;
+				childFragment = homeFragment;
 				break;
 
 			case 1:
-				fragment = mFragmentAtPos1;
+				childFragment = stockFragment;
 				break;
 
 			case 2:
-				fragment = mFragmentAtPos2;
+				childFragment = historyFragment;
 				break;
 
-			default:
-				fragment = mFragmentAtPos0;
-				break;
+//			default:
+//				break;
 			}
 			//			Bundle args = new Bundle();
 			//			args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
 			//			fragment.setArguments(args);
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.main_layout, fragment);
+			ft.replace(R.id.main_layout, (Fragment)childFragment);
 			ft.addToBackStack(null);
 			ft.commit();
 
@@ -173,5 +202,17 @@ public class MainActivity extends FragmentActivity{
 			//		    setTitle(mPlanetTitles[position]);
 			mDrawerLayout.closeDrawer(mLeftDrawer);
 		}
+	}
+
+	public void notifyChangeFragment(ChecklistBoxChildFragment fragment){
+		//TODO 画面変更時の処理
+		//TODO メニューボタンのON/OFF
+
+		childFragment = fragment;
+	}
+
+	public interface ChecklistBoxChildFragment{
+
+		public void onClickMenu(int menuId);
 	}
 }
