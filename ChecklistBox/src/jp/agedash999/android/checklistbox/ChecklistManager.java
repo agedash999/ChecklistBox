@@ -27,7 +27,7 @@ public class ChecklistManager {
 
 	public ChecklistManager(MainActivity activity){
 		mActivity = activity;
-		mDBAccess = new DBAccess(activity);
+		mDBAccess = new DBAccess(mActivity);
 
 
 		this.runningList = mDBAccess.getCurrentListAll();
@@ -255,9 +255,11 @@ public class ChecklistManager {
 		//事前にフィールドに保存しておいて、そこから取ってくる
 		return stockList.get(category);
 	}
+
 	public void getStockAndCategory(
 			List<String> p_categoryList,
 			List<List<Checklist>> p_stockList){
+		//TODO 格納し直すと、オブジェクト管理が複雑になるので要検討
 		Iterator<Integer> i = categoryOrder.iterator();
 		while(i.hasNext()){
 			int categoryID = i.next();
@@ -265,6 +267,14 @@ public class ChecklistManager {
 			p_stockList.add(stockList.get(categoryID));
 		}
 	}
+
+//	public void getStockAndCategory(
+//			Map<Integer,String> p_categoryList,
+//			Map<Integer,List<Checklist>> p_stockList){
+//		p_categoryList = this.categoryList;
+//		p_stockList = this.stockList;
+//	}
+
 //	public Map<Integer,List<Checklist>> getStockList(){
 //		return stockList;
 //	}
@@ -285,11 +295,14 @@ public class ChecklistManager {
 		//完了日付を設定
 	}
 
-	public void nodeAdded(){
+	public void addNode(Checklist clist,ChecklistNode node){
 		//データベース更新（チェックリストTBLにinsert）
+		int id = mDBAccess.insertChecklistNode(clist, node);
+		node.setID(id);
+		clist.addNode(node);
 	}
 
-	public void checklistAdded(){
+	public void addChecklist(){
 		//新規作成の場合
 		//テーブル作成
 
@@ -297,14 +310,14 @@ public class ChecklistManager {
 		//テーブル作成
 	}
 
-	public void nodeMoved(){
+	public void moveNode(){
 		//リストの格納順変更
 
 		//データベース更新
 
 	}
 
-	public void checklistMoved(){
+	public void checklistMove(){
 		//カテゴリ変更がある場合、カテゴリ変更
 		//リストの格納順変更
 
@@ -312,7 +325,7 @@ public class ChecklistManager {
 		//データベース更新
 	}
 
-	public void nodeRemoved(){
+	public void removeNode(){
 		//リストから削除
 
 		//データベース更新

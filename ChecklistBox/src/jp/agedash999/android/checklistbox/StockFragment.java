@@ -51,6 +51,7 @@ public class StockFragment extends Fragment
 		listStock = (ExpandableListView)rootView.findViewById(R.id.list_stock);
 
 		//下位（Manager）との疎結合性を高めるため、渡されたList/Mapをここで格納し直す
+		//TODO 格納し直すと、オブジェクト管理が複雑になるので要検討
 		List<String> categoryList = new ArrayList<String>();
 		List<List<Checklist>> stockList = new ArrayList<List<Checklist>>();
 		mCLManager.getStockAndCategory(categoryList, stockList);
@@ -184,6 +185,7 @@ public class StockFragment extends Fragment
 	}
 
 	private void onDeleteChecklist(int index){
+		//TODO ここはStockの場合修正が必要 というか、Checklist自体を渡したほうが？
 		activity.getChecklistManager().removeChecklist(Checklist.CHECKLIST_RUNNING ,index, 0);
 		mCLAdapter.notifyDataSetChanged();
 	}
