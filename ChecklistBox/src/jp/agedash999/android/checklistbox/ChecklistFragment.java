@@ -85,7 +85,9 @@ public class ChecklistFragment extends Fragment
 			}
 			cnode = mList.get(position);
 			((TextView)view.findViewById(R.id.title_node)).setText(cnode.getTitle());
-			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(cnode.getID()));
+			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(position));
+			//TODO こっちに修正する予定
+//			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(cnode.getID()));
 			CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);
 			cbx_checked.setChecked(cnode.isChecked());
 			cbx_checked.setOnCheckedChangeListener(new OnCheckedChangeListener() {
