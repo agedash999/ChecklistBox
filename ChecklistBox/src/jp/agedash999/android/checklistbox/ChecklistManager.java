@@ -362,20 +362,22 @@ public class ChecklistManager {
 		//データベース更新
 	}
 
-	public void removeChecklist(int clType, int index, int categoryIndex){
+	public void removeChecklist(Checklist clist){
 		//データベース更新（テーブル削除）
 		//リストから削除
+		int clType = clist.getType();
 		switch (clType) {
 		case Checklist.CHECKLIST_RUNNING:
-			mDBAccess.deleteChecklist(clType, runningList.get(index).getId());
-			runningList.remove(index);
+			mDBAccess.deleteChecklist(clType, clist.getId());
+			runningList.remove(clist);
 			break;
 		case Checklist.CHECKLIST_STORE:
-			//TODO 未実装
+			mDBAccess.deleteChecklist(clType, clist.getId());
+			clist.getCategory().getChildList().remove(clist);
 			break;
 		case Checklist.CHECKLIST_HISTORY:
-			mDBAccess.deleteChecklist(clType, historyList.get(index).getId());
-			historyList.remove(index);
+			mDBAccess.deleteChecklist(clType, clist.getId());
+			historyList.remove(clist);
 			break;
 		default:
 			break;
@@ -398,7 +400,7 @@ public class ChecklistManager {
 			id = mDBAccess.insertNewChecklist(clist);
 			clist.setId(id);
 			mDBAccess.insertChecklistNodes(clist);
-			clist.getCategory().addChecklist(clist);
+//			clist.getCategory().addChecklist(clist);
 			break;
 		case Checklist.CHECKLIST_HISTORY:
 			id = mDBAccess.insertNewChecklist(clist);
@@ -415,9 +417,10 @@ public class ChecklistManager {
 		mDBAccess.updateChecklistInfo(clist);
 	}
 
-	public void categoryAdded(ChecklistCategory category){
+	public void insertCategory(ChecklistCategory category){
 		//TODO 後で動作確認
 		int categoryID = mDBAccess.insertNewCategory(category);
+		category.setId(categoryID);
 		stockList.add(category);
 	}
 }

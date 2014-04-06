@@ -33,7 +33,8 @@ public class StockFragment extends Fragment
 	private StockListAdapter mCLAdapter;
 	private ChecklistManager mCLManager;
 
-	private int contextMenuIndex;
+//	private int contextIndex;
+	private Checklist contextChecklist;
 
 	public static final String KEY_TITLE = "title";
 	public static final String KEY_CATEGORY_ID = "category_id";
@@ -69,10 +70,11 @@ public class StockFragment extends Fragment
 				Checklist clist = (Checklist)parent.getExpandableListAdapter()
 						.getChild(groupPosition, childPosition);
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				Fragment fragment = ChecklistFragment.newInstance(clist);
+				ChecklistFragment fragment = ChecklistFragment.newInstance(clist);
 				ft.replace(R.id.main_layout, fragment);
 				ft.addToBackStack(null);
-				ft.commit();
+                activity.notifyChangeFragment(fragment);
+                ft.commit();
 				return false;
 			}
 
@@ -107,11 +109,11 @@ public class StockFragment extends Fragment
 			childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
 		}
 
-		Checklist clist = (Checklist)mCLAdapter.getChild(groupPos, childPos);
+		this.contextChecklist = (Checklist)mCLAdapter.getChild(groupPos, childPos);
 		ChecklistDialog dialog;
 		switch (item.getItemId()) {
 		case CONTEXT_MENUID_EDIT:
-			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_STOCK_EDIT, clist);
+			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_STOCK_EDIT, contextChecklist);
 			dialog.setChecklistDialogListener(this);
 			dialog.show(getFragmentManager(), "edit");
 			break;
@@ -123,7 +125,7 @@ public class StockFragment extends Fragment
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					onDeleteChecklist(contextMenuIndex);
+					onDeleteChecklist(contextChecklist);
 				}
 			});
 			builder.setNegativeButton(R.string.dialog_button_clist_cansel, new DialogInterface.OnClickListener() {
@@ -137,7 +139,7 @@ public class StockFragment extends Fragment
 
 			break;
 		case CONTEXT_MENUID_TOHOME:
-			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_STOCK_TOHOME, clist);
+			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_STOCK_TOHOME, contextChecklist);
 			dialog.setChecklistDialogListener(this);
 			dialog.show(getFragmentManager(), "tohome");
 			break;
@@ -186,9 +188,8 @@ public class StockFragment extends Fragment
 
 	}
 
-	private void onDeleteChecklist(int index){
-		//TODO ここはStockの場合修正が必要 というか、Checklist自体を渡したほうが？
-		activity.getChecklistManager().removeChecklist(Checklist.CHECKLIST_RUNNING ,index, 0);
+	private void onDeleteChecklist(Checklist clist){
+		activity.getChecklistManager().removeChecklist(clist);
 		mCLAdapter.notifyDataSetChanged();
 	}
 

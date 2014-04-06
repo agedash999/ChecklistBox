@@ -172,8 +172,13 @@ public class Checklist {
 
 	public void setCategory(ChecklistCategory category) {
 		//TODO 追加実装ポイント：並べ替え
+		if(this.cltype != CHECKLIST_STORE){
+			return;
+		}
 		this.category.getChildList().remove(this);
-		category.addChecklist(this);
+		if(!category.getChildList().contains(this)){
+			category.addChecklist(this);
+		}
 		this.category = category;
 	}
 }

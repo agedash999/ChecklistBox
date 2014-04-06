@@ -33,6 +33,7 @@ implements ChecklistDialog.ChecklistDialogListener
 	private final int CONTEXT_MENUID_TOHOME = 3;
 
 	private int contextMenuIndex;
+	private Checklist contextChecklist;
 
 	public HistoryFragment() {
 		super();
@@ -56,10 +57,11 @@ implements ChecklistDialog.ChecklistDialogListener
 				ListView listView = (ListView) parent;
 				Checklist clist = (Checklist)listView.getItemAtPosition(position);
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				Fragment fragment = ChecklistFragment.newInstance(clist);
+				ChecklistFragment fragment = ChecklistFragment.newInstance(clist);
 				ft.replace(R.id.main_layout, fragment);
 				ft.addToBackStack(null);
 				ft.commit();
+				activity.notifyChangeFragment(fragment);
 			}
 
 		});
@@ -81,7 +83,7 @@ implements ChecklistDialog.ChecklistDialogListener
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		this.contextMenuIndex = ((AdapterContextMenuInfo)item.getMenuInfo()).position;
-		Checklist clist = mCLAdapter.getChecklist(contextMenuIndex);
+		this.contextChecklist = mCLAdapter.getChecklist(contextMenuIndex);
 		ChecklistDialog dialog;
 		switch (item.getItemId()) {
 		case CONTEXT_MENUID_DELETE:
@@ -92,7 +94,7 @@ implements ChecklistDialog.ChecklistDialogListener
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					onDeleteChecklist(contextMenuIndex);
+					onDeleteChecklist(contextChecklist);
 				}
 			});
 			builder.setNegativeButton(R.string.dialog_button_clist_cansel, new DialogInterface.OnClickListener() {
@@ -106,12 +108,12 @@ implements ChecklistDialog.ChecklistDialogListener
 
 			break;
 		case CONTEXT_MENUID_STOCK:
-			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HISTORY_STORE , clist);
+			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HISTORY_STORE , contextChecklist);
 			dialog.setChecklistDialogListener(this);
 			dialog.show(getFragmentManager(), "store");
 			break;
 		case CONTEXT_MENUID_TOHOME:
-			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HISTORY_TOHOME , clist);
+			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HISTORY_TOHOME , contextChecklist);
 			dialog.setChecklistDialogListener(this);
 			dialog.show(getFragmentManager(), "tohome");
 			break;
@@ -154,8 +156,8 @@ implements ChecklistDialog.ChecklistDialogListener
 
 	}
 
-	private void onDeleteChecklist(int index){
-		activity.getChecklistManager().removeChecklist(Checklist.CHECKLIST_RUNNING ,index, 0);
+	private void onDeleteChecklist(Checklist clist){
+		activity.getChecklistManager().removeChecklist(clist);
 		mCLAdapter.notifyDataSetChanged();
 	}
 
