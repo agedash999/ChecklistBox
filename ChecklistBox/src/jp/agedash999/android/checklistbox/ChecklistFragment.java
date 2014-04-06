@@ -95,7 +95,6 @@ public class ChecklistFragment extends Fragment
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					// TODO 自動生成されたメソッド・スタブ
-//					ViewParent view = buttonView.getParent();
 					TextView txv_position = (TextView)((View)buttonView.getParent()).findViewById(R.id.txv_position_hide);
 					int nodePosition = Integer.parseInt(txv_position.getText().toString());
 					ChecklistNode node = mChecklist.getNodes().get(nodePosition);

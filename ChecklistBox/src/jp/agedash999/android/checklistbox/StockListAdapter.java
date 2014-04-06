@@ -10,36 +10,47 @@ import android.widget.TextView;
 
 public class StockListAdapter extends BaseExpandableListAdapter {
 
-	private List<List<Checklist>> stockList; //チェックリストのList カテゴリ順<表示順>に格納
-	private List<String> categoryList; //カテゴリ名のリスト カテゴリ表示順に格納
+//	private List<List<Checklist>> stockList; //チェックリストのList カテゴリ順<表示順>に格納
+//	private List<String> categoryList; //カテゴリ名のリスト カテゴリ表示順に格納
+
+	private List<ChecklistCategory> stockList;
 
 	private LayoutInflater layoutInflater;
 
+//	public StockListAdapter(
+//			List<String> categoryList ,
+//			List<List<Checklist>> stockList ,
+//			LayoutInflater layoutInflater ){
+//		super();
+//		this.categoryList = categoryList;
+//		this.stockList = stockList;
+//		this.layoutInflater = layoutInflater;
+//	}
+
 	public StockListAdapter(
-			List<String> categoryList ,
-			List<List<Checklist>> stockList ,
+			List<ChecklistCategory> stockList ,
 			LayoutInflater layoutInflater ){
 		super();
-		this.categoryList = categoryList;
 		this.stockList = stockList;
 		this.layoutInflater = layoutInflater;
 	}
 
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
-		return stockList.get(groupPosition).get(childPosition);
+		return stockList.get(groupPosition).getChildList().get(childPosition);
 	}
 
 	@Override
 	public long getChildId(int groupPosition, int childPosition) {
-		return stockList.get(groupPosition).get(childPosition).getID();
+		return stockList.get(groupPosition).getChildList().get(childPosition).getId();
 	}
 
 	@Override
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView,
 			ViewGroup parent) {
 		View view = convertView;
-		Checklist clist = stockList.get(groupPosition).get(childPosition);
+		Checklist clist = (Checklist)getChild(groupPosition, childPosition);
+
 		if(view == null){
 			//TODO parentいる？
 			view = layoutInflater.inflate(R.layout.listrow_stock_checklist, null);
@@ -56,17 +67,17 @@ public class StockListAdapter extends BaseExpandableListAdapter {
 
 	@Override
 	public int getChildrenCount(int groupPosition) {
-		return stockList.get(groupPosition).size();
+		return stockList.get(groupPosition).getChildList().size();
 	}
 
 	@Override
 	public Object getGroup(int groupPosition) {
-		return categoryList.get(groupPosition);
+		return stockList.get(groupPosition);
 	}
 
 	@Override
 	public int getGroupCount() {
-		return categoryList.size();
+		return stockList.size();
 	}
 
 	@Override
@@ -85,7 +96,7 @@ public class StockListAdapter extends BaseExpandableListAdapter {
 		}
 
 		((TextView)view.findViewById(R.id.title_category))
-		.setText(categoryList.get(groupPosition));
+		.setText(stockList.get(groupPosition).getTitle());
 
 		return view;
 	}

@@ -1,6 +1,5 @@
 package jp.agedash999.android.checklistbox;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
@@ -52,11 +51,14 @@ public class StockFragment extends Fragment
 
 		//下位（Manager）との疎結合性を高めるため、渡されたList/Mapをここで格納し直す
 		//TODO 格納し直すと、オブジェクト管理が複雑になるので要検討
-		List<String> categoryList = new ArrayList<String>();
-		List<List<Checklist>> stockList = new ArrayList<List<Checklist>>();
-		mCLManager.getStockAndCategory(categoryList, stockList);
+//		List<String> categoryList = new ArrayList<String>();
+//		List<List<Checklist>> stockList = new ArrayList<List<Checklist>>();
+//		mCLManager.getStockAndCategory(categoryList, stockList);
 
-		mCLAdapter = new StockListAdapter(categoryList, stockList, inflater);
+		List<ChecklistCategory> stockList = mCLManager.getStockList();
+
+
+		mCLAdapter = new StockListAdapter(stockList, inflater);
 		listStock.setAdapter(mCLAdapter);
 
 		listStock.setOnChildClickListener(new OnChildClickListener(){

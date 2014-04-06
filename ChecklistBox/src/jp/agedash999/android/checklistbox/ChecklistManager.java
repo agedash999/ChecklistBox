@@ -1,11 +1,7 @@
 package jp.agedash999.android.checklistbox;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class ChecklistManager {
 
@@ -14,9 +10,11 @@ public class ChecklistManager {
 
 	private List<Checklist> runningList; //表示順に格納
 
-	private List<Integer> categoryOrder; //カテゴリーIDをカテゴリー表示順に格納
-	private Map<Integer,String> categoryList; //カテゴリIDとカテゴリ名の紐付け
-	private Map<Integer,List<Checklist>> stockList; //カテゴリIDと属するチェックリストのList
+//	private List<Integer> categoryOrder; //カテゴリーIDをカテゴリー表示順に格納
+//	private Map<Integer,String> categoryList; //カテゴリIDとカテゴリ名の紐付け
+//	private Map<Integer,List<Checklist>> stockList; //カテゴリIDと属するチェックリストのList
+
+	private List<ChecklistCategory> stockList; //カテゴリ並び順<チェックリスト並び順>で格納
 
 	private List<Checklist> historyList; //表示順に格納
 
@@ -38,18 +36,20 @@ public class ChecklistManager {
 			addTestStock();
 			this.runningList = mDBAccess.getCurrentListAll();
 		}
-		this.categoryList = new HashMap<Integer, String>();
-		this.categoryOrder = new ArrayList<Integer>();
-		mDBAccess.getCategory(categoryList, categoryOrder);
+//		this.categoryList = new HashMap<Integer, String>();
+//		this.categoryOrder = new ArrayList<Integer>();
+//		mDBAccess.getCategory(categoryList, categoryOrder);
+//
+//		this.stockList = mDBAccess.getStockListAll(categoryList);
 
-		this.stockList = mDBAccess.getStockListAll(categoryList);
+		this.stockList = mDBAccess.getStockListAll();
 		this.historyList = mDBAccess.getHistoryListAll();
 
 	}
 
 	private void addTestHome(){
 		//TODO テストデータ
-		Checklist clist1 = new Checklist(Checklist.CHECKLIST_RUNNING, "朝やること", 0,Calendar.getInstance());
+		Checklist clist1 = new Checklist(Checklist.CHECKLIST_RUNNING, "朝やること", null,Calendar.getInstance());
 		clist1.addNode("歯磨き", false);
 		clist1.addNode("持ち物準備", true);
 		clist1.addNode("ストレッチ", false);
@@ -57,7 +57,7 @@ public class ChecklistManager {
 		clist1.setMemo("毎朝必ずやるリスト");
 		mDBAccess.testDataAdd(clist1);
 
-		Checklist clist2 = new Checklist(Checklist.CHECKLIST_RUNNING, "旅行の持ち物（国内）", 0,Calendar.getInstance());
+		Checklist clist2 = new Checklist(Checklist.CHECKLIST_RUNNING, "旅行の持ち物（国内）", null,Calendar.getInstance());
 		clist2.addNode("パンツ", false);
 		clist2.addNode("靴下", true);
 		clist2.addNode("携帯バッテリー", false);
@@ -71,7 +71,7 @@ public class ChecklistManager {
 		clist2.setMemo("朝必ずチェックする");
 		mDBAccess.testDataAdd(clist2);
 
-		Checklist clist3 = new Checklist(Checklist.CHECKLIST_RUNNING, "旅行の持ち物（海外）", 0,Calendar.getInstance());
+		Checklist clist3 = new Checklist(Checklist.CHECKLIST_RUNNING, "旅行の持ち物（海外）", null,Calendar.getInstance());
 		clist3.addNode("パンツ", false);
 		clist3.addNode("靴下", true);
 		clist3.addNode("携帯バッテリー", false);
@@ -85,7 +85,7 @@ public class ChecklistManager {
 		clist3.setMemo("");
 		mDBAccess.testDataAdd(clist3);
 
-		Checklist clist4 = new Checklist(Checklist.CHECKLIST_RUNNING, "市役所でやること", 0,Calendar.getInstance());
+		Checklist clist4 = new Checklist(Checklist.CHECKLIST_RUNNING, "市役所でやること", null,Calendar.getInstance());
 		clist4.addNode("住民票をとる", false);
 		clist4.addNode("戸籍の写しを取る", false);
 		clist4.addNode("住基カードの発行申請するうううううううううううう", false);
@@ -94,20 +94,20 @@ public class ChecklistManager {
 
 	private void addTestHistory(){
 		//TODO テストデータ
-		Checklist clist1 = new Checklist(Checklist.CHECKLIST_HISTORY, "夜やること", 0,Calendar.getInstance());
+		Checklist clist1 = new Checklist(Checklist.CHECKLIST_HISTORY, "夜やること", null,Calendar.getInstance());
 		clist1.addNode("歯磨き", false);
 		clist1.addNode("明日の持ち物準備", true);
 		clist1.addNode("日記を書く", false);
 		clist1.addNode("明日の天気の確認", false);
 		mDBAccess.testDataAdd(clist1);
 
-		Checklist clist2 = new Checklist(Checklist.CHECKLIST_HISTORY, "バイトの面接", 0,Calendar.getInstance());
+		Checklist clist2 = new Checklist(Checklist.CHECKLIST_HISTORY, "バイトの面接", null,Calendar.getInstance());
 		clist2.addNode("履歴書準備", false);
 		clist2.addNode("スーツ準備", true);
 		clist2.addNode("交通手段確認", false);
 		mDBAccess.testDataAdd(clist2);
 
-		Checklist clist3 = new Checklist(Checklist.CHECKLIST_HISTORY, "旅行の持ち物（カザフスタン）", 0,Calendar.getInstance());
+		Checklist clist3 = new Checklist(Checklist.CHECKLIST_HISTORY, "旅行の持ち物（カザフスタン）", null,Calendar.getInstance());
 		clist3.addNode("パンツ", false);
 		clist3.addNode("靴下", true);
 		clist3.addNode("携帯バッテリー", false);
@@ -120,7 +120,7 @@ public class ChecklistManager {
 		clist3.addNode("地球の歩き方（カザフスタン）", false);
 		mDBAccess.testDataAdd(clist3);
 
-		Checklist clist4 = new Checklist(Checklist.CHECKLIST_HISTORY, "市役所でやること", 0,Calendar.getInstance());
+		Checklist clist4 = new Checklist(Checklist.CHECKLIST_HISTORY, "市役所でやること", null,Calendar.getInstance());
 		clist4.addNode("住民票をとる", false);
 		clist4.addNode("戸籍の写しを取る", false);
 		clist4.addNode("住基カードの発行申請するうううううううううううう", false);
@@ -132,9 +132,12 @@ public class ChecklistManager {
 //		List<Checklist> list1 = new ArrayList<Checklist>();
 		//TODO テスト用
 		int categoryID;
-		categoryID = mDBAccess.insertNewCategory("一日の生活チェック");
+
+		ChecklistCategory category1 = new ChecklistCategory("一日の生活チェック");
+		categoryID = mDBAccess.insertNewCategory(category1);
+		category1.setId(categoryID);
 		Checklist clist1_1 = new Checklist
-				(Checklist.CHECKLIST_STORE, "保存用朝やること", categoryID,Calendar.getInstance());
+				(Checklist.CHECKLIST_STORE, "保存用朝やること", category1,Calendar.getInstance());
 		clist1_1.addNode("歯磨き", false);
 		clist1_1.addNode("明日の持ち物準備", true);
 		clist1_1.addNode("日記を書く", false);
@@ -142,14 +145,14 @@ public class ChecklistManager {
 		mDBAccess.testDataAdd(clist1_1);
 
 		Checklist clist1_2 = new Checklist
-				(Checklist.CHECKLIST_STORE, "保存用昼やること", categoryID,Calendar.getInstance());
+				(Checklist.CHECKLIST_STORE, "保存用昼やること", category1,Calendar.getInstance());
 		clist1_2.addNode("昼食食べる", false);
 		clist1_2.addNode("歯磨き", true);
 		clist1_2.addNode("昼寝", false);
 		mDBAccess.testDataAdd(clist1_2);
 
 		Checklist clist1_3 = new Checklist
-				(Checklist.CHECKLIST_STORE, "保存用夜やること", categoryID,Calendar.getInstance());
+				(Checklist.CHECKLIST_STORE, "保存用夜やること", category1,Calendar.getInstance());
 		clist1_3.addNode("寝る準備", false);
 		clist1_3.addNode("音楽聞く", true);
 		clist1_3.addNode("日記書く", false);
@@ -163,9 +166,11 @@ public class ChecklistManager {
 
 //		List<Checklist> list2 = new ArrayList<Checklist>();
 		//TODO テスト用
-		categoryID = mDBAccess.insertNewCategory("仕事関連");
+		ChecklistCategory category2 = new ChecklistCategory("仕事関連");
+		categoryID = mDBAccess.insertNewCategory(category2);
+		category2.setId(categoryID);
 		Checklist clist2_1 = new Checklist
-				(Checklist.CHECKLIST_STORE, "バイトの朝", categoryID,Calendar.getInstance());
+				(Checklist.CHECKLIST_STORE, "バイトの朝", category2,Calendar.getInstance());
 		clist2_1.addNode("行き方確認", false);
 		clist2_1.addNode("明日の持ち物準備", true);
 		clist2_1.addNode("持ち物をもう一度確認", false);
@@ -173,16 +178,18 @@ public class ChecklistManager {
 		mDBAccess.testDataAdd(clist2_1);
 
 		Checklist clist2_2 = new Checklist
-				(Checklist.CHECKLIST_STORE, "バイトの面接", categoryID,Calendar.getInstance());
+				(Checklist.CHECKLIST_STORE, "バイトの面接", category2,Calendar.getInstance());
 		clist2_2.addNode("履歴書準備", false);
 		clist2_2.addNode("スーツ準備", true);
 		clist2_2.addNode("交通手段確認", false);
 		mDBAccess.testDataAdd(clist2_2);
 
-		categoryID = mDBAccess.insertNewCategory("旅行関連");
+		ChecklistCategory category3 = new ChecklistCategory("旅行関連");
+		categoryID = mDBAccess.insertNewCategory(category3);
+		category3.setId(categoryID);
 		//TODO テスト用
 		Checklist clist3_1 = new Checklist
-				(Checklist.CHECKLIST_STORE, "旅行一般", categoryID,Calendar.getInstance());
+				(Checklist.CHECKLIST_STORE, "旅行一般", category3,Calendar.getInstance());
 		clist3_1.addNode("靴下", false);
 		clist3_1.addNode("パンツ", true);
 		clist3_1.addNode("頭痛薬", false);
@@ -197,21 +204,23 @@ public class ChecklistManager {
 		mDBAccess.testDataAdd(clist3_1);
 
 		Checklist clist3_2 = new Checklist
-				(Checklist.CHECKLIST_STORE, "国内旅行", categoryID,Calendar.getInstance());
+				(Checklist.CHECKLIST_STORE, "国内旅行", category3,Calendar.getInstance());
 		clist3_2.addNode("免許証", false);
 		clist3_2.addNode("交通手段確認", false);
 		mDBAccess.testDataAdd(clist3_2);
 
 		Checklist clist3_3 = new Checklist
-				(Checklist.CHECKLIST_STORE, "海外旅行", categoryID,Calendar.getInstance());
+				(Checklist.CHECKLIST_STORE, "海外旅行", category3,Calendar.getInstance());
 		clist3_3.addNode("地球の歩き方", false);
 		clist3_3.addNode("パスポート", true);
 		mDBAccess.testDataAdd(clist3_3);
 
-		categoryID = mDBAccess.insertNewCategory("空のカテゴリテスト");
+		ChecklistCategory category4 = new ChecklistCategory("空のカテゴリテスト");
+		categoryID = mDBAccess.insertNewCategory(category4);
+		category4.setId(categoryID);
 
 		Checklist clist5_1 = new Checklist
-				(Checklist.CHECKLIST_STORE, "スポーツジムの持ち物", 0,Calendar.getInstance());
+				(Checklist.CHECKLIST_STORE, "スポーツジムの持ち物", null,Calendar.getInstance());
 		clist5_1.addNode("着替えのシャツ", false);
 		clist5_1.addNode("着替えのパンツ", false);
 		clist5_1.addNode("着替えの靴下", false);
@@ -236,37 +245,37 @@ public class ChecklistManager {
 //		return categoryList;
 //	}
 
-	public List<String> getCategoryList(){
-		//表示順に並べ替えたカテゴリタイトルを渡す
-		List<String> list = new ArrayList<String>();
-		Iterator<Integer> i = categoryOrder.iterator();
-		while(i.hasNext()){
-			list.add(categoryList.get(i.next()));
-		}
-		return list;
-	}
+//	public List<String> getCategoryList(){
+//		//表示順に並べ替えたカテゴリタイトルを渡す
+//		List<String> list = new ArrayList<String>();
+//		Iterator<Integer> i = categoryOrder.iterator();
+//		while(i.hasNext()){
+//			list.add(categoryList.get(i.next()));
+//		}
+//		return list;
+//	}
+//
+//	public List<Integer> getCategoryOrder(){
+//		return categoryOrder;
+//	}
 
-	public List<Integer> getCategoryOrder(){
-		return categoryOrder;
-	}
+//	public List<Checklist> getStockListFromCategory(int category){
+//		//TODO 渡されたカテゴリーIDのチェックリストを取得
+//		//事前にフィールドに保存しておいて、そこから取ってくる
+//		return stockList.get(category);
+//	}
 
-	public List<Checklist> getStockListFromCategory(int category){
-		//TODO 渡されたカテゴリーIDのチェックリストを取得
-		//事前にフィールドに保存しておいて、そこから取ってくる
-		return stockList.get(category);
-	}
-
-	public void getStockAndCategory(
-			List<String> p_categoryList,
-			List<List<Checklist>> p_stockList){
-		//TODO 格納し直すと、オブジェクト管理が複雑になるので要検討
-		Iterator<Integer> i = categoryOrder.iterator();
-		while(i.hasNext()){
-			int categoryID = i.next();
-			p_categoryList.add(categoryList.get(categoryID));
-			p_stockList.add(stockList.get(categoryID));
-		}
-	}
+//	public void getStockAndCategory(
+//			List<String> p_categoryList,
+//			List<List<Checklist>> p_stockList){
+//		//TODO 格納し直すと、オブジェクト管理が複雑になるので要検討
+//		Iterator<Integer> i = categoryOrder.iterator();
+//		while(i.hasNext()){
+//			int categoryID = i.next();
+//			p_categoryList.add(categoryList.get(categoryID));
+//			p_stockList.add(stockList.get(categoryID));
+//		}
+//	}
 
 //	public void getStockAndCategory(
 //			Map<Integer,String> p_categoryList,
@@ -278,9 +287,18 @@ public class ChecklistManager {
 //	public Map<Integer,List<Checklist>> getStockList(){
 //		return stockList;
 //	}
+
+	public List<ChecklistCategory> getStockList(){
+		return stockList;
+	}
+
 	public List<Checklist> getHistoryList(){
 		return historyList;
 	}
+
+//	public ChecklistCategory getCategory(int index){
+//
+//	}
 
 	public void nodeCheckChanged(Checklist clist, ChecklistNode node){
 		//TODO 並べ替え？
@@ -359,20 +377,20 @@ public class ChecklistManager {
 		switch (clist.getType()) {
 		case Checklist.CHECKLIST_RUNNING:
 			id = mDBAccess.insertNewChecklist(clist);
-			mDBAccess.insertChecklistNodes(clist);
 			clist.setId(id);
+			mDBAccess.insertChecklistNodes(clist);
 			runningList.add(clist);
 			break;
 		case Checklist.CHECKLIST_STORE:
 			id = mDBAccess.insertNewChecklist(clist);
-			mDBAccess.insertChecklistNodes(clist);
 			clist.setId(id);
-			stockList.get(clist.getCategoryID()).add(clist);
+			mDBAccess.insertChecklistNodes(clist);
+			clist.getCategory().addChecklist(clist);
 			break;
 		case Checklist.CHECKLIST_HISTORY:
 			id = mDBAccess.insertNewChecklist(clist);
-			mDBAccess.insertChecklistNodes(clist);
 			clist.setId(id);
+			mDBAccess.insertChecklistNodes(clist);
 			historyList.add(clist);
 			break;
 //		default:
@@ -384,11 +402,9 @@ public class ChecklistManager {
 		mDBAccess.updateChecklistInfo(clist);
 	}
 
-	public void categoryAdded(String categoryName){
+	public void categoryAdded(ChecklistCategory category){
 		//TODO 後で動作確認
-		int categoryID = mDBAccess.insertNewCategory(categoryName);
-		categoryList.put(categoryID, categoryName);
-		categoryOrder.add(categoryID);
-		stockList.put(categoryID, new ArrayList<Checklist>());
+		int categoryID = mDBAccess.insertNewCategory(category);
+		stockList.add(category);
 	}
 }

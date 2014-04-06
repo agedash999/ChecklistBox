@@ -58,13 +58,13 @@ public class ChecklistDialog extends DialogFragment {
 		switch (dialogType) {
 		case FOR_HOME_NEW:
 			//TODO 日付の初期設定
-			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING, "", 0, Calendar.getInstance());
+			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING, "", null, Calendar.getInstance());
 			dialog.idDialogTitle = R.string.dialog_title_clist_create_home;
 			dialog.idLabelDate = R.string.dialog_label_clist_expdate;
 			break;
 		case FOR_STOCK_NEW:
 			//TODO 日付の初期設定
-			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE, "", 0, Calendar.getInstance());
+			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE, "", null, Calendar.getInstance());
 			dialog.idDialogTitle = R.string.dialog_title_clist_create_stock;
 			dialog.idLabelDate = R.string.dialog_label_clist_credate;
 			break;
@@ -78,6 +78,8 @@ public class ChecklistDialog extends DialogFragment {
 			int dialogType,Checklist clist){
 		ChecklistDialog dialog = new ChecklistDialog();
 		dialog.mDialogType = dialogType;
+		ChecklistCategory undef = null;
+
 		switch (dialogType) {
 		case FOR_HOME_EDIT:
 			dialog.mChecklist = clist;
@@ -91,7 +93,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_HOME_STORE:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE,
-					new String(clist.getTitle()), DatabaseHelper.CATEGORY_UNDEFINED_ID, Calendar.getInstance());
+					new String(clist.getTitle()), undef, Calendar.getInstance());
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_store_home;
@@ -99,7 +101,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_HISTORY_STORE:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE,
-					new String(clist.getTitle()), DatabaseHelper.CATEGORY_UNDEFINED_ID, Calendar.getInstance());
+					new String(clist.getTitle()), undef, Calendar.getInstance());
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_store_history;
@@ -107,7 +109,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_STOCK_TOHOME:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING,
-					new String(clist.getTitle()), DatabaseHelper.CATEGORY_UNDEFINED_ID, Calendar.getInstance());
+					new String(clist.getTitle()), undef, Calendar.getInstance());
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_copy_stock;
@@ -115,7 +117,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_HISTORY_TOHOME:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING,
-					new String(clist.getTitle()), DatabaseHelper.CATEGORY_UNDEFINED_ID, Calendar.getInstance());
+					new String(clist.getTitle()), undef, Calendar.getInstance());
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_copy_history;
@@ -145,12 +147,13 @@ public class ChecklistDialog extends DialogFragment {
 		spn_category = (Spinner)view.findViewById(R.id.spn_category);
 
 		if(mDialogType == FOR_HISTORY_STORE || mDialogType == FOR_HOME_STORE
-				|| mDialogType == FOR_STOCK_NEW){
+				|| mDialogType == FOR_STOCK_NEW || mDialogType == FOR_STOCK_EDIT){
 			((TextView)view.findViewById(R.id.tv_label_category)).setVisibility(TextView.VISIBLE);
 			spn_category.setVisibility(Spinner.VISIBLE);
-			spn_category.setAdapter(new ArrayAdapter<String>(
-					activity, android.R.layout.simple_spinner_item,
-					activity.getChecklistManager().getCategoryList()));
+			List<ChecklistCategory> stockList = activity.getChecklistManager().getStockList();
+			spn_category.setAdapter(new ArrayAdapter<ChecklistCategory>(
+					activity, android.R.layout.simple_spinner_item,stockList));
+			spn_category.setSelection(stockList.indexOf(mChecklist.getCategory()));
 		}
 
 		txv_date = (TextView)view.findViewById(R.id.tv_date);
@@ -188,8 +191,10 @@ public class ChecklistDialog extends DialogFragment {
 				mChecklist.setTitle(etx_title.getText().toString());
 				mChecklist.setMemo(etx_memo.getText().toString());
 				if(spn_category.getVisibility() == Spinner.VISIBLE){
-					List<Integer> categoryIDs = activity.getChecklistManager().getCategoryOrder();
-					mChecklist.setCategoryID(categoryIDs.get(spn_category.getSelectedItemPosition()));
+					ChecklistCategory category = (ChecklistCategory)spn_category.getSelectedItem();
+//					List<Integer> categoryIDs = activity.getChecklistManager().getCategoryOrder();
+//					mChecklist.setCategoryID(categoryIDs.get(spn_category.getSelectedItemPosition()));
+					mChecklist.setCategory(category);
 				}
 				mChecklist.setDate(mDate);
 				mListener.onChecklistInfoSave(mChecklist, mDialogType);

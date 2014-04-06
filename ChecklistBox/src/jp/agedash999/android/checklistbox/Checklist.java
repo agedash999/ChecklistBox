@@ -16,34 +16,13 @@ public class Checklist {
 
 	private String title;
 	private String memo;
-	private int categoryID;
+//	private int categoryID;
+	private ChecklistCategory category;
 	private Calendar date;//実施日または完了日
 	private List<ChecklistNode> checklist;
 
-	public Checklist(int id,int cltype, String title, String memo, int categoryID,Calendar date){
-		this.id = id;
-		this.cltype = cltype;
-		if(title == null){
-			this.title = "";
-		}else{
-			this.title = title;
-		}
-		if(memo == null){
-			this.memo = "";
-		}else{
-			this.memo = memo;
-		}
-		//カテゴリIDが0の場合は、デフォルトを設定
-		if(categoryID == 0){
-			this.setCategoryID(DatabaseHelper.CATEGORY_UNDEFINED_ID);
-		}else{
-			this.setCategoryID(categoryID);
-		}
-		this.date = date;
-		this.checklist = new ArrayList<ChecklistNode>();
-	}
+	public Checklist(int id,int cltype, String title, String memo, ChecklistCategory category ,long timeInMillis){
 
-	public Checklist(int id,int cltype, String title, String memo, int categoryID,long timeInMillis){
 		this.id = id;
 		this.cltype = cltype;
 		if(title == null){
@@ -56,26 +35,37 @@ public class Checklist {
 		}else{
 			this.memo = memo;
 		}
-		//カテゴリIDが0の場合は、デフォルトを設定
-		if(categoryID == 0){
-			this.setCategoryID(DatabaseHelper.CATEGORY_UNDEFINED_ID);
-		}else{
-			this.setCategoryID(categoryID);
+
+		if(cltype == CHECKLIST_RUNNING || cltype == CHECKLIST_HISTORY){
+			this.category = null;
+		}else if(cltype == CHECKLIST_STORE){
+			category.getId();//null確認
+			this.category = category;
 		}
+//		if(categoryID == 0){
+//			this.setCategoryID(DatabaseHelper.CATEGORY_UNDEFINED_ID);
+//		}else{
+//			this.setCategoryID(categoryID);
+//		}
 
 		this.date = Calendar.getInstance();
 		date.setTimeInMillis(timeInMillis);
 		this.checklist = new ArrayList<ChecklistNode>();
 	}
 
-	public Checklist(int cltype, String title,int categoryID,Calendar date){
+	public Checklist(int cltype, String title,ChecklistCategory category,Calendar date){
 		this.cltype = cltype;
 		this.title = title;
-		if(categoryID == 0){
-			this.setCategoryID(DatabaseHelper.CATEGORY_UNDEFINED_ID);
-		}else{
-			this.setCategoryID(categoryID);
+		if(cltype == CHECKLIST_RUNNING || cltype == CHECKLIST_HISTORY){
+			this.category = null;
+		}else if(cltype == CHECKLIST_STORE){
+			this.category = category;
 		}
+//		if(categoryID == 0){
+//			this.setCategoryID(DatabaseHelper.CATEGORY_UNDEFINED_ID);
+//		}else{
+//			this.setCategoryID(categoryID);
+//		}
 		this.date = date;
 		this.checklist = new ArrayList<ChecklistNode>();
 	}
@@ -162,17 +152,28 @@ public class Checklist {
 		return checklist;
 	}
 
-	public int getCategoryID() {
-		return categoryID;
-	}
-
-	public void setCategoryID(int categoryID) {
-		this.categoryID = categoryID;
-	}
+//	public int getCategoryID() {
+//		return categoryID;
+//	}
+//
+//	public void setCategoryID(int categoryID) {
+//		this.categoryID = categoryID;
+//	}
 
 	public String getDateFormated(){
 		//TODO ロケール考慮
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd (E)");
 		return sdf.format(date.getTime());
+	}
+
+	public ChecklistCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ChecklistCategory category) {
+		//TODO 追加実装ポイント：並べ替え
+		this.category.getChildList().remove(this);
+		category.addChecklist(this);
+		this.category = category;
 	}
 }
