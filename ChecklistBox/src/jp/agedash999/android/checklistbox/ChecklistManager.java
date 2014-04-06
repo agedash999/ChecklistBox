@@ -1,6 +1,7 @@
 package jp.agedash999.android.checklistbox;
 
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 public class ChecklistManager {
@@ -22,6 +23,7 @@ public class ChecklistManager {
 	//TODO 新規追加時に重複チェックをする
 	//TODO 名称変更時にはDBを書き換える
 
+	private static ChecklistCategory undef;
 
 	public ChecklistManager(MainActivity activity){
 		mActivity = activity;
@@ -45,6 +47,17 @@ public class ChecklistManager {
 		this.stockList = mDBAccess.getStockListAll();
 		this.historyList = mDBAccess.getHistoryListAll();
 
+		//カテゴリ未指定の取得
+		Iterator<ChecklistCategory> iter = stockList.iterator();
+		ChecklistCategory cat;
+		boolean finish = false;
+		while(iter.hasNext() && !finish){
+			cat = iter.next();
+			if(cat.getId() == DatabaseHelper.CATEGORY_UNDEFINED_ID){
+				ChecklistManager.undef = cat;
+				finish = true;
+			}
+		}
 	}
 
 	private void addTestHome(){
@@ -296,9 +309,9 @@ public class ChecklistManager {
 		return historyList;
 	}
 
-//	public ChecklistCategory getCategory(int index){
-//
-//	}
+	public static ChecklistCategory getCategoryUndefined(){
+		return ChecklistManager.undef;
+	}
 
 	public void nodeCheckChanged(Checklist clist, ChecklistNode node){
 		//TODO 並べ替え？

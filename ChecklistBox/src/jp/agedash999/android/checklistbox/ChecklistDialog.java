@@ -78,7 +78,7 @@ public class ChecklistDialog extends DialogFragment {
 			int dialogType,Checklist clist){
 		ChecklistDialog dialog = new ChecklistDialog();
 		dialog.mDialogType = dialogType;
-		ChecklistCategory undef = null;
+		ChecklistCategory undef = ChecklistManager.getCategoryUndefined();
 
 		switch (dialogType) {
 		case FOR_HOME_EDIT:
