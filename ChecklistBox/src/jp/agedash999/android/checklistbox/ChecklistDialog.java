@@ -142,6 +142,8 @@ public class ChecklistDialog extends DialogFragment {
 
 		etx_title = ((EditText)view.findViewById(R.id.etx_title));
 		etx_title.setText(mChecklist.getTitle());
+//		etx_title.requestFocus();
+		etx_title.setSelection(etx_title.getText().length());
 		etx_memo = ((EditText)view.findViewById(R.id.etx_memo));
 		etx_memo.setText(mChecklist.getMemo());
 		spn_category = (Spinner)view.findViewById(R.id.spn_category);

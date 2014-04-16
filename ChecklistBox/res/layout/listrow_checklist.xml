@@ -11,7 +11,7 @@
         />
 
     <TextView
-        android:id="@+id/title_node"
+        android:id="@+id/txv_title_node"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp" />

@@ -313,7 +313,7 @@ public class ChecklistManager {
 		return ChecklistManager.undef;
 	}
 
-	public void nodeCheckChanged(Checklist clist, ChecklistNode node){
+	public void nodeUpdated(Checklist clist, ChecklistNode node){
 		//TODO 並べ替え？
 		//データベース更新（カラム値変更のみ）
 		mDBAccess.updateChecklistNode(clist, node);

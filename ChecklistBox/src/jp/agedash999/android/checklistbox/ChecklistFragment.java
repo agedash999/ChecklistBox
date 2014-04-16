@@ -3,12 +3,15 @@ package jp.agedash999.android.checklistbox;
 import java.util.List;
 
 import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -84,7 +87,46 @@ public class ChecklistFragment extends Fragment
 				view = mInflater.inflate(mLayout, null);
 			}
 			cnode = mList.get(position);
-			((TextView)view.findViewById(R.id.title_node)).setText(cnode.getTitle());
+			TextView etx_title_node = (TextView)view.findViewById(R.id.txv_title_node);
+			etx_title_node.setText(cnode.getTitle());
+			//ChecklisNodeクリック時の動作（タイトル編集UIの表示）
+			etx_title_node.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
+					final int nodePosition = Integer.parseInt(txv_position.getText().toString());
+
+					final EditText editView = new EditText(activity);
+					editView.setText(mChecklist.getNodes().get(nodePosition).getTitle());
+					editView.setSelection(editView.getText().length());
+
+//					final TextView hide = new TextView(activity);
+//					hide.setVisibility(View.GONE);
+//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
+//					hide.setText(txv_position.getText());
+
+					builder.setView(editView)
+					.setTitle("テスト")
+					.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+							ChecklistNode node = mChecklist.getNodes().get(nodePosition);
+							node.setTitle(editView.getText().toString());
+							activity.getChecklistManager().nodeUpdated(mChecklist, node);
+							notifyDataSetChanged();
+						}
+					})
+					.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+							// TODO 自動生成されたメソッド・スタブ
+						}
+					})
+					.show();
+				}
+			});
+
 			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(position));
 			//TODO こっちに修正する予定
 //			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(cnode.getID()));
@@ -99,12 +141,10 @@ public class ChecklistFragment extends Fragment
 					int nodePosition = Integer.parseInt(txv_position.getText().toString());
 					ChecklistNode node = mChecklist.getNodes().get(nodePosition);
 					node.setChecked(isChecked);
-					activity.getChecklistManager().nodeCheckChanged(mChecklist, node);
+					activity.getChecklistManager().nodeUpdated(mChecklist, node);
 					notifyDataSetChanged();
 				}
 			});
-
-			//ChecklisNodeクリック時の動作（タイトル編集UIの表示）
 
 			return view;
 
