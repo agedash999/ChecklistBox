@@ -10,22 +10,8 @@ import android.widget.TextView;
 
 public class StockListAdapter extends BaseExpandableListAdapter {
 
-//	private List<List<Checklist>> stockList; //チェックリストのList カテゴリ順<表示順>に格納
-//	private List<String> categoryList; //カテゴリ名のリスト カテゴリ表示順に格納
-
 	private List<ChecklistCategory> stockList;
-
 	private LayoutInflater layoutInflater;
-
-//	public StockListAdapter(
-//			List<String> categoryList ,
-//			List<List<Checklist>> stockList ,
-//			LayoutInflater layoutInflater ){
-//		super();
-//		this.categoryList = categoryList;
-//		this.stockList = stockList;
-//		this.layoutInflater = layoutInflater;
-//	}
 
 	public StockListAdapter(
 			List<ChecklistCategory> stockList ,

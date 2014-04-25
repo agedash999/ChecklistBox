@@ -1,7 +1,5 @@
 package jp.agedash999.android.checklistbox;
 
-import java.util.List;
-
 import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,7 +29,6 @@ implements ChecklistDialog.ChecklistDialogListener
 
 	private MainActivity activity;
 	private View rootView;
-//	private ListView listHome;
 	private HomeListAdapter mCLAdapter;
     private DragSortListView mDslv;
     private DragSortController mController;
@@ -49,7 +46,7 @@ implements ChecklistDialog.ChecklistDialogListener
             if (from != to) {
                 Checklist clist = mCLAdapter.getItem(from);
 
-                List<Checklist> test = activity.getChecklistManager().getRunningList();
+//                List<Checklist> test = activity.getChecklistManager().getRunningList();
 
                 activity.getChecklistManager().moveRunningList(clist, to);
 
@@ -85,13 +82,14 @@ implements ChecklistDialog.ChecklistDialogListener
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		//使用するView・Activityをフィールドに格納
 		this.rootView = inflater.inflate(R.layout.fragment_home, container, false);
+		this.mDslv = (DragSortListView)rootView.findViewById(R.id.list_home);
 
-//		listHome = (ListView)rootView.findViewById(R.id.list_home);
-		mDslv = (DragSortListView)rootView.findViewById(R.id.list_home);
-
+		//Adapterのインスタンスを生成してListViewにセット
 		mCLAdapter = new HomeListAdapter(getActivity(), R.layout.listrow_home,
 				activity.getChecklistManager().getRunningList(),HomeListAdapter.DIALOG_HOME);
+
 		mDslv.setAdapter(mCLAdapter);
 		mDslv.setOnItemClickListener(new OnItemClickListener() {
             @Override

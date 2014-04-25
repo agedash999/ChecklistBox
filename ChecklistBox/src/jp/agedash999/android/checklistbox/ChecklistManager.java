@@ -396,11 +396,36 @@ public class ChecklistManager {
 		testRunningFieldOutput();
 	}
 
-	public void moveNode(){
-		//リストの格納順変更
+	public void moveNode(Checklist clist , ChecklistNode node , int to){
+		List<ChecklistNode> list = clist.getChecklist();
+		list.remove(node);
+		list.add(to, node);
 
-		//データベース更新
+		if(to == 0){
+			//挿入先が一番最初の場合
+			node.setSortNo(0.0);
+			ChecklistNode nodeNext = list.get(to + 1);
+			nodeNext.setSortNo( list.get(to + 2).getSortNo() / 2 );
+			updateNodeInfo(clist, nodeNext);
+			updateNodeInfo(clist, node);
 
+		}else if( to >= list.size() - 1 ){
+			//挿入先が一番最後の場合
+			double prevNo = list.get(to - 1).getSortNo();
+			double sortNo = ((int)prevNo) + 1;
+			node.setSortNo(sortNo);
+			updateNodeInfo(clist, node);
+		}else{
+			double prevNo = list.get(to - 1).getSortNo();
+			double nextNo = list.get(to + 1).getSortNo();
+			node.setSortNo(prevNo + ( ( nextNo - prevNo ) / 2 ));
+			updateNodeInfo(clist, node);
+		}
+
+		Log.d("checklist_box", node.getTitle() + " " + to + " " + node.getSortNo());
+		testNodeDBOutput(clist);
+		Log.d("checklist_box", "*************************************************");
+		testNodeFieldOutput(clist);
 	}
 
 	public void checklistMove(){
@@ -475,6 +500,10 @@ public class ChecklistManager {
 		stockList.add(category);
 	}
 
+	public void updateNodeInfo(Checklist clist , ChecklistNode node){
+		mDBAccess.updateChecklistNode(clist, node);
+	}
+
 	private void testRunningFieldOutput(){
 		Iterator<Checklist> i = runningList.iterator();
 		while(i.hasNext()){
@@ -502,6 +531,31 @@ public class ChecklistManager {
 //					rightPad(clist.getCategory().getTitle() ,18) +
 					rightPad(clist.getDateFormated() ,16) +
 					rightPad(Double.toString(clist.getSortNo()) ,4);
+			Log.d("checklist_box", str);
+		}
+	}
+
+	private void testNodeFieldOutput(Checklist clist){
+		Iterator<ChecklistNode> i = clist.getChecklist().iterator();
+		while(i.hasNext()){
+			ChecklistNode node = i.next();
+			String str =
+					rightPad(Integer.toString(node.getID()), 4) +
+					rightPad(node.getTitle(), 20) +
+					rightPad(Double.toString(node.getSortNo()), 4);
+			Log.d("checklist_box", str);
+		}
+	}
+
+	private void testNodeDBOutput(Checklist clist){
+		List<ChecklistNode> list = mDBAccess.testGetChecklist(clist);
+		Iterator<ChecklistNode> i = list.iterator();
+		while(i.hasNext()){
+			ChecklistNode node = i.next();
+			String str =
+					rightPad(Integer.toString(node.getID()), 4) +
+					rightPad(node.getTitle(), 20) +
+					rightPad(Double.toString(node.getSortNo()), 4);
 			Log.d("checklist_box", str);
 		}
 	}

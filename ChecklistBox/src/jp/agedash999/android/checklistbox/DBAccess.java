@@ -417,6 +417,24 @@ public class DBAccess {
 		}
 	}
 
+	public List<ChecklistNode> testGetChecklist(Checklist clist){
+//		clist.clearNodes();
+		List<ChecklistNode> list = new ArrayList<ChecklistNode>();
+		//TODO 並べ替え
+		Cursor cursorNodes = mDBHelper.getReadableDatabase().rawQuery
+				("select * from " + mDBHelper.
+						getTableName(clist.getId(), clist.getType())
+						, null);
+		if(cursorNodes.moveToFirst()){
+			while(!cursorNodes.isAfterLast()){
+				ChecklistNode node = makeChecklistNode(cursorNodes);
+				list.add(node);
+				cursorNodes.moveToNext();
+			}
+		}
+		return list;
+	}
+
 	private boolean intToBool(int i){
 		if(i!=0){
 			return true;

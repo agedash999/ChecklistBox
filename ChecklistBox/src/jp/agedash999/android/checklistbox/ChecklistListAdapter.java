@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ChecklistListAdapter extends ArrayAdapter<Checklist> {
@@ -16,6 +17,8 @@ public class ChecklistListAdapter extends ArrayAdapter<Checklist> {
 	private LayoutInflater mInflater;
 	private int mLayout;
 	private int dialogType;
+
+	private boolean moveMode = false;
 
 	public static final int DIALOG_HOME = 0;
 	public static final int DIALOG_HISTORY = 1;
@@ -40,6 +43,12 @@ public class ChecklistListAdapter extends ArrayAdapter<Checklist> {
 		((TextView)view.findViewById(R.id.title_checklist)).setText(clist.getTitle());
 		((TextView)view.findViewById(R.id.date)).setText(clist.getDateFormated());
 
+		if(moveMode){
+			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
+		}else{
+			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+		}
+
 		switch (dialogType) {
 		case DIALOG_HOME:
 			((TextView)view.findViewById(R.id.label_date)).setText(context.getString(R.string.checklist_row_expdate));
@@ -50,6 +59,10 @@ public class ChecklistListAdapter extends ArrayAdapter<Checklist> {
 		}
 
 		return view;
+	}
+
+	public void changeMoveMode(){
+		moveMode = (!moveMode);
 	}
 
 	public Checklist getChecklist(int position){
