@@ -61,6 +61,8 @@ public class ChecklistFragment extends Fragment
 				mChecklist.getNodes());
 		listChecklist.setAdapter(mCLAdapter);
 
+		activity.getChecklistManager().sortNode(mChecklist);
+
 		return rootView;
 	}
 
@@ -142,6 +144,7 @@ public class ChecklistFragment extends Fragment
 					ChecklistNode node = mChecklist.getNodes().get(nodePosition);
 					node.setChecked(isChecked);
 					activity.getChecklistManager().nodeUpdated(mChecklist, node);
+					activity.getChecklistManager().sortNode(mChecklist);
 					notifyDataSetChanged();
 				}
 			});

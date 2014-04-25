@@ -3,6 +3,7 @@ package jp.agedash999.android.checklistbox;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,58 +17,55 @@ public class Checklist {
 
 	private String title;
 	private String memo;
-//	private int categoryID;
 	private ChecklistCategory category;
 	private Calendar date;//実施日または完了日
+	private double sortNo;
 	private List<ChecklistNode> checklist;
 
-	public Checklist(int id,int cltype, String title, String memo, ChecklistCategory category ,long timeInMillis){
+
+	//内部使用
+	private Checklist(int id,int cltype, String title, String memo,
+			ChecklistCategory category ,Calendar date,double sortNo){
 
 		this.id = id;
 		this.cltype = cltype;
+
 		if(title == null){
-			this.title = "";
+			title = "";
 		}else{
 			this.title = title;
 		}
+
 		if(memo == null){
 			this.memo = "";
 		}else{
 			this.memo = memo;
 		}
 
+		//TODO カテゴリーがnullだった場合の処理
 		if(cltype == CHECKLIST_RUNNING || cltype == CHECKLIST_HISTORY){
-			this.category = null;
+			this.category = category;
 		}else if(cltype == CHECKLIST_STORE){
 			category.getId();//null確認
 			this.category = category;
 		}
-//		if(categoryID == 0){
-//			this.setCategoryID(DatabaseHelper.CATEGORY_UNDEFINED_ID);
-//		}else{
-//			this.setCategoryID(categoryID);
-//		}
 
-		this.date = Calendar.getInstance();
-		date.setTimeInMillis(timeInMillis);
+		this.date = date;
+
+		this.setSortNo(sortNo);
 		this.checklist = new ArrayList<ChecklistNode>();
 	}
 
-	public Checklist(int cltype, String title,ChecklistCategory category,Calendar date){
-		this.cltype = cltype;
-		this.title = title;
-		if(cltype == CHECKLIST_RUNNING || cltype == CHECKLIST_HISTORY){
-			this.category = null;
-		}else if(cltype == CHECKLIST_STORE){
-			this.category = category;
-		}
-//		if(categoryID == 0){
-//			this.setCategoryID(DatabaseHelper.CATEGORY_UNDEFINED_ID);
-//		}else{
-//			this.setCategoryID(categoryID);
-//		}
-		this.date = date;
-		this.checklist = new ArrayList<ChecklistNode>();
+	//DBテーブルから取得した時に使用
+	public Checklist(int id,int cltype, String title, String memo,
+			ChecklistCategory category ,long timeInMillis,double sortNo){
+		this(id,cltype,title,memo,category,Calendar.getInstance(),sortNo);
+		this.getDate().setTimeInMillis(timeInMillis);
+	}
+
+	//UI上で新規作成するときに使用
+	public Checklist(int cltype, String title,ChecklistCategory category){
+		this(-1,cltype,title,"",category,Calendar.getInstance(),-1);
 	}
 
 	public int getId() {
@@ -80,10 +78,6 @@ public class Checklist {
 
 	public int getType(){
 		return this.cltype;
-	}
-
-	public int getID(){
-		return this.id;
 	}
 
 	public void setTitle(String title){
@@ -180,5 +174,40 @@ public class Checklist {
 			category.addChecklist(this);
 		}
 		this.category = category;
+	}
+
+	public double getSortNo() {
+		return sortNo;
+	}
+
+	public void setSortNo(double sortNo) {
+		this.sortNo = sortNo;
+	}
+
+	public static class ChecklistSortNoComp implements Comparator<Checklist>{
+
+		@Override
+		public int compare(Checklist clist1, Checklist clist2) {
+			if(clist1.getSortNo() < clist2.getSortNo()){
+				return -1;
+			}else if(clist1.getSortNo() > clist2.getSortNo()){
+				return +1;
+			}else{
+				return 0;
+			}
+		}
+	}
+
+	public static class ChecklistDateComp implements Comparator<Checklist>{
+		@Override
+		public int compare(Checklist clist1, Checklist clist2) {
+			if(clist1.getDate().getTimeInMillis() < clist2.getDate().getTimeInMillis()){
+				return -1;
+			}else if(clist1.getDate().getTimeInMillis() > clist2.getDate().getTimeInMillis()){
+				return +1;
+			}else{
+				return 0;
+			}
+		}
 	}
 }

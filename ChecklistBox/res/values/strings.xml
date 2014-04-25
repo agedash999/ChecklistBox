@@ -45,5 +45,8 @@
     <string name="dialog_button_clist_delete">削除</string>
     <string name="dialog_button_clist_cansel">キャンセル</string>
     <string name="dialog_button_clist_change">変更</string>
+    <string name="dialog_radio_sort_sortno">任意の並び順</string>
+    <string name="dialog_radio_sort_expdate_asc">実施日(昇順)</string>
+    <string name="dialog_radio_sort_expdate_desc">実施日(降順)</string>
 
 </resources>

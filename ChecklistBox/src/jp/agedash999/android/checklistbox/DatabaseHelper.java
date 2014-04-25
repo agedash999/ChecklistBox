@@ -29,38 +29,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_MEMO = "memo";
 	public static final String COLUMN_SORTNUM = "sort_num";
-	public static final String COLUMN_EXPDATE = "exp_date";
-	public static final String COLUMN_CREDATE = "cre_date";
-	public static final String COLUMN_FINDATE = "fin_date";
+	public static final String COLUMN_DATE = "date";
+//	public static final String COLUMN_EXPDATE = "exp_date";
+//	public static final String COLUMN_CREDATE = "cre_date";
+//	public static final String COLUMN_FINDATE = "fin_date";
 	public static final String COLUMN_CHECKED = "checked";
 	public static final String COLUMN_NEXTID = "next_id";
 
+	//チェックリストテーブル共通
+	private static final String SUFFIX_CHECKLIST =
+			COLUMN_ID + " integer primary key autoincrement,"
+			+ COLUMN_NAME + " text not null,"
+			+ COLUMN_MEMO + " text,"
+			+ COLUMN_CATEGORYID + " integer,"
+			+ COLUMN_SORTNUM + " real,"
+			+ COLUMN_DATE + " text)";
 	//処理中チェックリストテーブル
 	private static final String CTBL_CURRENTLIST =
 			"create table " + TABLE_CURRENTLIST + " ("
-			+ COLUMN_ID + " integer primary key autoincrement,"
-			+ COLUMN_NAME + " text not null,"
-			+ COLUMN_MEMO + " text,"
-			+ COLUMN_SORTNUM + " real,"
-			+ COLUMN_EXPDATE + " text)";
+			+ SUFFIX_CHECKLIST;
 	//保存チェックリストテーブル
 	private static final String CTBL_STOCKLIST =
 			"create table " + TABLE_STOCKLIST + " ("
-			+ COLUMN_ID + " integer primary key autoincrement,"
-			+ COLUMN_NAME + " text not null,"
-			+ COLUMN_MEMO + " text,"
-			+ COLUMN_CATEGORYID + " integer,"
-			+ COLUMN_SORTNUM + " real,"
-			+ COLUMN_CREDATE + " text)";
+					+ SUFFIX_CHECKLIST;
 	//履歴チェックリストテーブル
 	private static final String CTBL_HISTORYLIST =
 			"create table " + TABLE_HISTORYLIST + " ("
-			+ COLUMN_ID + " integer primary key autoincrement,"
-			+ COLUMN_NAME + " text not null,"
-			+ COLUMN_MEMO + " text,"
-			+ COLUMN_CATEGORYID + " integer,"
-			+ COLUMN_SORTNUM + " real,"
-			+ COLUMN_FINDATE + " text)";
+					+ SUFFIX_CHECKLIST;
+//	//処理中チェックリストテーブル
+//	private static final String CTBL_CURRENTLIST =
+//			"create table " + TABLE_CURRENTLIST + " ("
+//			+ COLUMN_ID + " integer primary key autoincrement,"
+//			+ COLUMN_NAME + " text not null,"
+//			+ COLUMN_MEMO + " text,"
+//			+ COLUMN_CATEGORYID + " integer,"
+//			+ COLUMN_SORTNUM + " real,"
+//			+ COLUMN_EXPDATE + " text)";
+//	//保存チェックリストテーブル
+//	private static final String CTBL_STOCKLIST =
+//			"create table " + TABLE_STOCKLIST + " ("
+//			+ COLUMN_ID + " integer primary key autoincrement,"
+//			+ COLUMN_NAME + " text not null,"
+//			+ COLUMN_MEMO + " text,"
+//			+ COLUMN_CATEGORYID + " integer,"
+//			+ COLUMN_SORTNUM + " real,"
+//			+ COLUMN_CREDATE + " text)";
+//	//履歴チェックリストテーブル
+//	private static final String CTBL_HISTORYLIST =
+//			"create table " + TABLE_HISTORYLIST + " ("
+//			+ COLUMN_ID + " integer primary key autoincrement,"
+//			+ COLUMN_NAME + " text not null,"
+//			+ COLUMN_MEMO + " text,"
+//			+ COLUMN_CATEGORYID + " integer,"
+//			+ COLUMN_SORTNUM + " real,"
+//			+ COLUMN_FINDATE + " text)";
 	//カテゴリテーブル
 	private static final String CTBL_CATEGORY =
 			"create table " + TABLE_CATEGORY + " ("

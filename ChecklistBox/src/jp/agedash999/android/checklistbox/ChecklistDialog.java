@@ -58,13 +58,13 @@ public class ChecklistDialog extends DialogFragment {
 		switch (dialogType) {
 		case FOR_HOME_NEW:
 			//TODO 日付の初期設定
-			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING, "", null, Calendar.getInstance());
+			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING, "", null);
 			dialog.idDialogTitle = R.string.dialog_title_clist_create_home;
 			dialog.idLabelDate = R.string.dialog_label_clist_expdate;
 			break;
 		case FOR_STOCK_NEW:
 			//TODO 日付の初期設定
-			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE, "", null, Calendar.getInstance());
+			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE, "", null);
 			dialog.idDialogTitle = R.string.dialog_title_clist_create_stock;
 			dialog.idLabelDate = R.string.dialog_label_clist_credate;
 			break;
@@ -93,7 +93,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_HOME_STORE:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE,
-					new String(clist.getTitle()), undef, Calendar.getInstance());
+					new String(clist.getTitle()), undef);
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_store_home;
@@ -101,7 +101,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_HISTORY_STORE:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE,
-					new String(clist.getTitle()), undef, Calendar.getInstance());
+					new String(clist.getTitle()), undef);
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_store_history;
@@ -109,7 +109,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_STOCK_TOHOME:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING,
-					new String(clist.getTitle()), undef, Calendar.getInstance());
+					new String(clist.getTitle()), undef);
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_copy_stock;
@@ -117,7 +117,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_HISTORY_TOHOME:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING,
-					new String(clist.getTitle()), undef, Calendar.getInstance());
+					new String(clist.getTitle()), undef);
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_copy_history;

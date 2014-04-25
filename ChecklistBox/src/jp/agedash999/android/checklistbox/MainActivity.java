@@ -135,25 +135,26 @@ public class MainActivity extends FragmentActivity{
 			// アプリアイコンがタップされた場合
 			return true;
 		}
+		int itemId = item.getItemId();
 
-		switch (item.getItemId()) {
+		switch (itemId) {
 //		case MENU_ADD_ID:
 //
 //			break;
-//		case MENU_MOVE_ID:
-//			int a =1;
-//
-//			break;
-//		case MENU_SORT_ID:
-//			int b =1;
-//
-//			break;
+		case MENU_MOVE_ID:
+			childFragment.onClickMenu(itemId);
+
+			break;
+		case MENU_SORT_ID:
+			childFragment.onClickMenu(itemId);
+
+			break;
 		case MENU_SETTINGS_ID:
 			//設定の場合はここで捌く
 
 			break;
 		default:
-			childFragment.onClickMenu(item.getItemId());
+			childFragment.onClickMenu(itemId);
 			break;
 		}
 
@@ -172,7 +173,6 @@ public class MainActivity extends FragmentActivity{
 		}
 
 		private void changeFragment(int position) {
-			// Create a new fragment and specify the planet to show based on position
 			switch (position) {
 			case 0:
 				childFragment = homeFragment;
@@ -214,5 +214,6 @@ public class MainActivity extends FragmentActivity{
 	public interface ChecklistBoxChildFragment{
 
 		public void onClickMenu(int menuId);
+
 	}
 }

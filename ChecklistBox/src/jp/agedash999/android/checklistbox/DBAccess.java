@@ -3,7 +3,6 @@ package jp.agedash999.android.checklistbox;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,13 +25,15 @@ public class DBAccess {
 
 		if(cursor.moveToFirst()){
 			while(!cursor.isAfterLast()){
-				Checklist clist = new Checklist(
-						cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)),
-						Checklist.CHECKLIST_RUNNING,
-						cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
-						cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MEMO)),
-						null,
-						cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_EXPDATE)));
+				Checklist clist = makeChecklist(Checklist.CHECKLIST_RUNNING, cursor, null);
+//				Checklist clist = new Checklist(
+//						cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)),
+//						Checklist.CHECKLIST_RUNNING,
+//						cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
+//						cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MEMO)),
+//						null,
+//						cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_EXPDATE)),
+//						cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.COLUMN_SORTNUM)));
 				readChecklistNodes(clist);
 				currentList.add(clist);
 				cursor.moveToNext();
@@ -42,23 +43,23 @@ public class DBAccess {
 		return currentList;
 	}
 
-	public void getCategory(Map<Integer,String> categoryList, List<Integer> categoryOrder ){
-		mCV.clear();
-		//TODO 並べ替え
-		Cursor cursor = mDBHelper.getReadableDatabase().rawQuery
-				("select * from " + DatabaseHelper.TABLE_CATEGORY, null);
-		if(cursor.moveToFirst()){
-			while(!cursor.isAfterLast()){
-				int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
-				categoryList.put(
-						id
-						,cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)));
-				categoryOrder.add(id);
-				cursor.moveToNext();
-			}
-		}
-		mCV.clear();
-	}
+//	public void getCategory(Map<Integer,String> categoryList, List<Integer> categoryOrder ){
+//		mCV.clear();
+//		//TODO 並べ替え
+//		Cursor cursor = mDBHelper.getReadableDatabase().rawQuery
+//				("select * from " + DatabaseHelper.TABLE_CATEGORY, null);
+//		if(cursor.moveToFirst()){
+//			while(!cursor.isAfterLast()){
+//				int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
+//				categoryList.put(
+//						id
+//						,cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)));
+//				categoryOrder.add(id);
+//				cursor.moveToNext();
+//			}
+//		}
+//		mCV.clear();
+//	}
 
 	public List<ChecklistCategory> getStockListAll(){
 		mCV.clear();
@@ -71,20 +72,16 @@ public class DBAccess {
 				//TODO 追加実装ポイント：カテゴリ内並び替え
 				ChecklistCategory category = new ChecklistCategory(
 						cursorCategory.getInt(cursorCategory.getColumnIndex(DatabaseHelper.COLUMN_ID)),
-						cursorCategory.getString(cursorCategory.getColumnIndex(DatabaseHelper.COLUMN_NAME)));
+						cursorCategory.getString(cursorCategory.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
+						cursorCategory.getDouble(cursorCategory.getColumnIndex(DatabaseHelper.COLUMN_SORTNUM)));
 				String selectStr = DatabaseHelper.COLUMN_CATEGORYID + "=?";
 				String[] selectionArgs = { Integer.toString(category.getId()) };
 				Cursor cursorStock = mDBHelper.getReadableDatabase().query(
 						DatabaseHelper.TABLE_STOCKLIST, null, selectStr, selectionArgs, null, null, null);
 				if(cursorStock.moveToFirst()){
 					while(!cursorStock.isAfterLast()){
-						Checklist clist = new Checklist(
-								cursorStock.getInt(cursorStock.getColumnIndex(DatabaseHelper.COLUMN_ID)),
-								Checklist.CHECKLIST_STORE,
-								cursorStock.getString(cursorStock.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
-								cursorStock.getString(cursorStock.getColumnIndex(DatabaseHelper.COLUMN_MEMO)),
-								category,
-								cursorStock.getInt(cursorStock.getColumnIndex(DatabaseHelper.COLUMN_CREDATE)));
+						Checklist clist = makeChecklist(Checklist.CHECKLIST_STORE, cursorStock, category);
+						clist.setCategory(category);
 						readChecklistNodes(clist);
 						category.addChecklist(clist);
 						cursorStock.moveToNext();
@@ -136,13 +133,15 @@ public class DBAccess {
 
 		if(cursor.moveToFirst()){
 			while(!cursor.isAfterLast()){
-				Checklist clist = new Checklist(
-						cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)),
-						Checklist.CHECKLIST_HISTORY,
-						cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
-						cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MEMO)),
-						null,
-						cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_FINDATE)));
+				Checklist clist = makeChecklist(Checklist.CHECKLIST_HISTORY, cursor, null);
+//				Checklist clist = new Checklist(
+//						cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)),
+//						Checklist.CHECKLIST_HISTORY,
+//						cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
+//						cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MEMO)),
+//						null,
+//						cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_FINDATE)),
+//						cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.COLUMN_SORTNUM)));
 				readChecklistNodes(clist);
 				historyList.add(clist);
 				cursor.moveToNext();
@@ -150,6 +149,31 @@ public class DBAccess {
 		}
 		mCV.clear();
 		return historyList;
+	}
+
+	private Checklist makeChecklist(int cltype,Cursor cursor,ChecklistCategory category){
+		Checklist clist = new Checklist(
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)),
+				cltype,
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MEMO)),
+				category,
+				cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_DATE)),
+				cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.COLUMN_SORTNUM)));
+
+		return clist;
+
+	}
+
+	private ChecklistNode makeChecklistNode(Cursor cursor){
+		ChecklistNode node = new ChecklistNode(
+				cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)),
+				cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
+				intToBool(cursor.getInt
+						(cursor.getColumnIndex(DatabaseHelper.COLUMN_CHECKED))),
+						cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.COLUMN_SORTNUM)));
+
+		return node;
 	}
 
 //	public void getStockListOfCategory(int categoryID){
@@ -166,11 +190,7 @@ public class DBAccess {
 						, null);
 		if(cursorNodes.moveToFirst()){
 			while(!cursorNodes.isAfterLast()){
-				ChecklistNode node = new ChecklistNode(
-						cursorNodes.getInt(cursorNodes.getColumnIndex(DatabaseHelper.COLUMN_ID)),
-						cursorNodes.getString(cursorNodes.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
-						intToBool(cursorNodes.getInt
-								(cursorNodes.getColumnIndex(DatabaseHelper.COLUMN_CHECKED))));
+				ChecklistNode node = makeChecklistNode(cursorNodes);
 				clist.addNode(node);
 				cursorNodes.moveToNext();
 			}
@@ -179,30 +199,41 @@ public class DBAccess {
 
 
 	public void updateChecklistInfo(Checklist clist){
+		String tableName;
 		switch (clist.getType()) {
 		case Checklist.CHECKLIST_RUNNING:
-			mCV.clear();
-			mCV.put(DatabaseHelper.COLUMN_NAME, clist.getTitle());
-			mCV.put(DatabaseHelper.COLUMN_MEMO, clist.getMemo());
-			mCV.put(DatabaseHelper.COLUMN_EXPDATE, clist.getDate().getTimeInMillis());
-			mDBHelper.getWritableDatabase().update
-					(DatabaseHelper.TABLE_CURRENTLIST, mCV,
-					DatabaseHelper.COLUMN_ID + "=?" ,
-					new String[]{String.valueOf(clist.getID())});
-			mCV.clear();
+			tableName = DatabaseHelper.TABLE_CURRENTLIST;
+			updateChecklistCV(clist, tableName);
+
+//			mCV.clear();
+//			mCV.put(DatabaseHelper.COLUMN_NAME, clist.getTitle());
+//			mCV.put(DatabaseHelper.COLUMN_MEMO, clist.getMemo());
+//			mCV.put(DatabaseHelper.COLUMN_CATEGORYID, DatabaseHelper.CATEGORY_UNDEFINED_ID);
+//			mCV.put(DatabaseHelper.COLUMN_SORTNUM, clist.getSortNo());
+//			mCV.put(DatabaseHelper.COLUMN_DATE, clist.getDate().getTimeInMillis());
+//
+//			mDBHelper.getWritableDatabase().update
+//					(DatabaseHelper.TABLE_CURRENTLIST, mCV,
+//					DatabaseHelper.COLUMN_ID + "=?" ,
+//					new String[]{String.valueOf(clist.getId())});
+//			mCV.clear();
 
 			break;
 		case Checklist.CHECKLIST_STORE:
-			mCV.clear();
-			mCV.put(DatabaseHelper.COLUMN_NAME, clist.getTitle());
-			mCV.put(DatabaseHelper.COLUMN_MEMO, clist.getMemo());
-			mCV.put(DatabaseHelper.COLUMN_CATEGORYID, clist.getCategory().getId());
-			mCV.put(DatabaseHelper.COLUMN_CREDATE, clist.getDate().getTimeInMillis());
-			mDBHelper.getWritableDatabase().update
-					(DatabaseHelper.TABLE_STOCKLIST, mCV,
-					DatabaseHelper.COLUMN_ID + "=?" ,
-					new String[]{String.valueOf(clist.getID())});
-			mCV.clear();
+			tableName = DatabaseHelper.TABLE_STOCKLIST;
+			updateChecklistCV(clist, tableName);
+
+//			mCV.clear();
+//			mCV.put(DatabaseHelper.COLUMN_NAME, clist.getTitle());
+//			mCV.put(DatabaseHelper.COLUMN_MEMO, clist.getMemo());
+//			mCV.put(DatabaseHelper.COLUMN_CATEGORYID, clist.getCategory().getId());
+//			mCV.put(DatabaseHelper.COLUMN_SORTNUM, clist.getSortNo());
+//			mCV.put(DatabaseHelper.COLUMN_DATE, clist.getDate().getTimeInMillis());
+//			mDBHelper.getWritableDatabase().update
+//					(DatabaseHelper.TABLE_STOCKLIST, mCV,
+//					DatabaseHelper.COLUMN_ID + "=?" ,
+//					new String[]{String.valueOf(clist.getId())});
+//			mCV.clear();
 
 			break;
 		case Checklist.CHECKLIST_HISTORY:
@@ -214,62 +245,91 @@ public class DBAccess {
 		}
 	}
 
-	public int insertNewChecklist(Checklist clist){
+	private void updateChecklistCV(Checklist clist, String tableName){
+		int categoryId = DatabaseHelper.CATEGORY_UNDEFINED_ID;
+		if(clist.getCategory() != null){
+			categoryId = clist.getCategory().getId();
+		}
+		mCV.clear();
+		mCV.put(DatabaseHelper.COLUMN_NAME, clist.getTitle());
+		mCV.put(DatabaseHelper.COLUMN_MEMO, clist.getMemo());
+		mCV.put(DatabaseHelper.COLUMN_CATEGORYID, categoryId);
+		mCV.put(DatabaseHelper.COLUMN_SORTNUM, clist.getSortNo());
+		mCV.put(DatabaseHelper.COLUMN_DATE, clist.getDate().getTimeInMillis());
+		mDBHelper.getWritableDatabase().update
+				(tableName, mCV,
+				DatabaseHelper.COLUMN_ID + "=?" ,
+				new String[]{String.valueOf(clist.getId())});
+		mCV.clear();
+
+	}
+
+	public void insertNewChecklist(Checklist clist){
+		String tableName;
 		int id = -1;
+		double sortNo = -1.0;
 		switch (clist.getType()) {
 		case Checklist.CHECKLIST_RUNNING:
-			mCV.clear();
-			mCV.put(DatabaseHelper.COLUMN_NAME, clist.getTitle());
-			mCV.put(DatabaseHelper.COLUMN_MEMO, clist.getMemo());
-			mCV.put(DatabaseHelper.COLUMN_EXPDATE, clist.getDate().getTimeInMillis());
-			id = (int) mDBHelper.getWritableDatabase().insert(
-					DatabaseHelper.TABLE_CURRENTLIST ,null,mCV);
-			mCV.clear();
-			clist.setId(id);
+			tableName = DatabaseHelper.TABLE_CURRENTLIST;
+			clist.setSortNo(getNewSortNo(tableName));
+			insertChecklistCV(clist, tableName);
 
 			mDBHelper.getWritableDatabase().execSQL(
-					mDBHelper.makeCTBLString(clist.getID(), clist.getType()));
-
+					mDBHelper.makeCTBLString(clist.getId(), clist.getType()));
 			break;
 
 		case Checklist.CHECKLIST_STORE:
-			int categoryID = DatabaseHelper.CATEGORY_UNDEFINED_ID;
-			if(clist.getCategory() != null){
-				categoryID = clist.getCategory().getId();
-			}
-			mCV.clear();
-			mCV.put(DatabaseHelper.COLUMN_NAME, clist.getTitle());
-			mCV.put(DatabaseHelper.COLUMN_MEMO, clist.getMemo());
-			mCV.put(DatabaseHelper.COLUMN_CATEGORYID, categoryID);
-			mCV.put(DatabaseHelper.COLUMN_CREDATE, clist.getDate().getTimeInMillis());
-			id = (int) mDBHelper.getWritableDatabase().insert(
-					DatabaseHelper.TABLE_STOCKLIST ,null,mCV);
-			mCV.clear();
-			clist.setId(id);
+			tableName = DatabaseHelper.TABLE_STOCKLIST;
+			clist.setSortNo(getNewSortNo(tableName));
+			insertChecklistCV(clist, tableName);
 
 			mDBHelper.getWritableDatabase().execSQL(
-					mDBHelper.makeCTBLString(clist.getID(),clist.getType()));
-
+					mDBHelper.makeCTBLString(clist.getId(),clist.getType()));
 			break;
+
 		case Checklist.CHECKLIST_HISTORY:
-			mCV.clear();
-			mCV.put(DatabaseHelper.COLUMN_NAME, clist.getTitle());
-			mCV.put(DatabaseHelper.COLUMN_MEMO, clist.getMemo());
-//			mCV.put(DatabaseHelper.COLUMN_CATEGORYID, clist.getCategoryID());
-			mCV.put(DatabaseHelper.COLUMN_FINDATE, clist.getDate().getTimeInMillis());
-			id = (int) mDBHelper.getWritableDatabase().insert(
-					DatabaseHelper.TABLE_HISTORYLIST ,null,mCV);
-			mCV.clear();
-			clist.setId(id);
+			tableName = DatabaseHelper.TABLE_HISTORYLIST;
+			clist.setSortNo(getNewSortNo(tableName));
+			insertChecklistCV(clist, tableName);
 
 			mDBHelper.getWritableDatabase().execSQL(
-					mDBHelper.makeCTBLString(clist.getID(),clist.getType()));
-
+					mDBHelper.makeCTBLString(clist.getId(),clist.getType()));
 			break;
+
 		default:
 			break;
 		}
-		return id;
+	}
+
+	private void insertChecklistCV(Checklist clist, String tableName){
+		int categoryId = DatabaseHelper.CATEGORY_UNDEFINED_ID;
+		if(clist.getCategory() != null){
+			categoryId = clist.getCategory().getId();
+		}
+		mCV.clear();
+		mCV.put(DatabaseHelper.COLUMN_NAME, clist.getTitle());
+		mCV.put(DatabaseHelper.COLUMN_MEMO, clist.getMemo());
+
+		mCV.put(DatabaseHelper.COLUMN_CATEGORYID, categoryId);
+		mCV.put(DatabaseHelper.COLUMN_SORTNUM, clist.getSortNo());
+		mCV.put(DatabaseHelper.COLUMN_DATE, clist.getDate().getTimeInMillis());
+		int id = (int) mDBHelper.getWritableDatabase().insert(
+				tableName ,null,mCV);
+		mCV.clear();
+		clist.setId(id);
+	}
+
+	private int getNewSortNo(String tableName){
+		int sortNo = 0;
+		Cursor cursor = mDBHelper.getWritableDatabase().rawQuery(
+				"select max(" + DatabaseHelper.COLUMN_SORTNUM + ") from "
+						+ tableName, null);
+		if(cursor.moveToFirst()){
+			sortNo  = ((int)cursor.getDouble
+					(cursor.getColumnIndex("max(" + DatabaseHelper.COLUMN_SORTNUM + ")")));
+			sortNo++;
+		}
+		return sortNo;
 	}
 
 	public void insertChecklistNodes(Checklist clist){
@@ -278,52 +338,46 @@ public class DBAccess {
 		int id;
 		while(it.hasNext()){
 			node = it.next();
-			id = insertChecklistNode(clist, node);
-			node.setID(id);
+			insertChecklistNode(clist, node);
 		}
 	}
 
-	public int insertChecklistNode(Checklist clist ,ChecklistNode node){
+	public void insertChecklistNode(Checklist clist ,ChecklistNode node){
 		mCV.clear();
+		String tableName = mDBHelper.getTableName(clist.getId(), clist.getType());
+		int sortNum = getNewSortNo(tableName);
+
 		//TODO ノードID取得・セット
 		mCV.put(DatabaseHelper.COLUMN_NAME, node.getTitle());
 		mCV.put(DatabaseHelper.COLUMN_CHECKED, boolToInt(node.isChecked()));
+		mCV.put(DatabaseHelper.COLUMN_SORTNUM, sortNum);
 		int id = (int)mDBHelper.getWritableDatabase().insert(
-				mDBHelper.getTableName(clist.getId(), clist.getType()), null, mCV);
+				tableName, null, mCV);
 		node.setID(id);
 		mCV.clear();
-
-		return id;
 	}
 
 	public void updateChecklistNode(Checklist clist ,ChecklistNode node){
 		mCV.clear();
+		String tableName = mDBHelper.getTableName(clist.getId(), clist.getType());
 		mCV.put(DatabaseHelper.COLUMN_NAME, node.getTitle());
 		mCV.put(DatabaseHelper.COLUMN_CHECKED, boolToInt(node.isChecked()));
 		mDBHelper.getWritableDatabase().update
-				(mDBHelper.getTableName(clist.getId(), clist.getType()), mCV,
-				DatabaseHelper.COLUMN_ID + "=?" ,
+				(tableName, mCV,DatabaseHelper.COLUMN_ID + "=?" ,
 				new String[]{String.valueOf(node.getID())});
 		mCV.clear();
 	}
 
-	public int insertNewCategory(ChecklistCategory category){
+	public void insertNewCategory(ChecklistCategory category){
 		mCV.clear();
-		Cursor cursor = mDBHelper.getWritableDatabase().rawQuery(
-				"select max(" + DatabaseHelper.COLUMN_SORTNUM + ") from "
-						+ DatabaseHelper.TABLE_CATEGORY, null);
-		int sortNum = 0;
-		if(cursor.moveToFirst()){
-			sortNum  = ((int)cursor.getDouble
-//					(cursor.getColumnIndex(DatabaseHelper.COLUMN_SORTNUM)));
-					(cursor.getColumnIndex("max(" + DatabaseHelper.COLUMN_SORTNUM + ")")));
-			sortNum++;
-		}
+		String tableName = DatabaseHelper.TABLE_CATEGORY;
+		int sortNum = getNewSortNo(tableName);
 		mCV.put(DatabaseHelper.COLUMN_NAME, category.getTitle());
 		mCV.put(DatabaseHelper.COLUMN_SORTNUM, sortNum);
 		int id =(int) mDBHelper.getWritableDatabase().insert
-		(DatabaseHelper.TABLE_CATEGORY , null, mCV);
-		return id;
+		(tableName , null, mCV);
+		category.setId(id);
+		mCV.clear();
 	}
 
 	public void copyChecklistNodes(String fromTableID, String toTableID){
@@ -357,8 +411,7 @@ public class DBAccess {
 	}
 
 	public void testDataAdd(Checklist clist){
-		int id = insertNewChecklist(clist);
-		clist.setId(id);
+		insertNewChecklist(clist);
 		for(ChecklistNode node :clist.getNodes()){
 			insertChecklistNode(clist, node);
 		}

@@ -1,5 +1,7 @@
 package jp.agedash999.android.checklistbox;
 
+import java.util.List;
+
 import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,6 +19,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 
 public class HomeFragment extends Fragment
 implements ChecklistDialog.ChecklistDialogListener
@@ -24,8 +31,10 @@ implements ChecklistDialog.ChecklistDialogListener
 
 	private MainActivity activity;
 	private View rootView;
-	private ListView listHome;
-	private ChecklistListAdapter mCLAdapter;
+//	private ListView listHome;
+	private HomeListAdapter mCLAdapter;
+    private DragSortListView mDslv;
+    private DragSortController mController;
 
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -33,6 +42,41 @@ implements ChecklistDialog.ChecklistDialogListener
 
 	private int contextIndex;
 	private Checklist contextChecklist;
+
+    private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
+        @Override
+        public void drop(int from, int to) {
+            if (from != to) {
+                Checklist clist = mCLAdapter.getItem(from);
+
+                List<Checklist> test = activity.getChecklistManager().getRunningList();
+
+                activity.getChecklistManager().moveRunningList(clist, to);
+
+                //方法１
+//              mCLAdapter.remove(clist);
+//              mCLAdapter.insert(clist, to);
+
+                //方法２
+                mCLAdapter.notifyDataSetChanged();
+
+                //方法３
+//                mDslv.invalidateViews()
+
+            }
+        }
+    };
+
+    private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
+        @Override
+        public void remove(int which) {
+        	mCLAdapter.remove(mCLAdapter.getItem(which));
+        }
+    };
+
+    public DragSortController getController() {
+        return mController;
+    }
 
 	public HomeFragment(){
 		super();
@@ -43,12 +87,13 @@ implements ChecklistDialog.ChecklistDialogListener
 			Bundle savedInstanceState) {
 		this.rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-		listHome = (ListView)rootView.findViewById(R.id.list_home);
+//		listHome = (ListView)rootView.findViewById(R.id.list_home);
+		mDslv = (DragSortListView)rootView.findViewById(R.id.list_home);
 
-		mCLAdapter = new ChecklistListAdapter(getActivity(), R.layout.listrow_home,
-				activity.getChecklistManager().getRunningList(),ChecklistListAdapter.DIALOG_HOME);
-		listHome.setAdapter(mCLAdapter);
-		listHome.setOnItemClickListener(new OnItemClickListener() {
+		mCLAdapter = new HomeListAdapter(getActivity(), R.layout.listrow_home,
+				activity.getChecklistManager().getRunningList(),HomeListAdapter.DIALOG_HOME);
+		mDslv.setAdapter(mCLAdapter);
+		mDslv.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
@@ -63,7 +108,15 @@ implements ChecklistDialog.ChecklistDialogListener
             }
         });
 
-		registerForContextMenu(listHome);
+		registerForContextMenu(mDslv);
+		mController = buildController(mDslv);
+		mDslv.setFloatViewManager(mController);
+		mDslv.setOnTouchListener(mController);
+		mDslv.setDropListener(onDrop);
+		mDslv.setRemoveListener(onRemove);
+		mDslv.setDragEnabled(true);
+
+		activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_RUNNING);
 
 		return rootView;
 	}
@@ -137,15 +190,18 @@ implements ChecklistDialog.ChecklistDialogListener
 		switch (dialogType) {
 		case ChecklistDialog.FOR_HOME_NEW:
 			activity.getChecklistManager().insertChecklist(clist);
+			activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_RUNNING);
 			mCLAdapter.notifyDataSetChanged();
 			break;
 		case ChecklistDialog.FOR_HOME_EDIT:
 			activity.getChecklistManager().updateChecklistInfo(clist);
+			activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_RUNNING);
 			mCLAdapter.notifyDataSetChanged();
 			break;
 		case ChecklistDialog.FOR_HOME_STORE:
 			activity.getChecklistManager().insertChecklist(clist);
 			mCLAdapter.notifyDataSetChanged();
+			//TODO 画面を写す？
 			break;
 //		default:
 //			break;
@@ -168,19 +224,74 @@ implements ChecklistDialog.ChecklistDialogListener
 
 	@Override
 	public void onClickMenu(int menuId) {
-		ChecklistDialog dialog;
 		switch (menuId) {
 		case MainActivity.MENU_ADD_ID:
+			ChecklistDialog dialog;
 			dialog = ChecklistDialog.getDialogBlank(ChecklistDialog.FOR_HOME_NEW);
 			dialog.setChecklistDialogListener(this);
 			dialog.show(getFragmentManager(), "create");
 			break;
 		case MainActivity.MENU_MOVE_ID:
+			mCLAdapter.changeMoveMode();
+			mDslv.invalidateViews();
 			//TODO チェックリストを移動可能にする？
 
 			break;
 		case MainActivity.MENU_SORT_ID:
 			//TODO ソート順ダイアログ表示処理
+			final ChecklistManager manager = activity.getChecklistManager();
+			int sortType = manager.getRunninglistSortType();
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+			final RadioButton radioSortNo = new RadioButton(activity);
+			radioSortNo.setText(R.string.dialog_radio_sort_sortno);
+			final RadioButton radioDateAsc = new RadioButton(activity);
+			radioDateAsc.setText(R.string.dialog_radio_sort_expdate_asc);
+			final RadioButton radioDateDesc = new RadioButton(activity);
+			radioDateDesc.setText(R.string.dialog_radio_sort_expdate_desc);
+			final RadioGroup group = new RadioGroup(activity);
+			group.addView(radioSortNo);
+			group.addView(radioDateAsc);
+			group.addView(radioDateDesc);
+
+			if(sortType == ChecklistManager.SORTTYPE_SORTNO){
+				group.check(radioSortNo.getId());
+			}else if(sortType == ChecklistManager.SORTTYPE_DATE_ASC){
+				group.check(radioDateAsc.getId());
+			}else if(sortType == ChecklistManager.SORTTYPE_DATE_DESC){
+				group.check(radioDateDesc.getId());
+			}
+
+			builder.setView(group)
+			.setTitle("テスト")
+			.setPositiveButton("変更", new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO 自動生成されたメソッド・スタブ
+					int checked = group.getCheckedRadioButtonId();
+					if(checked == radioSortNo.getId()){
+						manager.setRunninglistSortType(ChecklistManager.SORTTYPE_SORTNO);
+					}else if(checked == radioDateAsc.getId()){
+						manager.setRunninglistSortType(ChecklistManager.SORTTYPE_DATE_ASC);
+					}else if(checked == radioDateDesc.getId()){
+						manager.setRunninglistSortType(ChecklistManager.SORTTYPE_DATE_DESC);
+					}
+					manager.sortChecklist(Checklist.CHECKLIST_RUNNING);
+					mDslv.invalidateViews();
+				}
+			})
+			.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO 自動生成されたメソッド・スタブ
+
+				}
+			})
+			.show();
+
 
 			break;
 		case MainActivity.MENU_SETTINGS_ID:
@@ -191,4 +302,18 @@ implements ChecklistDialog.ChecklistDialogListener
 //			break;
 		}
 	}
+
+	public DragSortController buildController(DragSortListView dslv) {
+        // defaults are
+        //   dragStartMode = onDown
+        //   removeMode = flingRight
+        DragSortController controller = new DragSortController(dslv);
+        controller.setDragHandleId(R.id.iv_drag_handle);
+        controller.setRemoveEnabled(false);
+        controller.setSortEnabled(true);
+        controller.setDragInitMode(DragSortController.ON_DOWN);
+        controller.setRemoveMode(DragSortController.FLING_REMOVE);
+
+        return controller;
+    }
 }
