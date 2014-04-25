@@ -62,6 +62,7 @@ public class ChecklistFragment extends Fragment
 		listChecklist.setAdapter(mCLAdapter);
 
 		activity.getChecklistManager().sortNode(mChecklist);
+		activity.notifyChangeFragment(this);
 
 		return rootView;
 	}

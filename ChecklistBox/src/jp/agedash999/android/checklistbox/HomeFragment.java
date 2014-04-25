@@ -104,7 +104,7 @@ implements ChecklistDialog.ChecklistDialogListener
                 ft.replace(R.id.main_layout, fragment);
                 ft.addToBackStack(null);
                 ft.commit();
-                activity.notifyChangeFragment(fragment);
+//                activity.notifyChangeFragment(fragment);
             }
         });
 
@@ -117,6 +117,7 @@ implements ChecklistDialog.ChecklistDialogListener
 		mDslv.setDragEnabled(true);
 
 		activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_RUNNING);
+		activity.notifyChangeFragment(this);
 
 		return rootView;
 	}
