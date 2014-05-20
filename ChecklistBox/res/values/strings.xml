@@ -16,6 +16,7 @@
     <string name="checklist_row_credate">作成日：</string>
     <string name="checklist_row_findate">完了日：</string>
     <string name="checklist_addview_hint">決定ボタンで追加</string>
+    <string name="checklist_imageview_desc">ドラッグで移動</string>
     <string name="conmenu_home_title">メニュー</string>
     <string name="conmenu_edit">編集</string>
     <string name="conmenu_delete">削除</string>

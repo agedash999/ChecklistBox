@@ -25,7 +25,7 @@
     <com.mobeta.android.dslv.DragSortListView
         android:id="@+id/list_checklist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         dslv:collapsed_height="2dp"
         dslv:drag_enabled="true"
         dslv:drag_scroll_start="0.33"

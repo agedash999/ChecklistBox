@@ -6,9 +6,9 @@
 
     <ImageView
         android:id="@+id/iv_drag_handle"
+        android:contentDescription="@string/checklist_imageview_desc"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="0"
         android:background="@drawable/drag" />
 
     <CheckBox

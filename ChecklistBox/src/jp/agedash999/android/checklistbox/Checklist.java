@@ -184,6 +184,16 @@ public class Checklist {
 		this.sortNo = sortNo;
 	}
 
+	public int getUncheckedNum(){
+		int i = 0;
+		Iterator<ChecklistNode> iter = checklist.iterator();
+		while(iter.hasNext()){
+			ChecklistNode node = iter.next();
+			if(!node.isChecked()) i++;
+		}
+		return i;
+	}
+
 	public static class ChecklistSortNoComp implements Comparator<Checklist>{
 
 		@Override
