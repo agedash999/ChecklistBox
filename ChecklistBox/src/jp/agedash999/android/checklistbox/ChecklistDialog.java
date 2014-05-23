@@ -78,7 +78,7 @@ public class ChecklistDialog extends DialogFragment {
 			int dialogType,Checklist clist){
 		ChecklistDialog dialog = new ChecklistDialog();
 		dialog.mDialogType = dialogType;
-		ChecklistCategory undef = ChecklistManager.getCategoryUndefined();
+//		ChecklistCategory undef = ChecklistManager.getCategoryUndefined();
 
 		switch (dialogType) {
 		case FOR_HOME_EDIT:
@@ -93,7 +93,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_HOME_STORE:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE,
-					new String(clist.getTitle()), undef);
+					new String(clist.getTitle()), null);
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_store_home;
@@ -101,7 +101,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_HISTORY_STORE:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE,
-					new String(clist.getTitle()), undef);
+					new String(clist.getTitle()), null);
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_store_history;
@@ -109,7 +109,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_STOCK_TOHOME:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING,
-					new String(clist.getTitle()), undef);
+					new String(clist.getTitle()), null);
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_copy_stock;
@@ -117,7 +117,7 @@ public class ChecklistDialog extends DialogFragment {
 			break;
 		case FOR_HISTORY_TOHOME:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING,
-					new String(clist.getTitle()), undef);
+					new String(clist.getTitle()), null);
 			dialog.mChecklist.setMemo(new String(clist.getMemo()));
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_copy_history;

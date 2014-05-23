@@ -46,8 +46,6 @@ implements ChecklistDialog.ChecklistDialogListener
             if (from != to) {
                 Checklist clist = mCLAdapter.getItem(from);
 
-//                List<Checklist> test = activity.getChecklistManager().getRunningList();
-
                 activity.getChecklistManager().moveRunningList(clist, to);
 
                 //方法１

@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class CategoryListAdapter  extends ArrayAdapter<ChecklistCategory> {
 
@@ -14,6 +16,8 @@ public class CategoryListAdapter  extends ArrayAdapter<ChecklistCategory> {
 	private List<ChecklistCategory> mList;
 	private LayoutInflater mInflater;
 	private int mLayout;
+
+	private boolean moveMode = false;
 
 	public CategoryListAdapter(Context context, int resource, List<ChecklistCategory> objects) {
 		super(context, resource, objects);
@@ -26,14 +30,28 @@ public class CategoryListAdapter  extends ArrayAdapter<ChecklistCategory> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View view = convertView;
-		ChecklistCategory clist;
+		ChecklistCategory category;
 		if(view == null){
 			view = mInflater.inflate(mLayout, null);
 		}
-		clist = mList.get(position);
+		category = mList.get(position);
+		((TextView)view.findViewById(R.id.title_category)).setText(category.getTitle());
 
-
+		if(moveMode){
+			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
+		}else{
+			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+		}
 
 		return view;
 	}
+
+	public void changeMoveMode(){
+		moveMode = (!moveMode);
+	}
+
+	public ChecklistCategory getCategory(int position){
+		return mList.get(position);
+	}
+
 }

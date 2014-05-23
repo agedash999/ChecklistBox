@@ -83,7 +83,6 @@ public class DBAccess {
 						Checklist clist = makeChecklist(Checklist.CHECKLIST_STORE, cursorStock, category);
 						clist.setCategory(category);
 						readChecklistNodes(clist);
-						category.addChecklist(clist);
 						cursorStock.moveToNext();
 					}
 				}
@@ -380,6 +379,13 @@ public class DBAccess {
 		mCV.clear();
 	}
 
+	public void deleteCategoryInfo(ChecklistCategory category){
+		mCV.clear();
+		mDBHelper.getWritableDatabase().delete(
+				DatabaseHelper.TABLE_CATEGORY, DatabaseHelper.COLUMN_ID + "=?",
+				new String[]{String.valueOf(category.getId()) });
+	}
+
 	public void copyChecklistNodes(String fromTableID, String toTableID){
 		//TODO チェックリストコピーメソッド
 
@@ -410,6 +416,17 @@ public class DBAccess {
 		}
 	}
 
+	public void updateCategoryInfo(ChecklistCategory category){
+		mCV.clear();
+		mCV.put(DatabaseHelper.COLUMN_NAME, category.getTitle());
+		mCV.put(DatabaseHelper.COLUMN_SORTNUM, category.getSortNo());
+		mDBHelper.getWritableDatabase().update
+				(DatabaseHelper.TABLE_CATEGORY , mCV,DatabaseHelper.COLUMN_ID + "=?" ,
+				new String[]{String.valueOf(category.getId())});
+		mCV.clear();
+	}
+
+
 	public void testDataAdd(Checklist clist){
 		insertNewChecklist(clist);
 		for(ChecklistNode node :clist.getNodes()){
@@ -433,6 +450,26 @@ public class DBAccess {
 			}
 		}
 		return list;
+	}
+
+	public List<ChecklistCategory> testGetCategorylist(){
+
+		List<ChecklistCategory> categoryList = new ArrayList<ChecklistCategory>();
+		Cursor cursorCategory = mDBHelper.getReadableDatabase().rawQuery
+				("select * from " + DatabaseHelper.TABLE_CATEGORY, null);
+		if(cursorCategory.moveToFirst()){
+			while(!cursorCategory.isAfterLast()){
+				//TODO 追加実装ポイント：カテゴリ内並び替え
+				ChecklistCategory category = new ChecklistCategory(
+						cursorCategory.getInt(cursorCategory.getColumnIndex(DatabaseHelper.COLUMN_ID)),
+						cursorCategory.getString(cursorCategory.getColumnIndex(DatabaseHelper.COLUMN_NAME)),
+						cursorCategory.getDouble(cursorCategory.getColumnIndex(DatabaseHelper.COLUMN_SORTNUM)));
+				categoryList.add(category);
+				cursorCategory.moveToNext();
+			}
+		}
+		mCV.clear();
+		return categoryList;
 	}
 
 	private boolean intToBool(int i){

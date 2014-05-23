@@ -24,6 +24,7 @@ public class MainActivity extends FragmentActivity{
 	private ChecklistBoxChildFragment homeFragment = null;
 	private ChecklistBoxChildFragment stockFragment = null;
 	private ChecklistBoxChildFragment historyFragment = null;
+	private ChecklistBoxChildFragment categoryEditFragment = null;
 
 	private ChecklistBoxChildFragment childFragment;
 
@@ -37,6 +38,7 @@ public class MainActivity extends FragmentActivity{
 
 	private String[] mDrawerMainMenuItems;
 	private String[] mDrawerSubMenuItems;
+	private DrawerMenuListener mDrawerListener;
 
 	private ChecklistManager mCLManager;
 
@@ -48,6 +50,7 @@ public class MainActivity extends FragmentActivity{
 		homeFragment = new HomeFragment();
 		stockFragment = new StockFragment();
 		historyFragment = new HistoryFragment();
+		categoryEditFragment = new CategoryEditFragment();
 
 		childFragment = homeFragment;
 
@@ -68,7 +71,9 @@ public class MainActivity extends FragmentActivity{
 				android.R.layout.simple_list_item_1 , mDrawerSubMenuItems));
 
 		// ドロワーのListItemクリックリスナーセット
-		mDrawerListMain.setOnItemClickListener(new DrawerMenuListener());
+		mDrawerListener = new DrawerMenuListener();
+		mDrawerListMain.setOnItemClickListener(mDrawerListener);
+		mDrawerListSub.setOnItemClickListener(mDrawerListener);
 
 		//TODO タイトルをフラグメントごとに設定する
 		mTitle = mDrawerTitle = getTitle();
@@ -167,8 +172,8 @@ public class MainActivity extends FragmentActivity{
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			if(parent.equals(mDrawerListMain)){
 				changeFragment(position);
-			}else if(parent.equals(mDrawerSubMenuItems)){
-
+			}else if(parent.equals(mDrawerListSub)){
+				callCategoryEdit(position);
 			}
 		}
 
@@ -192,6 +197,19 @@ public class MainActivity extends FragmentActivity{
 			//			Bundle args = new Bundle();
 			//			args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
 			//			fragment.setArguments(args);
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.main_layout, (Fragment)childFragment);
+			ft.addToBackStack(null);
+			ft.commit();
+
+			// Highlight the selected item, update the title, and close the drawer
+			mDrawerListMain.setItemChecked(position, true);
+			//		    setTitle(mPlanetTitles[position]);
+			mDrawerLayout.closeDrawer(mLeftDrawer);
+		}
+
+		private void callCategoryEdit(int position){
+			childFragment = categoryEditFragment;
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.main_layout, (Fragment)childFragment);
 			ft.addToBackStack(null);

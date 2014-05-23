@@ -45,6 +45,8 @@ public class ChecklistCategory {
 	}
 
 	public void addChecklist(Checklist clist){
+		//Checklistのカテゴリを変更した時にリストへの追加を行うので、
+		//そこからのみ呼ぶ
 		this.childList.add(clist);
 	}
 

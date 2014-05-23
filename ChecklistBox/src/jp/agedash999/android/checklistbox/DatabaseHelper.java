@@ -1,6 +1,5 @@
 package jp.agedash999.android.checklistbox;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -9,8 +8,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DBNAME = "checklist_box.db";
 	private static final int DBVERSION = 1;
-	public static String CATEGORY_UNDEFINED_NAME;
-	public static final int CATEGORY_UNDEFINED_ID = 1;
 
 	public static final int CHECKLIST_RUNNING = Checklist.CHECKLIST_RUNNING;
 	public static final int CHECKLIST_STORE = Checklist.CHECKLIST_STORE ;
@@ -35,6 +32,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //	public static final String COLUMN_FINDATE = "fin_date";
 	public static final String COLUMN_CHECKED = "checked";
 	public static final String COLUMN_NEXTID = "next_id";
+
+	public static final int CATEGORY_UNDEFINED_ID = 0;
+
+	public static String CATEGORY_DAILY_NAME;
+	public static final int CATEGORY_DAILY_ID = 1;
+
+	public static String CATEGORY_BUISINES_NAME;
+	public static final int CATEGORY_BUISINES_ID = 2;
+
+	public static String CATEGORY_TRAVEL_NAME;
+	public static final int CATEGORY_TRAVEL_ID = 3;
+
 
 	//チェックリストテーブル共通
 	private static final String SUFFIX_CHECKLIST =
@@ -98,7 +107,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public DatabaseHelper(Context context){
 		super(context, DBNAME, null, DBVERSION);
-		DatabaseHelper.CATEGORY_UNDEFINED_NAME = context.getString(R.string.category_undefined);
+		DatabaseHelper.CATEGORY_DAILY_NAME = context.getString(R.string.category_name_daily);
+		DatabaseHelper.CATEGORY_BUISINES_NAME = context.getString(R.string.category_name_buisiness);
+		DatabaseHelper.CATEGORY_TRAVEL_NAME = context.getString(R.string.category_name_travel);
 	}
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -110,11 +121,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		// TODO 初回データの読み込み・テーブル作成
 		// カテゴリ未指定レコード(ID 1)を挿入
-		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_NAME, CATEGORY_UNDEFINED_NAME);
-		cv.put(COLUMN_SORTNUM, 0);
-		db.insert(TABLE_CATEGORY, null, cv);
-		cv.clear();
+		// カテゴリ未指定は廃止
+//		ContentValues cv = new ContentValues();
+//		cv.put(COLUMN_NAME, CATEGORY_UNDEFINED_NAME);
+//		cv.put(COLUMN_SORTNUM, 0);
+//		db.insert(TABLE_CATEGORY, null, cv);
+//		cv.clear();
 
 	}
 

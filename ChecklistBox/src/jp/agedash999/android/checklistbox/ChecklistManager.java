@@ -25,7 +25,7 @@ public class ChecklistManager {
 	//TODO 新規追加時に重複チェックをする
 	//TODO 名称変更時にはDBを書き換える
 
-	private static ChecklistCategory undef;
+//	private static ChecklistCategory undef;
 
 	public static final int SORTTYPE_SORTNO = 1;
 	public static final int SORTTYPE_DATE_ASC = 2;
@@ -59,16 +59,16 @@ public class ChecklistManager {
 		this.stockList = mDBAccess.getStockListAll();
 
 		//カテゴリ未指定の取得
-		Iterator<ChecklistCategory> iter = stockList.iterator();
-		ChecklistCategory cat;
-		boolean finish = false;
-		while(iter.hasNext() && !finish){
-			cat = iter.next();
-			if(cat.getId() == DatabaseHelper.CATEGORY_UNDEFINED_ID){
-				ChecklistManager.undef = cat;
-				finish = true;
-			}
-		}
+//		Iterator<ChecklistCategory> iter = stockList.iterator();
+//		ChecklistCategory cat;
+//		boolean finish = false;
+//		while(iter.hasNext() && !finish){
+//			cat = iter.next();
+//			if(cat.getId() == DatabaseHelper.CATEGORY_UNDEFINED_ID){
+//				ChecklistManager.undef = cat;
+//				finish = true;
+//			}
+//		}
 
 		if(testFlag){
 			addTestStock2();
@@ -258,19 +258,19 @@ public class ChecklistManager {
 	}
 
 	private void addTestStock2(){
-		Checklist clist5_1 = new Checklist
-				(Checklist.CHECKLIST_STORE, "スポーツジムの持ち物", undef);
-		clist5_1.addNode("着替えのシャツ", false);
-		clist5_1.addNode("着替えのパンツ", false);
-		clist5_1.addNode("着替えの靴下", false);
-		clist5_1.addNode("シューズ", false);
-		clist5_1.addNode("バスタオル", false);
-		clist5_1.addNode("洗面用具", false);
-		clist5_1.addNode("汚れ物入れ", false);
-		clist5_1.addNode("イヤホン", false);
-		clist5_1.addNode("ICカード", false);
-		clist5_1.setMemo("トレーニングウェアは着ている前提");
-		mDBAccess.testDataAdd(clist5_1);
+//		Checklist clist5_1 = new Checklist
+//				(Checklist.CHECKLIST_STORE, "スポーツジムの持ち物", undef);
+//		clist5_1.addNode("着替えのシャツ", false);
+//		clist5_1.addNode("着替えのパンツ", false);
+//		clist5_1.addNode("着替えの靴下", false);
+//		clist5_1.addNode("シューズ", false);
+//		clist5_1.addNode("バスタオル", false);
+//		clist5_1.addNode("洗面用具", false);
+//		clist5_1.addNode("汚れ物入れ", false);
+//		clist5_1.addNode("イヤホン", false);
+//		clist5_1.addNode("ICカード", false);
+//		clist5_1.setMemo("トレーニングウェアは着ている前提");
+//		mDBAccess.testDataAdd(clist5_1);
 	}
 
 	public List<Checklist> getRunningList(){
@@ -334,9 +334,9 @@ public class ChecklistManager {
 		return historyList;
 	}
 
-	public static ChecklistCategory getCategoryUndefined(){
-		return ChecklistManager.undef;
-	}
+//	public static ChecklistCategory getCategoryUndefined(){
+//		return ChecklistManager.undef;
+//	}
 
 	public void nodeUpdated(Checklist clist, ChecklistNode node){
 		//TODO 並べ替え？
@@ -436,7 +436,7 @@ public class ChecklistManager {
 		//データベース更新
 	}
 
-	public void removeNode(){
+	public void removeNode(Checklist clist, ChecklistNode node){
 		//リストから削除
 
 		//データベース更新
@@ -476,6 +476,7 @@ public class ChecklistManager {
 			runningList.add(clist);
 			break;
 		case Checklist.CHECKLIST_STORE:
+			clist.getCategory().getId();//TODO nullじゃないことを確認
 			mDBAccess.insertNewChecklist(clist);
 			mDBAccess.insertChecklistNodes(clist);
 //			clist.getCategory().addChecklist(clist);
@@ -491,13 +492,10 @@ public class ChecklistManager {
 	}
 
 	public void updateChecklistInfo(Checklist clist){
+		if(clist.getType() == Checklist.CHECKLIST_STORE){
+			clist.getCategory().getId(); //TODO nullじゃないことを確認
+		}
 		mDBAccess.updateChecklistInfo(clist);
-	}
-
-	public void insertCategory(ChecklistCategory category){
-		//TODO 後で動作確認
-		mDBAccess.insertNewCategory(category);
-		stockList.add(category);
 	}
 
 	public void updateNodeInfo(Checklist clist , ChecklistNode node){
@@ -635,6 +633,92 @@ public class ChecklistManager {
 			Collections.reverse(list);
 		}
 	}
+
+	public void moveCategory(ChecklistCategory category , int to){
+		stockList.remove(category);
+		stockList.add(to, category);
+		if(to == 0){
+			//挿入先が一番最初の場合
+			category.setSortNo(0.0);
+			ChecklistCategory catNext = stockList.get(to + 1);
+			catNext.setSortNo( stockList.get(to + 2).getSortNo() / 2 );
+			updateCategoryInfo(category);
+
+		}else if( to >= stockList.size() - 1 ){
+			//挿入先が一番最後の場合
+			double prevNo = stockList.get(to - 1).getSortNo();
+			double sortNo = ((int)prevNo) + 1;
+			category.setSortNo(sortNo);
+			updateCategoryInfo(category);
+		}else{
+			double prevNo = stockList.get(to - 1).getSortNo();
+			double nextNo = stockList.get(to + 1).getSortNo();
+			category.setSortNo(prevNo + ( ( nextNo - prevNo ) / 2 ));
+			updateCategoryInfo(category);
+		}
+
+		Log.d("checklist_box", category.getTitle() + " " + to + " " + category.getSortNo());
+		testCategoryDBOutput();
+		Log.d("checklist_box", "*************************************************");
+//		testCategoryFieldOutput();
+	}
+
+	public void updateCategoryInfo(ChecklistCategory category){
+		mDBAccess.updateCategoryInfo(category);
+	}
+
+	public void testCategoryFieldOutput(){
+		Iterator<ChecklistCategory> i = stockList.iterator();
+		while(i.hasNext()){
+			ChecklistCategory category = i.next();
+			String str =
+					rightPad(Integer.toString(category.getId()), 4) +
+					rightPad(category.getTitle(), 20) +
+					rightPad(Double.toString(category.getSortNo()), 4);
+			Log.d("checklist_box", str);
+		}
+	}
+
+	public void insertCategory(ChecklistCategory category){
+		//TODO 後で動作確認
+		mDBAccess.insertNewCategory(category);
+		stockList.add(category);
+	}
+
+	public void deleteCategory(ChecklistCategory category){
+		Iterator<Checklist> iter = category.getChildList().iterator();
+		while(iter.hasNext()){
+			Checklist clist = iter.next();
+			mDBAccess.deleteChecklist(Checklist.CHECKLIST_STORE, clist.getId());
+		}
+		mDBAccess.deleteCategoryInfo(category);
+		stockList.remove(category);
+	}
+
+	public void moveChecklistToCategory(ChecklistCategory from, ChecklistCategory to){
+		to.getChildList().addAll(from.getChildList());
+		from.getChildList().clear();
+//		Iterator<Checklist> iter = from.getChildList().iterator();
+//		while(iter.hasNext()){
+//			Checklist list = iter.next();
+//			list.setCategory(to);
+//		}
+//		from.getChildList().clear();
+	}
+
+	private void testCategoryDBOutput(){
+		List<ChecklistCategory> list = mDBAccess.testGetCategorylist();
+		Iterator<ChecklistCategory> i = list.iterator();
+		while(i.hasNext()){
+			ChecklistCategory category = i.next();
+			String str =
+					rightPad(Integer.toString(category.getId()), 4) +
+					rightPad(category.getTitle(), 20) +
+					rightPad(Double.toString(category.getSortNo()), 4);
+			Log.d("checklist_box", str);
+		}
+	}
+
 
 	private void sortNodeSortNo(Checklist clist){
 		Collections.sort(clist.getChecklist(), new ChecklistNode.NodeSortNoComp());

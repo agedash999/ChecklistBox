@@ -9,14 +9,17 @@ import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -47,6 +50,9 @@ implements ChecklistBoxChildFragment{
 
 	private ListView listChecklist;
 	private EditText etx_checklist_add;
+
+	private final int CONTEXT_MENUID_EDIT = 0;
+	private final int CONTEXT_MENUID_DELETE = 1;
 
 //	private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
 //		@Override
@@ -84,12 +90,12 @@ implements ChecklistBoxChildFragment{
 				mChecklist.getNodes());
 
 		mDslv.setDropListener(mCLAdapter);
-		//		listChecklist.setAdapter(mCLAdapter);
+		//		listChecklist.setAdapter(mCLAdapter);//不要？
 		mDslv.setAdapter(mCLAdapter);
 
 		registerForContextMenu(mDslv);
 
-//		mController = buildController(mDslv);
+//		mController = buildController(mDslv);//使わない
 
 		mController = new SectionController(mDslv, mCLAdapter);
 		mController.setDragHandleId(R.id.iv_drag_handle);
@@ -101,14 +107,91 @@ implements ChecklistBoxChildFragment{
 		mDslv.setFloatViewManager(mController);
 		mDslv.setOnTouchListener(mController);
 		mDslv.setDropListener(mCLAdapter);
-//		mDslv.setRemoveListener(onRemove);
+//		mDslv.setRemoveListener(onRemove); //不要？
 		mDslv.setDragEnabled(true);
+
+		registerForContextMenu(mDslv);
+
+		//		Button btn = (Button)rootView.findViewById(R.id.button_test);
+		//		registerForContextMenu(btn);
+
 
 		activity.getChecklistManager().sortNode(mChecklist);
 		activity.notifyChangeFragment(this);
 
 		return rootView;
 	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		menu.setHeaderTitle(getString(R.string.conmenu_home_title));
+		menu.add(0, CONTEXT_MENUID_EDIT, 0, R.string.conmenu_edit);
+		menu.add(0, CONTEXT_MENUID_DELETE, 0, R.string.conmenu_delete);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		final int contextIndex = ((AdapterContextMenuInfo)item.getMenuInfo()).position;
+		final ChecklistNode contextNode = mCLAdapter.getItem(contextIndex);
+
+		switch (item.getItemId()) {
+		case CONTEXT_MENUID_EDIT:
+			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+			final EditText editView = new EditText(activity);
+			editView.setText(contextNode.getTitle());
+			editView.setSelection(editView.getText().length());
+
+			builder.setView(editView)
+			.setTitle("テスト")
+			.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+					contextNode.setTitle(editView.getText().toString());
+					activity.getChecklistManager().nodeUpdated(mChecklist, contextNode);
+					mCLAdapter.notifyDataSetChanged();
+				}
+			})
+			.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+					// TODO 自動生成されたメソッド・スタブ
+				}
+			})
+			.show();
+
+			break;
+		case CONTEXT_MENUID_DELETE:
+			AlertDialog.Builder builder_del = new AlertDialog.Builder(activity);
+			builder_del.setTitle(R.string.dialog_title_node_delete);
+			builder_del.setMessage(R.string.dialog_message_node_delete);
+			builder_del.setPositiveButton(R.string.dialog_button_node_delete, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					onDeleteNode(contextIndex);
+
+				}
+			});
+			builder_del.setNegativeButton(R.string.dialog_button_node_cansel, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					onDeleteNodeCanseled(contextIndex);
+				}
+			});
+			builder_del.create().show();
+
+			break;
+		default:
+			break;
+		}
+
+		return super.onContextItemSelected(item);
+
+	}
+
 
 	private void activateAddView(){
 		//追加エリアの可視化
@@ -233,6 +316,15 @@ implements ChecklistBoxChildFragment{
 		return controller;
 	}
 
+	private void onDeleteNode(int nodeIndex){
+		mChecklist.getChecklist().remove(nodeIndex);
+		mCLAdapter.enableSection(true);
+		mCLAdapter.notifyDataSetChanged();
+	}
+
+	private void onDeleteNodeCanseled(int nodeIndex){
+
+	}
 
 
 	/**
@@ -298,48 +390,51 @@ implements ChecklistBoxChildFragment{
 			etx_title_node.setText(cnode.getTitle());
 
 			if(moveMode){
-				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
+				ImageView iv = ((ImageView)view.findViewById(R.id.iv_drag_handle));
+				iv.setVisibility(View.VISIBLE);
+
 			}else{
 				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+				view.setLongClickable(true);
 			}
 
 			//ChecklisNodeクリック時の動作（タイトル編集UIの表示）
-			etx_title_node.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
-					final int nodePosition = Integer.parseInt(txv_position.getText().toString());
-
-					final EditText editView = new EditText(activity);
-					editView.setText(mChecklist.getNodes().get(nodePosition).getTitle());
-					editView.setSelection(editView.getText().length());
-
-					//					final TextView hide = new TextView(activity);
-					//					hide.setVisibility(View.GONE);
-					//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
-					//					hide.setText(txv_position.getText());
-
-					builder.setView(editView)
-					.setTitle("テスト")
-					.setPositiveButton("保存", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-							ChecklistNode node = mChecklist.getNodes().get(nodePosition);
-							node.setTitle(editView.getText().toString());
-							activity.getChecklistManager().nodeUpdated(mChecklist, node);
-							notifyDataSetChanged();
-						}
-					})
-					.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-							// TODO 自動生成されたメソッド・スタブ
-						}
-					})
-					.show();
-				}
-			});
+//			etx_title_node.setOnClickListener(new OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
+//					final int nodePosition = Integer.parseInt(txv_position.getText().toString());
+//
+//					final EditText editView = new EditText(activity);
+//					editView.setText(mChecklist.getNodes().get(nodePosition).getTitle());
+//					editView.setSelection(editView.getText().length());
+//
+//					//					final TextView hide = new TextView(activity);
+//					//					hide.setVisibility(View.GONE);
+//					//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
+//					//					hide.setText(txv_position.getText());
+//
+//					builder.setView(editView)
+//					.setTitle("テスト")
+//					.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+//						@Override
+//						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+//							ChecklistNode node = mChecklist.getNodes().get(nodePosition);
+//							node.setTitle(editView.getText().toString());
+//							activity.getChecklistManager().nodeUpdated(mChecklist, node);
+//							notifyDataSetChanged();
+//						}
+//					})
+//					.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+//						@Override
+//						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+//							// TODO 自動生成されたメソッド・スタブ
+//						}
+//					})
+//					.show();
+//				}
+//			});
 
 			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(position));
 			//TODO こっちに修正する予定
@@ -360,7 +455,6 @@ implements ChecklistBoxChildFragment{
 					mCLAdapter.notifyDataSetChanged();
 				}
 			});
-
 			return view;
 
 		}
@@ -453,7 +547,7 @@ implements ChecklistBoxChildFragment{
 			}
 		}
 
-		private int dataPosition(int position) {
+		public int dataPosition(int position) {
 			if(enableSection){
 				return position > mDivPos ? position - 1 : position;
 			}else{

@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ChecklistListAdapter extends ArrayAdapter<Checklist> {
+public class HistoryListAdapter extends ArrayAdapter<Checklist> {
 
 	private Context context;
 	private List<Checklist> mList;
@@ -23,7 +23,7 @@ public class ChecklistListAdapter extends ArrayAdapter<Checklist> {
 	public static final int DIALOG_HOME = 0;
 	public static final int DIALOG_HISTORY = 1;
 
-	public ChecklistListAdapter(Context context, int resource, List<Checklist> objects, int dialogType) {
+	public HistoryListAdapter(Context context, int resource, List<Checklist> objects, int dialogType) {
 		super(context, resource, objects);
 		this.context = context;
 		this.mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

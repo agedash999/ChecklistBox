@@ -25,7 +25,7 @@ implements ChecklistDialog.ChecklistDialogListener
 	private MainActivity activity;
 	private View rootView;
 	private ListView listHistory;
-	private ChecklistListAdapter mCLAdapter;
+	private HistoryListAdapter mCLAdapter;
 
 //	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -46,8 +46,8 @@ implements ChecklistDialog.ChecklistDialogListener
 
 		listHistory = (ListView)rootView.findViewById(R.id.list_history);
 
-		mCLAdapter = new ChecklistListAdapter(getActivity(), R.layout.listrow_history,
-				activity.getChecklistManager().getHistoryList(),ChecklistListAdapter.DIALOG_HISTORY);
+		mCLAdapter = new HistoryListAdapter(getActivity(), R.layout.listrow_history,
+				activity.getChecklistManager().getHistoryList(),HistoryListAdapter.DIALOG_HISTORY);
 		listHistory.setAdapter(mCLAdapter);
 		listHistory.setOnItemClickListener(new OnItemClickListener() {
 

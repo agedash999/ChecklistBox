@@ -43,12 +43,14 @@ public class Checklist {
 		}
 
 		//TODO カテゴリーがnullだった場合の処理
-		if(cltype == CHECKLIST_RUNNING || cltype == CHECKLIST_HISTORY){
-			this.category = category;
-		}else if(cltype == CHECKLIST_STORE){
-			category.getId();//null確認
-			this.category = category;
-		}
+//		if(cltype == CHECKLIST_RUNNING || cltype == CHECKLIST_HISTORY){
+//			this.category = category;
+//		}else if(cltype == CHECKLIST_STORE){
+////			category.getId();//null確認
+//			this.category = category;
+//		}
+
+		this.category = category;
 
 		this.date = date;
 
@@ -169,7 +171,11 @@ public class Checklist {
 		if(this.cltype != CHECKLIST_STORE){
 			return;
 		}
-		this.category.getChildList().remove(this);
+
+		if(this.category != null){
+			this.category.getChildList().remove(this);
+		}
+
 		if(!category.getChildList().contains(this)){
 			category.addChecklist(this);
 		}

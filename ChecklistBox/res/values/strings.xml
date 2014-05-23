@@ -6,7 +6,9 @@
     <string name="action_move">順番移動</string>
     <string name="action_sort">表示順変更</string>
     <string name="action_settings">設定</string>
-    <string name="category_undefined">カテゴリ未指定</string>
+    <string name="category_name_daily">日常生活</string>
+    <string name="category_name_buisiness">仕事関連</string>
+    <string name="category_name_travel">旅行関連</string>
     <string name="title_section1">進行中</string>
     <string name="title_section2">一覧</string>
     <string name="title_section3">履歴</string>
@@ -35,7 +37,9 @@
     <string name="dialog_title_clist_store_history">保存（履歴）</string>
     <string name="dialog_title_clist_copy_stock">ホームに追加（ストック）</string>
     <string name="dialog_title_clist_copy_history">ホームに追加（履歴）</string>
+    <string name="dialog_title_node_delete">削除</string>
     <string name="dialog_message_clist_delete">削除しますか？</string>
+    <string name="dialog_message_node_delete">削除しますか？</string>
     <string name="dialog_label_clist_title">タイトル</string>
     <string name="dialog_label_clist_memo">メモ</string>
     <string name="dialog_label_clist_expdate">実施日</string>
@@ -46,10 +50,18 @@
     <string name="dialog_button_clist_delete">削除</string>
     <string name="dialog_button_clist_cansel">キャンセル</string>
     <string name="dialog_button_clist_change">変更</string>
+    <string name="dialog_button_node_delete">削除</string>
+    <string name="dialog_button_node_cansel">キャンセル</string>
     <string name="dialog_radio_sort_sortno">任意の並び順</string>
     <string name="dialog_radio_sort_expdate_asc">実施日(昇順)</string>
     <string name="dialog_radio_sort_expdate_desc">実施日(降順)</string>
     <string name="dialog_radio_sort_check_off">任意の並び順</string>
     <string name="dialog_radio_sort_check_down">完了済を上に</string>
+    <string name="dialog_title_category_delete">カテゴリ削除</string>
+    <string name="dialog_message_category_delete">カテゴリを削除します</string>
+    <string name="dialog_label_category_delete_move">保持しているチェックリストの移動先</string>
+    <string name="dialog_label_category_delete_delete">チェックリストを削除</string>
+    <string name="dialog_button_category_delete">削除</string>
+    <string name="dialog_button_category_cansel">キャンセル</string>
 
 </resources>
