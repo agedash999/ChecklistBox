@@ -23,6 +23,8 @@ public class StockFragment extends Fragment
 	implements ChecklistDialog.ChecklistDialogListener
 	,ChecklistBoxChildFragment {
 
+	private ChecklistBoxChildFragment mInstance;
+
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
 	private final int CONTEXT_MENUID_TOHOME = 3;
@@ -32,6 +34,9 @@ public class StockFragment extends Fragment
 	private ExpandableListView listStock;
 	private StockListAdapter mCLAdapter;
 	private ChecklistManager mCLManager;
+    private String mFragmentTitle;
+
+    private final int FRAGMENT_TITLE_ID = R.string.fragment_title_stock;
 
 //	private int contextIndex;
 	private Checklist contextChecklist;
@@ -43,10 +48,17 @@ public class StockFragment extends Fragment
 		super();
 	}
 
+	public static ChecklistBoxChildFragment newInstance(){
+		StockFragment instance = new StockFragment();
+		instance.mInstance = instance;
+		return instance;
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		this.rootView = inflater.inflate(R.layout.fragment_stock, container, false);
+		this.mFragmentTitle = activity.getResources().getString(FRAGMENT_TITLE_ID);
 
 		listStock = (ExpandableListView)rootView.findViewById(R.id.list_stock);
 
@@ -70,7 +82,7 @@ public class StockFragment extends Fragment
 				Checklist clist = (Checklist)parent.getExpandableListAdapter()
 						.getChild(groupPosition, childPosition);
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ChecklistFragment fragment = ChecklistFragment.newInstance(clist);
+				ChecklistFragment fragment = ChecklistFragment.newInstance(clist,mInstance);
 				ft.replace(R.id.main_layout, fragment);
 				ft.addToBackStack(null);
                 activity.notifyChangeFragment(fragment);
@@ -81,6 +93,7 @@ public class StockFragment extends Fragment
 		});
 
 		registerForContextMenu(listStock);
+		activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_STORE);
 
 		return rootView;
 	}
@@ -223,4 +236,15 @@ public class StockFragment extends Fragment
 		}
 
 	}
+
+	@Override
+	public String getFragmenTitle() {
+		return mFragmentTitle;
+	}
+
+	@Override
+	public String getFragmenSubTitle() {
+		return null;
+	}
+
 }

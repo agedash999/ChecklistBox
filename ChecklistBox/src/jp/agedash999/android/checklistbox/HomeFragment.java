@@ -27,11 +27,16 @@ public class HomeFragment extends Fragment
 implements ChecklistDialog.ChecklistDialogListener
 ,ChecklistBoxChildFragment {
 
+	private ChecklistBoxChildFragment mInstance;
+
 	private MainActivity activity;
 	private View rootView;
 	private HomeListAdapter mCLAdapter;
     private DragSortListView mDslv;
     private DragSortController mController;
+    private String mFragmentTitle;
+
+    private final int FRAGMENT_TITLE_ID = R.string.fragment_title_home;
 
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -77,12 +82,19 @@ implements ChecklistDialog.ChecklistDialogListener
 		super();
 	}
 
+	public static ChecklistBoxChildFragment newInstance(){
+		HomeFragment instance = new HomeFragment();
+		instance.mInstance = instance;
+		return instance;
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		//使用するView・Activityをフィールドに格納
 		this.rootView = inflater.inflate(R.layout.fragment_home, container, false);
 		this.mDslv = (DragSortListView)rootView.findViewById(R.id.list_home);
+		this.mFragmentTitle = activity.getResources().getString(FRAGMENT_TITLE_ID);
 
 		//Adapterのインスタンスを生成してListViewにセット
 		mCLAdapter = new HomeListAdapter(getActivity(), R.layout.listrow_home,
@@ -96,7 +108,7 @@ implements ChecklistDialog.ChecklistDialogListener
                 ListView listView = (ListView) parent;
                 Checklist clist = (Checklist)listView.getItemAtPosition(position);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ChecklistFragment fragment = ChecklistFragment.newInstance(clist);
+                ChecklistFragment fragment = ChecklistFragment.newInstance(clist, mInstance);
                 ft.replace(R.id.main_layout, fragment);
                 ft.addToBackStack(null);
                 ft.commit();
@@ -313,4 +325,14 @@ implements ChecklistDialog.ChecklistDialogListener
 
         return controller;
     }
+
+	@Override
+	public String getFragmenTitle() {
+		return mFragmentTitle;
+	}
+
+	@Override
+	public String getFragmenSubTitle() {
+		return null;
+	}
 }

@@ -22,10 +22,15 @@ public class HistoryFragment extends Fragment
 implements ChecklistDialog.ChecklistDialogListener
 ,ChecklistBoxChildFragment {
 
+	private ChecklistBoxChildFragment mInstance;
+
 	private MainActivity activity;
 	private View rootView;
 	private ListView listHistory;
 	private HistoryListAdapter mCLAdapter;
+    private String mFragmentTitle;
+
+    private final int FRAGMENT_TITLE_ID = R.string.fragment_title_history;
 
 //	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -39,10 +44,17 @@ implements ChecklistDialog.ChecklistDialogListener
 		super();
 	}
 
+	public static ChecklistBoxChildFragment newInstance(){
+		HistoryFragment instance = new HistoryFragment();
+		instance.mInstance = instance;
+		return instance;
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		this.rootView = inflater.inflate(R.layout.fragment_history, container, false);
+		this.mFragmentTitle = activity.getResources().getString(FRAGMENT_TITLE_ID);
 
 		listHistory = (ListView)rootView.findViewById(R.id.list_history);
 
@@ -57,7 +69,7 @@ implements ChecklistDialog.ChecklistDialogListener
 				ListView listView = (ListView) parent;
 				Checklist clist = (Checklist)listView.getItemAtPosition(position);
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ChecklistFragment fragment = ChecklistFragment.newInstance(clist);
+				ChecklistFragment fragment = ChecklistFragment.newInstance(clist, mInstance);
 				ft.replace(R.id.main_layout, fragment);
 				ft.addToBackStack(null);
 				ft.commit();
@@ -67,6 +79,8 @@ implements ChecklistDialog.ChecklistDialogListener
 		});
 
 		registerForContextMenu(listHistory);
+		activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_HISTORY);
+		activity.notifyChangeFragment(this);
 
 		return rootView;
 	}
@@ -188,4 +202,15 @@ implements ChecklistDialog.ChecklistDialogListener
 //			break;
 		}
 	}
+
+	@Override
+	public String getFragmenTitle() {
+		return mFragmentTitle;
+	}
+
+	@Override
+	public String getFragmenSubTitle() {
+		return null;
+	}
+
 }

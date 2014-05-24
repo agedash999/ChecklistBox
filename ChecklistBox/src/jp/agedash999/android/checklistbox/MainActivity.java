@@ -1,5 +1,6 @@
 package jp.agedash999.android.checklistbox;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity{
 
@@ -20,6 +22,7 @@ public class MainActivity extends FragmentActivity{
 	public static final int MENU_MOVE_ID = R.id.menu_move;
 	public static final int MENU_SORT_ID = R.id.menu_sort;
 	public static final int MENU_SETTINGS_ID = R.id.menu_settings;
+	public static final int APL_NAME_ID = R.string.app_name;
 
 	private ChecklistBoxChildFragment homeFragment = null;
 	private ChecklistBoxChildFragment stockFragment = null;
@@ -33,8 +36,11 @@ public class MainActivity extends FragmentActivity{
 	private ListView mDrawerListMain;
 	private ListView mDrawerListSub;
 	private ActionBarDrawerToggle mDrawerToggle;
-	private CharSequence mDrawerTitle;
-	private CharSequence mTitle;
+
+	private String appName;
+
+	private TextView mTitleMain;
+	private TextView mTitleSub;
 
 	private String[] mDrawerMainMenuItems;
 	private String[] mDrawerSubMenuItems;
@@ -47,12 +53,26 @@ public class MainActivity extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		homeFragment = new HomeFragment();
-		stockFragment = new StockFragment();
-		historyFragment = new HistoryFragment();
+		homeFragment = HomeFragment.newInstance();
+		stockFragment = StockFragment.newInstance();
+		historyFragment = HistoryFragment.newInstance();
 		categoryEditFragment = new CategoryEditFragment();
 
 		childFragment = homeFragment;
+
+		appName = getResources().getString(APL_NAME_ID);
+
+		// ActionBar関連の設定
+		ActionBar bar = getActionBar();
+		View actionBarView = getLayoutInflater().inflate(R.layout.action_bar, null);
+
+		mTitleMain = (TextView)actionBarView.findViewById(R.id.title_main);
+		mTitleSub = (TextView)actionBarView.findViewById(R.id.title_sub);
+
+		bar.setCustomView(actionBarView);
+		bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_USE_LOGO);
+        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        bar.setDisplayShowHomeEnabled(true);
 
 		// ドロワー関連のUI取得
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -76,20 +96,19 @@ public class MainActivity extends FragmentActivity{
 		mDrawerListSub.setOnItemClickListener(mDrawerListener);
 
 		//TODO タイトルをフラグメントごとに設定する
-		mTitle = mDrawerTitle = getTitle();
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
 			//TODO アクションバーのメニューON/OFF
 
 			/** Called when a drawer has settled in a completely closed state. */
 			public void onDrawerClosed(View view) {
-				setTitle(mTitle);
+//				setTitle(mTitle);
 				invalidateOptionsMenu();
 			}
 
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView) {
-				setTitle(mDrawerTitle);
+//				setTitle(mDrawerTitle);
 				invalidateOptionsMenu();
 			}
 		};
@@ -97,6 +116,7 @@ public class MainActivity extends FragmentActivity{
 		// Set the drawer toggle as the DrawerListener
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+//		setTitle("");
 
 		// 起動時のFragmentとしてホーム画面をセットする
 		getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
@@ -129,17 +149,23 @@ public class MainActivity extends FragmentActivity{
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// If the nav drawer is open, hide action items related to the content view
-		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mLeftDrawer);
-		menu.findItem(R.id.menu_settings).setVisible(!drawerOpen);
+		if(mDrawerLayout.isDrawerOpen(mLeftDrawer)){
+//			menu.findItem(R.id.menu_add).setEnabled(false);
+//			menu.findItem(R.id.menu_settings).setVisible(false);
+			for(int i = 0 ; i<menu.size() ; i++){
+				menu.getItem(i).setEnabled(false);
+			}
+		}
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
-			// アプリアイコンがタップされた場合
+			// アプリアイコンがタップされた場合、ここで処理しない（Drawerを開く）
 			return true;
 		}
+		//ActionBarアイコンがタップされた場合はここで処理
 		int itemId = item.getItemId();
 
 		switch (itemId) {
@@ -227,9 +253,25 @@ public class MainActivity extends FragmentActivity{
 		//TODO メニューボタンのON/OFF
 
 		childFragment = fragment;
+		setTitleText(childFragment.getFragmenTitle(), childFragment.getFragmenSubTitle());
+	}
+
+	public void setTitleText(String main, String sub){
+		if(sub == null){
+			mTitleSub.setVisibility(View.GONE);
+			mTitleMain.setText(appName + "> " + main);
+		}else{
+			mTitleSub.setVisibility(View.VISIBLE);
+			mTitleMain.setText(appName + " > " + main);
+			mTitleSub.setText(sub);
+		}
 	}
 
 	public interface ChecklistBoxChildFragment{
+
+		public String getFragmenTitle();
+
+		public String getFragmenSubTitle();
 
 		public void onClickMenu(int menuId);
 

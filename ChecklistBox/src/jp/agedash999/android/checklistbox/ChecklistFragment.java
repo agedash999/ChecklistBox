@@ -41,10 +41,12 @@ public class ChecklistFragment extends Fragment
 implements ChecklistBoxChildFragment{
 
 	private MainActivity activity;
+	private ChecklistBoxChildFragment parent;
 	private View rootView;
 	private ChecklistAdapter mCLAdapter;
 	private DragSortListView mDslv;
 	private DragSortController mController;
+    private String mFragmentTitle;
 
 	private Checklist mChecklist;
 
@@ -69,9 +71,12 @@ implements ChecklistBoxChildFragment{
 		super();
 	}
 
-	public static ChecklistFragment newInstance(Checklist clist){
+	public static ChecklistFragment newInstance
+	(Checklist clist, ChecklistBoxChildFragment parent){
 		ChecklistFragment instance = new ChecklistFragment();
 		instance.mChecklist = clist;
+		instance.parent = parent;
+		instance.mFragmentTitle = parent.getFragmenTitle();
 		return instance;
 	}
 
@@ -324,6 +329,16 @@ implements ChecklistBoxChildFragment{
 
 	private void onDeleteNodeCanseled(int nodeIndex){
 
+	}
+
+	@Override
+	public String getFragmenTitle() {
+		return mFragmentTitle;
+	}
+
+	@Override
+	public String getFragmenSubTitle() {
+		return mChecklist.getTitle();
 	}
 
 

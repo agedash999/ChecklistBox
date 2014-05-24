@@ -32,6 +32,9 @@ implements ChecklistBoxChildFragment {
 	private CategoryListAdapter mCLAdapter;
     private DragSortListView mDslv;
     private DragSortController mController;
+    private String mFragmentTitle;
+
+    private final int FRAGMENT_TITLE_ID = R.string.fragment_title_categoryedit;
 
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -67,6 +70,7 @@ implements ChecklistBoxChildFragment {
 		//使用するView・Activityをフィールドに格納
 		this.rootView = inflater.inflate(R.layout.fragment_categoryedit, container, false);
 		this.mDslv = (DragSortListView)rootView.findViewById(R.id.list_category);
+		this.mFragmentTitle = activity.getResources().getString(FRAGMENT_TITLE_ID);
 
 		//Adapterのインスタンスを生成してListViewにセット
 		mCLAdapter = new CategoryListAdapter(getActivity(), R.layout.listrow_category,
@@ -269,5 +273,15 @@ implements ChecklistBoxChildFragment {
 
         return controller;
     }
+
+	@Override
+	public String getFragmenTitle() {
+		return mFragmentTitle;
+	}
+
+	@Override
+	public String getFragmenSubTitle() {
+		return null;
+	}
 
 }
