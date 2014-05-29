@@ -19,9 +19,9 @@
     <string name="title_section3">履歴</string>
     <string name="drawer_open">開く</string>
     <string name="drawer_close">閉じる</string>
-    <string name="checklist_row_expdate">実施日：</string>
-    <string name="checklist_row_credate">作成日：</string>
-    <string name="checklist_row_findate">完了日：</string>
+    <string name="checklist_row_expdate">実施日： </string>
+    <string name="checklist_row_credate">作成日： </string>
+    <string name="checklist_row_findate">完了日： </string>
     <string name="checklist_addview_hint">決定ボタンで追加</string>
     <string name="checklist_imageview_desc">ドラッグで移動</string>
     <string name="conmenu_home_title">メニュー</string>
@@ -68,5 +68,44 @@
     <string name="dialog_label_category_delete_delete">チェックリストを削除</string>
     <string name="dialog_button_category_delete">削除</string>
     <string name="dialog_button_category_cansel">キャンセル</string>
+    <string name="setting_title_category_view">表示設定</string>
+    <string name="setting_title_checklist_2_home">ホーム画面の表示項目</string>
+    <string name="setting_description_checklist_2_home">ホーム画面のチェックリスト一覧の２行目に表示する項目を指定</string>
+    <string name="setting_title_checklist_2_stock">保存画面の表示項目</string>
+    <string name="setting_description_checklist_2_stock">保存画面のチェックリスト一覧の２行目に表示する項目を指定</string>
+    <string name="setting_title_checklist_2_history">履歴画面の表示項目</string>
+    <string name="setting_description_checklist_2_history">履歴画面のチェックリスト一覧の２行目に表示する項目を指定</string>
+    <string name="setting_title_category_operation">動作設定</string>
+    <string name="setting_title_stock_init">保存チェックリストの初期表示</string>
+    <string name="setting_description_stock_init">保存チェックリスト画面を表示した際のカテゴリの状態を指定</string>
+    <string name="setting_title_initsort_home">ホーム画面の初期ソート</string>
+    <string name="setting_description_initsort_home">ホーム画面のチェックリスト一覧を開いた際のソート方法を指定</string>
+    <string name="setting_title_initsort_checklist">チェックリスト項目の初期ソート</string>
+    <string name="setting_description_initsort_checklist">チェックリストの内容を表示した際のソート方法を指定</string>
+    <string name="setting_title_category_other">その他</string>
+    <string name="setting_title_history_delete">履歴の削除設定</string><!-- ここはswitch -->
+    <string name="setting_description_history_delete">履歴チェックリストの自動削除を行う</string>
+    <string name="setting_title_history_delete_date">履歴削除日数</string>
+    <string name="setting_description_history_delete_date">履歴チェックリストを削除する基準日数（完了日で判断）</string>
+
+<!--
+　　▽表示
+　　・（後ほど）文字サイズ
+　　・各画面チェックリストの２行目
+　　　・ホーム：メモ・実施日・未完了数/完了数
+　　　・保存：メモ・保存日・項目数
+　　　・履歴：メモ・完了日・項目数
+　　▽動作設定
+　　・保存リストの初期状態　：　全開・全閉じ・上だけ開き
+　　・初期ソート
+　　　・ホーム：実施日・任意
+　　　・保存：任意のみ
+　　　・履歴：完了日のみ
+　　　・チェックリスト：完了済みを下・任意
+　　▽その他
+　　・履歴削除関連
+　　　・履歴自動削除　ON/OFF
+　　　・履歴削除日数　7日以前/14日以前/30日以前/90日以前
+     -->
 
 </resources>

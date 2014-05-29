@@ -1,7 +1,10 @@
 package jp.agedash999.android.checklistbox;
 
 import android.app.ActionBar;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -23,6 +26,8 @@ public class MainActivity extends FragmentActivity{
 	public static final int MENU_SORT_ID = R.id.menu_sort;
 	public static final int MENU_SETTINGS_ID = R.id.menu_settings;
 	public static final int APL_NAME_ID = R.string.app_name;
+
+	private static final int RQC_SETTINGS = 100;
 
 	private ChecklistBoxChildFragment homeFragment = null;
 	private ChecklistBoxChildFragment stockFragment = null;
@@ -47,6 +52,7 @@ public class MainActivity extends FragmentActivity{
 	private DrawerMenuListener mDrawerListener;
 
 	private ChecklistManager mCLManager;
+	private SharedPreferences mPreferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -182,6 +188,9 @@ public class MainActivity extends FragmentActivity{
 			break;
 		case MENU_SETTINGS_ID:
 			//設定の場合はここで捌く
+//			Intent intent = new Intent(this, SettingActivity.class);
+//			startActivityForResult(intent, RQC_SETTINGS);
+			callSettings();
 
 			break;
 		default:
@@ -192,14 +201,25 @@ public class MainActivity extends FragmentActivity{
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void callSettings(){
+		Intent intent = new Intent(this, SettingActivity.class);
+		startActivityForResult(intent, RQC_SETTINGS);
+	}
 
 	private class DrawerMenuListener implements ListView.OnItemClickListener {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			if(parent.equals(mDrawerListMain)){
 				changeFragment(position);
+				mDrawerLayout.closeDrawer(mLeftDrawer);
 			}else if(parent.equals(mDrawerListSub)){
-				callCategoryEdit(position);
+				if(position == 0){
+					callCategoryEdit(position);
+					mDrawerLayout.closeDrawer(mLeftDrawer);
+				}else if(position == 1){
+					callSettings();
+					mDrawerLayout.closeDrawer(mLeftDrawer);
+				}
 			}
 		}
 
@@ -229,9 +249,9 @@ public class MainActivity extends FragmentActivity{
 			ft.commit();
 
 			// Highlight the selected item, update the title, and close the drawer
-			mDrawerListMain.setItemChecked(position, true);
+//			mDrawerListMain.setItemChecked(position, true);
 			//		    setTitle(mPlanetTitles[position]);
-			mDrawerLayout.closeDrawer(mLeftDrawer);
+//			mDrawerLayout.closeDrawer(mLeftDrawer);
 		}
 
 		private void callCategoryEdit(int position){
@@ -246,6 +266,7 @@ public class MainActivity extends FragmentActivity{
 			//		    setTitle(mPlanetTitles[position]);
 			mDrawerLayout.closeDrawer(mLeftDrawer);
 		}
+
 	}
 
 	public void notifyChangeFragment(ChecklistBoxChildFragment fragment){
@@ -265,6 +286,23 @@ public class MainActivity extends FragmentActivity{
 			mTitleMain.setText(appName + " > " + main);
 			mTitleSub.setText(sub);
 		}
+	}
+
+	@Override
+	protected void onActivityResult(
+			int requestCode,int resultCode,Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (RQC_SETTINGS == resultCode){
+			loadPreference();
+		}
+	}
+
+	public void loadPreference(){
+		mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+	}
+
+	public SharedPreferences getPreference(){
+		return mPreferences;
 	}
 
 	public interface ChecklistBoxChildFragment{

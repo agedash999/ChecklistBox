@@ -9,5 +9,72 @@
         <item >カテゴリ編集</item>
         <item >設定</item>
     </string-array>
-    
+    <string-array name="entries_viewitem_checklist_home">
+        <item >実施予定日</item>
+        <item >未完了数/完了数</item>
+        <item >メモ</item>
+        </string-array>
+    <string-array name="entryvalues_viewitem_checklist_home">
+        <item >date</item>
+        <item >node</item>
+        <item >memo</item>
+        </string-array>
+    <string-array name="entries_viewitem_checklist_stock">
+        <item >保存日</item>
+        <item >項目数</item>
+        <item >メモ</item>
+        </string-array>
+    <string-array name="entryvalues_viewitem_checklist_stock">
+        <item >date</item>
+        <item >node</item>
+        <item >memo</item>
+        </string-array>
+    <string-array name="entries_viewitem_checklist_history">
+        <item >完了日</item>
+        <item >項目数</item>
+        <item >メモ</item>
+        </string-array>
+    <string-array name="entryvalues_viewitem_checklist_history">
+        <item >date</item>
+        <item >node</item>
+        <item >memo</item>
+        </string-array>
+    <string-array name="entries_stock_init">
+        <item >全て閉じた状態</item>
+        <item >全て開いた状態</item>
+        <item >一番上のみ開いた状態</item>
+    </string-array>
+    <string-array name="entryvalues_stock_init">
+        <item >close</item>
+        <item >open</item>
+        <item >first_open</item>
+    </string-array>
+    <string-array name="entries_initsort_home">
+        <item >実施日</item>
+        <item >任意</item>
+    </string-array>
+    <string-array name="entryvalues_initsort_home">
+        <item >date</item>
+        <item >voluntary</item>
+    </string-array>
+    <string-array name="entries_initsort_checklist">
+        <item >完了済みを下</item>
+        <item >任意</item>
+    </string-array>
+    <string-array name="entryvalues_initsort_checklist">
+        <item >finished_bottom</item>
+        <item >voluntary</item>
+    </string-array>
+    <string-array name="entries_history_delete_date">
+        <item >7日前</item>
+        <item >14日前</item>
+        <item >30日前</item>
+        <item >90日前</item>
+    </string-array>
+    <string-array name="entryvalues_history_delete_date">
+        <item >7</item>
+        <item >14</item>
+        <item >30</item>
+        <item >90</item>
+    </string-array>
 </resources>

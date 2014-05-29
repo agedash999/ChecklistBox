@@ -98,7 +98,7 @@ implements ChecklistDialog.ChecklistDialogListener
 
 		//Adapterのインスタンスを生成してListViewにセット
 		mCLAdapter = new HomeListAdapter(getActivity(), R.layout.listrow_home,
-				activity.getChecklistManager().getRunningList(),HomeListAdapter.DIALOG_HOME);
+				activity.getChecklistManager().getRunningList());
 
 		mDslv.setAdapter(mCLAdapter);
 		mDslv.setOnItemClickListener(new OnItemClickListener() {
