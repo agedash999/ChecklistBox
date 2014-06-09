@@ -3,6 +3,8 @@ package jp.agedash999.android.checklistbox;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ public class HomeListAdapter extends ArrayAdapter<Checklist> {
 	private int mLayout;
 
 	private boolean moveMode = false;
+
+	private String viewItem;
 
 	public HomeListAdapter(Context context, int resource, List<Checklist> objects) {
 		super(context, resource, objects);
@@ -37,9 +41,20 @@ public class HomeListAdapter extends ArrayAdapter<Checklist> {
 		clist = mList.get(position);
 		((TextView)view.findViewById(R.id.title_checklist)).setText(clist.getTitle());
 
-		//サマリー日付表示の場合
-		((TextView)view.findViewById(R.id.tv_summery)).setText(
-				context.getString(R.string.checklist_row_expdate) + clist.getDateFormated());
+		//サマリー表示
+		if(viewItem.equals("date")){
+			((TextView)view.findViewById(R.id.tv_summery)).setText(
+					context.getString(R.string.checklist_row_expdate) + clist.getDateFormated());
+		}else if(viewItem.equals("node")){
+			((TextView)view.findViewById(R.id.tv_summery)).setText(
+					"ノード数");
+		}else if(viewItem.equals("memo")){
+			((TextView)view.findViewById(R.id.tv_summery)).setText(
+					clist.getMemo());
+		}else{
+
+		}
+
 
 		if(moveMode){
 			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
@@ -56,5 +71,10 @@ public class HomeListAdapter extends ArrayAdapter<Checklist> {
 
 	public Checklist getChecklist(int position){
 		return mList.get(position);
+	}
+
+	public void refleshAdapter(){
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+		this.viewItem = pref.getString(SettingActivity.KEY_VIEWITEM_HOME, null);
 	}
 }

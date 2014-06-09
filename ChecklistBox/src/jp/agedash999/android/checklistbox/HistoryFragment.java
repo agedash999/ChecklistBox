@@ -59,7 +59,7 @@ implements ChecklistDialog.ChecklistDialogListener
 		listHistory = (ListView)rootView.findViewById(R.id.list_history);
 
 		mCLAdapter = new HistoryListAdapter(getActivity(), R.layout.listrow_history,
-				activity.getChecklistManager().getHistoryList(),HistoryListAdapter.DIALOG_HISTORY);
+				activity.getChecklistManager().getHistoryList());
 		listHistory.setAdapter(mCLAdapter);
 		listHistory.setOnItemClickListener(new OnItemClickListener() {
 
@@ -146,6 +146,13 @@ implements ChecklistDialog.ChecklistDialogListener
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		this.mCLAdapter.refleshAdapter();
+		this.listHistory.invalidateViews();
 	}
 
 	@Override

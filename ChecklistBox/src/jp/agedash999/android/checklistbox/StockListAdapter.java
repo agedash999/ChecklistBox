@@ -2,6 +2,9 @@ package jp.agedash999.android.checklistbox;
 
 import java.util.List;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +14,18 @@ import android.widget.TextView;
 public class StockListAdapter extends BaseExpandableListAdapter {
 
 	private List<ChecklistCategory> stockList;
+	private Context context;
 	private LayoutInflater layoutInflater;
 
+	private String viewItem;
+
 	public StockListAdapter(
-			List<ChecklistCategory> stockList ,
-			LayoutInflater layoutInflater ){
+			Context context,
+			List<ChecklistCategory> stockList){
 		super();
+		this.context = context;
 		this.stockList = stockList;
-		this.layoutInflater = layoutInflater;
+		this.layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 	@Override
@@ -45,8 +52,18 @@ public class StockListAdapter extends BaseExpandableListAdapter {
 		((TextView)view.findViewById(R.id.title_stocklist))
 		.setText(clist.getTitle());
 
-		((TextView)view.findViewById(R.id.summery_stocklist))
-		.setText(clist.getDateFormated());
+		if(viewItem.equals("date")){
+			((TextView)view.findViewById(R.id.tv_summery)).setText(
+					context.getString(R.string.checklist_row_credate) + clist.getDateFormated());
+		}else if(viewItem.equals("node")){
+			((TextView)view.findViewById(R.id.tv_summery)).setText(
+					"ノード数");
+		}else if(viewItem.equals("memo")){
+			((TextView)view.findViewById(R.id.tv_summery)).setText(
+					clist.getMemo());
+		}else{
+
+		}
 
 		return view;
 	}
@@ -99,6 +116,11 @@ public class StockListAdapter extends BaseExpandableListAdapter {
 
 	public void refleshOrder(){
 		//TODO 順序再読み込み
+	}
+
+	public void refleshAdapter(){
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+		this.viewItem = pref.getString(SettingActivity.KEY_VIEWITEM_STOCK, null);
 	}
 
 }

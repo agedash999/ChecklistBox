@@ -6,7 +6,9 @@ import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.ContextMenu;
@@ -35,6 +37,8 @@ public class StockFragment extends Fragment
 	private StockListAdapter mCLAdapter;
 	private ChecklistManager mCLManager;
     private String mFragmentTitle;
+
+    private String initView;
 
     private final int FRAGMENT_TITLE_ID = R.string.fragment_title_stock;
 
@@ -71,7 +75,7 @@ public class StockFragment extends Fragment
 		List<ChecklistCategory> stockList = mCLManager.getStockList();
 
 
-		mCLAdapter = new StockListAdapter(stockList, inflater);
+		mCLAdapter = new StockListAdapter(getActivity(), stockList);
 		listStock.setAdapter(mCLAdapter);
 
 		listStock.setOnChildClickListener(new OnChildClickListener(){
@@ -94,6 +98,21 @@ public class StockFragment extends Fragment
 
 		registerForContextMenu(listStock);
 		activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_STORE);
+		activity.notifyChangeFragment(this);
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		this.initView = pref.getString(SettingActivity.KEY_STOCK_INIT, null);
+		if(initView.equals("close")){
+
+		}else if(initView.equals("open")){
+			for(int i=0;i<listStock.getExpandableListAdapter().getGroupCount();i++){
+				listStock.expandGroup(i);
+			}
+		}else if(initView.equals("first_open")){
+			listStock.expandGroup(0);
+		}else{
+
+		}
 
 		return rootView;
 	}
@@ -172,6 +191,13 @@ public class StockFragment extends Fragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		this.mCLAdapter.refleshAdapter();
+		this.listStock.invalidateViews();
 	}
 
 	@Override

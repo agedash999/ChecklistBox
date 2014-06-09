@@ -189,6 +189,14 @@ implements ChecklistDialog.ChecklistDialogListener
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		this.mCLAdapter.refleshAdapter();
+		this.mDslv.invalidateViews();
+	}
+
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
@@ -335,4 +343,6 @@ implements ChecklistDialog.ChecklistDialogListener
 	public String getFragmenSubTitle() {
 		return null;
 	}
+
+
 }

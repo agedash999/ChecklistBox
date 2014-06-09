@@ -5,7 +5,6 @@
         <ListPreference
             android:key="viewitem_home"
             android:title="@string/setting_title_checklist_2_home"
-            android:summary="@string/setting_description_checklist_2_home"
             android:dialogTitle="@string/setting_title_checklist_2_home"
             android:entries="@array/entries_viewitem_checklist_home"
             android:entryValues="@array/entryvalues_viewitem_checklist_home"
@@ -14,7 +13,6 @@
         <ListPreference
             android:key="viewitem_stock"
             android:title="@string/setting_title_checklist_2_stock"
-            android:summary="@string/setting_description_checklist_2_stock"
             android:dialogTitle="@string/setting_title_checklist_2_stock"
             android:entries="@array/entries_viewitem_checklist_stock"
             android:entryValues="@array/entryvalues_viewitem_checklist_stock"
@@ -23,7 +21,6 @@
         <ListPreference
             android:key="viewitem_history"
             android:title="@string/setting_title_checklist_2_history"
-            android:summary="@string/setting_description_checklist_2_history"
             android:dialogTitle="@string/setting_title_checklist_2_history"
             android:entries="@array/entries_viewitem_checklist_history"
             android:entryValues="@array/entryvalues_viewitem_checklist_history"
@@ -35,13 +32,12 @@
         <ListPreference
             android:key="stock_init"
             android:title="@string/setting_title_stock_init"
-            android:summary="@string/setting_description_stock_init"
             android:dialogTitle="@string/setting_title_stock_init"
             android:entries="@array/entries_stock_init"
             android:entryValues="@array/entryvalues_stock_init"
             android:defaultValue="close"
             />
-        <ListPreference
+<!--         <ListPreference
             android:key="initsort_home"
             android:title="@string/setting_title_initsort_home"
             android:summary="@string/setting_description_initsort_home"
@@ -58,7 +54,7 @@
             android:entries="@array/entries_initsort_checklist"
             android:entryValues="@array/entryvalues_initsort_checklist"
             android:defaultValue="finished_bottom"
-            />
+            /> -->
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/setting_title_category_other">
@@ -71,7 +67,6 @@
         <ListPreference
             android:key="history_delete_date"
             android:title="@string/setting_title_history_delete_date"
-            android:summary="@string/setting_description_history_delete_date"
             android:dialogTitle="@string/setting_title_history_delete_date"
             android:entries="@array/entries_history_delete_date"
             android:entryValues="@array/entryvalues_history_delete_date"

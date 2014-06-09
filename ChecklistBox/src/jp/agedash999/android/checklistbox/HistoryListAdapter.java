@@ -3,6 +3,8 @@ package jp.agedash999.android.checklistbox;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,20 +18,17 @@ public class HistoryListAdapter extends ArrayAdapter<Checklist> {
 	private List<Checklist> mList;
 	private LayoutInflater mInflater;
 	private int mLayout;
-	private int dialogType;
 
 	private boolean moveMode = false;
 
-	public static final int DIALOG_HOME = 0;
-	public static final int DIALOG_HISTORY = 1;
+	private String viewItem;
 
-	public HistoryListAdapter(Context context, int resource, List<Checklist> objects, int dialogType) {
+	public HistoryListAdapter(Context context, int resource, List<Checklist> objects) {
 		super(context, resource, objects);
 		this.context = context;
 		this.mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.mLayout = resource;
 		this.mList = objects;
-		this.dialogType = dialogType;
 	}
 
 	@Override
@@ -41,7 +40,6 @@ public class HistoryListAdapter extends ArrayAdapter<Checklist> {
 		}
 		clist = mList.get(position);
 		((TextView)view.findViewById(R.id.title_checklist)).setText(clist.getTitle());
-		((TextView)view.findViewById(R.id.date)).setText(clist.getDateFormated());
 
 		if(moveMode){
 			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
@@ -49,13 +47,17 @@ public class HistoryListAdapter extends ArrayAdapter<Checklist> {
 			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
 		}
 
-		switch (dialogType) {
-		case DIALOG_HOME:
-			((TextView)view.findViewById(R.id.label_date)).setText(context.getString(R.string.checklist_row_expdate));
-			break;
-		case DIALOG_HISTORY:
-			((TextView)view.findViewById(R.id.label_date)).setText(context.getString(R.string.checklist_row_findate));
-			break;
+		if(viewItem.equals("date")){
+			((TextView)view.findViewById(R.id.tv_summery)).setText(
+					context.getString(R.string.checklist_row_findate) + clist.getDateFormated());
+		}else if(viewItem.equals("node")){
+			((TextView)view.findViewById(R.id.tv_summery)).setText(
+					"ノード数");
+		}else if(viewItem.equals("memo")){
+			((TextView)view.findViewById(R.id.tv_summery)).setText(
+					clist.getMemo());
+		}else{
+
 		}
 
 		return view;
@@ -67,5 +69,10 @@ public class HistoryListAdapter extends ArrayAdapter<Checklist> {
 
 	public Checklist getChecklist(int position){
 		return mList.get(position);
+	}
+
+	public void refleshAdapter(){
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+		this.viewItem = pref.getString(SettingActivity.KEY_VIEWITEM_HISTORY, null);
 	}
 }
