@@ -125,8 +125,9 @@ public class MainActivity extends FragmentActivity{
 //		setTitle("");
 
 		// 起動時のFragmentとしてホーム画面をセットする
-		getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
-		.commit();
+//		getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
+//		.commit();
+		callSettings();
 
 		mCLManager = new ChecklistManager(this);
 	}
