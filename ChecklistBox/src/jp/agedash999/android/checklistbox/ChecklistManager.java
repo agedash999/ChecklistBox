@@ -148,7 +148,7 @@ public class ChecklistManager {
 		clist2.addNode("交通手段確認", false);
 		mDBAccess.testDataAdd(clist2);
 
-		Checklist clist3 = new Checklist(Checklist.CHECKLIST_HISTORY, "旅行の持ち物（カザフスタン）", null);
+		Checklist clist3 = new Checklist(Checklist.CHECKLIST_HISTORY, "旅行の持ち物（大阪）", null);
 		clist3.addNode("パンツ", false);
 		clist3.addNode("靴下", true);
 		clist3.addNode("携帯バッテリー", false);
@@ -158,7 +158,7 @@ public class ChecklistManager {
 		clist3.addNode("財布", true);
 		clist3.addNode("タバコ", false);
 		clist3.addNode("ライター", true);
-		clist3.addNode("地球の歩き方（カザフスタン）", false);
+		clist3.addNode("地球の歩き方（大阪）", false);
 		mDBAccess.testDataAdd(clist3);
 
 		Checklist clist4 = new Checklist(Checklist.CHECKLIST_HISTORY, "市役所でやること", null);
