@@ -6,7 +6,7 @@
         <item >履歴一覧</item>
     </string-array>
     <string-array name="drawer_menu2">
-        <item >カテゴリ編集</item>
+        <item >フォルダ編集</item>
         <item >設定</item>
     </string-array>
     <string-array name="entries_viewitem_checklist_home">

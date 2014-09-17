@@ -6,4 +6,7 @@
     android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
     android:gravity="center_vertical"
     android:textAlignment="viewStart"
+    android:paddingTop="5dip"
+    android:paddingBottom="5dip"
+    android:textSize="18sp"
 />
