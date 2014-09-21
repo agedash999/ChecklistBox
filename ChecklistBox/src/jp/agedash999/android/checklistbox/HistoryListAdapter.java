@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class HistoryListAdapter extends ArrayAdapter<Checklist> {
@@ -42,9 +41,10 @@ public class HistoryListAdapter extends ArrayAdapter<Checklist> {
 		((TextView)view.findViewById(R.id.title_checklist)).setText(clist.getTitle());
 
 		if(moveMode){
-			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
+			//履歴画面では並べ替え無し
+//			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
 		}else{
-			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+//			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
 		}
 
 		if(viewItem.equals("date")){

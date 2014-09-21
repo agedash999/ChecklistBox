@@ -58,8 +58,10 @@ public class HomeListAdapter extends ArrayAdapter<Checklist> {
 
 		if(moveMode){
 			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
+			((ImageView)view.findViewById(R.id.iv_checklist)).setVisibility(View.GONE);
 		}else{
 			((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+			((ImageView)view.findViewById(R.id.iv_checklist)).setVisibility(View.VISIBLE);
 		}
 
 		return view;
