@@ -68,6 +68,9 @@ public class MainActivity extends FragmentActivity{
 
 		appName = getResources().getString(APL_NAME_ID);
 
+		Thread.setDefaultUncaughtExceptionHandler(
+				new MyUncaughtExceptionHandler(getApplicationContext()));
+
 		// ActionBar関連の設定
 		ActionBar bar = getActionBar();
 		View actionBarView = getLayoutInflater().inflate(R.layout.action_bar, null);
@@ -130,6 +133,14 @@ public class MainActivity extends FragmentActivity{
 		callSettings();
 
 		mCLManager = new ChecklistManager(this);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		//前回バグで強制終了した場合はダイアログ表示
+		//TODO バグレポートダイアログをどこから呼び出すか
+//		MyUncaughtExceptionHandler.showBugReportDialogIfExist();
 	}
 
 	public ChecklistManager getChecklistManager(){
