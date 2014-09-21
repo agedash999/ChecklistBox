@@ -17,8 +17,10 @@ import android.os.Environment;
 public class MyUncaughtExceptionHandler implements UncaughtExceptionHandler {
 	private static File BUG_REPORT_FILE = null;
 	static {
+		//TODO パスの設定方法は暫定
 		String sdcard = Environment.getExternalStorageDirectory().getPath();
-		String path = sdcard + File.separator + "bug.txt";
+//		String path = sdcard + File.separator + "bug.txt";
+		String path = "/storage/sdcard1/" + "bug.txt";
 		BUG_REPORT_FILE = new File(path);
 	}
 
