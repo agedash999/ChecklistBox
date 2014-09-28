@@ -19,8 +19,13 @@ public class MyUncaughtExceptionHandler implements UncaughtExceptionHandler {
 	static {
 		//TODO パスの設定方法は暫定
 		String sdcard = Environment.getExternalStorageDirectory().getPath();
-//		String path = sdcard + File.separator + "bug.txt";
-		String path = "/storage/sdcard1/" + "bug.txt";
+		String path = sdcard + File.separator + "bug.txt";
+
+		String dataDir = Environment.getDataDirectory().getPath();
+//		String path = dataDir + File.separator + "bug.txt";
+
+//		String path = "/storage/sdcard1/" + "bug.txt";
+
 		BUG_REPORT_FILE = new File(path);
 	}
 

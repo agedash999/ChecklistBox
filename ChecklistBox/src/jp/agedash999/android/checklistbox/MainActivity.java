@@ -29,6 +29,8 @@ public class MainActivity extends FragmentActivity{
 
 	private static final int RQC_SETTINGS = 100;
 
+	private DrawerMenu mDrawer;
+
 	private ChecklistBoxChildFragment homeFragment = null;
 	private ChecklistBoxChildFragment stockFragment = null;
 	private ChecklistBoxChildFragment historyFragment = null;
@@ -82,6 +84,8 @@ public class MainActivity extends FragmentActivity{
 		bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_USE_LOGO);
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         bar.setDisplayShowHomeEnabled(true);
+
+        mDrawer = new DrawerMenu();
 
 		// ドロワー関連のUI取得
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
