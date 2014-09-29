@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -48,7 +49,7 @@ implements ChecklistBoxChildFragment{
 	private ChecklistAdapter mCLAdapter;
 	private DragSortListView mDslv;
 	private DragSortController mController;
-    private String mFragmentTitle;
+	private String mFragmentTitle;
 
 	private Checklist mChecklist;
 
@@ -56,16 +57,17 @@ implements ChecklistBoxChildFragment{
 	private EditText etx_checklist_add;
 	private TextView tv_checklist_title;
 	private TextView tv_summery;
+	private ViewGroup header;
 
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
 
-//	private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
-//		@Override
-//		public void remove(int which) {
-//			mCLAdapter.remove(mCLAdapter.getItem(which));
-//		}
-//	};
+	//	private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
+	//		@Override
+	//		public void remove(int which) {
+	//			mCLAdapter.remove(mCLAdapter.getItem(which));
+	//		}
+	//	};
 
 	public DragSortController getController(){
 		return mController;
@@ -99,8 +101,16 @@ implements ChecklistBoxChildFragment{
 		this.etx_checklist_add = (EditText)rootView.findViewById(R.id.etx_checklist_add);
 
 		tv_checklist_title.setText(mChecklist.getTitle());
-		
-		
+
+		this.header = (ViewGroup) rootView.findViewById(R.id.checklist_header);
+		registerForContextMenu(header);
+		header.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				header.performLongClick();
+			}
+		});
 
 		//キーイベントリスナーの設定
 		etx_checklist_add.setOnKeyListener(new OnKeyListener() {
@@ -136,7 +146,7 @@ implements ChecklistBoxChildFragment{
 
 		registerForContextMenu(mDslv);
 
-//		mController = buildController(mDslv);//使わない
+		//		mController = buildController(mDslv);//使わない
 
 		mController = new SectionController(mDslv, mCLAdapter);
 		mController.setDragHandleId(R.id.iv_drag_handle);
@@ -148,7 +158,7 @@ implements ChecklistBoxChildFragment{
 		mDslv.setFloatViewManager(mController);
 		mDslv.setOnTouchListener(mController);
 		mDslv.setDropListener(mCLAdapter);
-//		mDslv.setRemoveListener(onRemove); //不要？
+		//		mDslv.setRemoveListener(onRemove); //不要？
 		mDslv.setDragEnabled(true);
 
 		registerForContextMenu(mDslv);
@@ -166,67 +176,83 @@ implements ChecklistBoxChildFragment{
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		menu.setHeaderTitle(getString(R.string.conmenu_home_title));
-		menu.add(0, CONTEXT_MENUID_EDIT, 0, R.string.conmenu_edit);
-		menu.add(0, CONTEXT_MENUID_DELETE, 0, R.string.conmenu_delete);
+
+		if(v.getId() == header.getId()){
+
+
+		}else{
+			menu.setHeaderTitle(getString(R.string.conmenu_home_title));
+			menu.add(0, CONTEXT_MENUID_EDIT, 0, R.string.conmenu_edit);
+			menu.add(0, CONTEXT_MENUID_DELETE, 0, R.string.conmenu_delete);
+
+		}
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		final int contextIndex = ((AdapterContextMenuInfo)item.getMenuInfo()).position;
+		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo)item.getMenuInfo();
+		final int contextIndex = menuInfo.position;
 		final ChecklistNode contextNode = mCLAdapter.getItem(contextIndex);
 
-		switch (item.getItemId()) {
-		case CONTEXT_MENUID_EDIT:
-			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		//ヘッダの場合
+		if(menuInfo.targetView.getId() == header.getId()){
 
-			final EditText editView = new EditText(activity);
-			editView.setText(contextNode.getTitle());
-			editView.setSelection(editView.getText().length());
 
-			builder.setView(editView)
-			.setTitle("テスト")
-			.setPositiveButton("保存", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-					contextNode.setTitle(editView.getText().toString());
-					activity.getChecklistManager().nodeUpdated(mChecklist, contextNode);
-					mCLAdapter.notifyDataSetChanged();
-				}
-			})
-			.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-					// TODO 自動生成されたメソッド・スタブ
-				}
-			})
-			.show();
+			//ListView長押しの場合
+		}else{
 
-			break;
-		case CONTEXT_MENUID_DELETE:
-			AlertDialog.Builder builder_del = new AlertDialog.Builder(activity);
-			builder_del.setTitle(R.string.dialog_title_node_delete);
-			builder_del.setMessage(R.string.dialog_message_node_delete);
-			builder_del.setPositiveButton(R.string.dialog_button_node_delete, new DialogInterface.OnClickListener() {
+			switch (item.getItemId()) {
+			case CONTEXT_MENUID_EDIT:
+				AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					onDeleteNode(contextIndex);
+				final EditText editView = new EditText(activity);
+				editView.setText(contextNode.getTitle());
+				editView.setSelection(editView.getText().length());
 
-				}
-			});
-			builder_del.setNegativeButton(R.string.dialog_button_node_cansel, new DialogInterface.OnClickListener() {
+				builder.setView(editView)
+				.setTitle("テスト")
+				.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+						contextNode.setTitle(editView.getText().toString());
+						activity.getChecklistManager().nodeUpdated(mChecklist, contextNode);
+						mCLAdapter.notifyDataSetChanged();
+					}
+				})
+				.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+						// TODO 自動生成されたメソッド・スタブ
+					}
+				})
+				.show();
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					onDeleteNodeCanseled(contextIndex);
-				}
-			});
-			builder_del.create().show();
+				break;
+			case CONTEXT_MENUID_DELETE:
+				AlertDialog.Builder builder_del = new AlertDialog.Builder(activity);
+				builder_del.setTitle(R.string.dialog_title_node_delete);
+				builder_del.setMessage(R.string.dialog_message_node_delete);
+				builder_del.setPositiveButton(R.string.dialog_button_node_delete, new DialogInterface.OnClickListener() {
 
-			break;
-		default:
-			break;
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						onDeleteNode(contextIndex);
+
+					}
+				});
+				builder_del.setNegativeButton(R.string.dialog_button_node_cansel, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						onDeleteNodeCanseled(contextIndex);
+					}
+				});
+				builder_del.create().show();
+
+				break;
+			default:
+				break;
+			}
 		}
 
 		return super.onContextItemSelected(item);
@@ -418,9 +444,9 @@ implements ChecklistBoxChildFragment{
 		return summery;
 	}
 
-//	public String getFragmenSubTitle() {
-//		return mChecklist.getTitle();
-//	}
+	//	public String getFragmenSubTitle() {
+	//		return mChecklist.getTitle();
+	//	}
 
 
 	/**
@@ -455,7 +481,7 @@ implements ChecklistBoxChildFragment{
 					== ChecklistManager.SORTTYPE_SORTNO_CHECKED){
 				//TODO ちょっと止めとく
 				enableSection = true;
-//				enableSection = false;
+				//				enableSection = false;
 				//仕切りのIndexを設定
 				mDivPos = mChecklist.getUncheckedQty();
 			}else{
@@ -476,11 +502,11 @@ implements ChecklistBoxChildFragment{
 				//TODO Divのレイアウトを設定
 				view = mInflater.inflate(mDivLayout, null);
 				return view;
-//			}else if(view == null){
+				//			}else if(view == null){
 			}else{
 				view = mInflater.inflate(mLayout, null);
 			}
-//			cnode = mList.get(position);
+			//			cnode = mList.get(position);
 			cnode = mList.get(dataPosition);
 			TextView etx_title_node = (TextView)view.findViewById(R.id.txv_title_node);
 			etx_title_node.setText(cnode.getTitle());
@@ -495,42 +521,42 @@ implements ChecklistBoxChildFragment{
 			}
 
 			//ChecklisNodeクリック時の動作（タイトル編集UIの表示）
-//			etx_title_node.setOnClickListener(new OnClickListener() {
-//				@Override
-//				public void onClick(View v) {
-//					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
-//					final int nodePosition = Integer.parseInt(txv_position.getText().toString());
-//
-//					final EditText editView = new EditText(activity);
-//					editView.setText(mChecklist.getNodes().get(nodePosition).getTitle());
-//					editView.setSelection(editView.getText().length());
-//
-//					//					final TextView hide = new TextView(activity);
-//					//					hide.setVisibility(View.GONE);
-//					//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
-//					//					hide.setText(txv_position.getText());
-//
-//					builder.setView(editView)
-//					.setTitle("テスト")
-//					.setPositiveButton("保存", new DialogInterface.OnClickListener() {
-//						@Override
-//						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-//							ChecklistNode node = mChecklist.getNodes().get(nodePosition);
-//							node.setTitle(editView.getText().toString());
-//							activity.getChecklistManager().nodeUpdated(mChecklist, node);
-//							notifyDataSetChanged();
-//						}
-//					})
-//					.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-//						@Override
-//						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-//							// TODO 自動生成されたメソッド・スタブ
-//						}
-//					})
-//					.show();
-//				}
-//			});
+			//			etx_title_node.setOnClickListener(new OnClickListener() {
+			//				@Override
+			//				public void onClick(View v) {
+			//					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+			//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
+			//					final int nodePosition = Integer.parseInt(txv_position.getText().toString());
+			//
+			//					final EditText editView = new EditText(activity);
+			//					editView.setText(mChecklist.getNodes().get(nodePosition).getTitle());
+			//					editView.setSelection(editView.getText().length());
+			//
+			//					//					final TextView hide = new TextView(activity);
+			//					//					hide.setVisibility(View.GONE);
+			//					//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
+			//					//					hide.setText(txv_position.getText());
+			//
+			//					builder.setView(editView)
+			//					.setTitle("テスト")
+			//					.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+			//						@Override
+			//						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+			//							ChecklistNode node = mChecklist.getNodes().get(nodePosition);
+			//							node.setTitle(editView.getText().toString());
+			//							activity.getChecklistManager().nodeUpdated(mChecklist, node);
+			//							notifyDataSetChanged();
+			//						}
+			//					})
+			//					.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+			//						@Override
+			//						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+			//							// TODO 自動生成されたメソッド・スタブ
+			//						}
+			//					})
+			//					.show();
+			//				}
+			//			});
 
 			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(position));
 			//TODO こっちに修正する予定
@@ -570,14 +596,14 @@ implements ChecklistBoxChildFragment{
 			moveMode = (!moveMode);
 		}
 
-//		@Override
-//		public void drop(int from, int to) {
-//			if (from != to) {
-//				ChecklistNode data = mList.remove(dataPosition(from));
-//				mList.add(dataPosition(to), data);
-//				notifyDataSetChanged();
-//			}
-//		}
+		//		@Override
+		//		public void drop(int from, int to) {
+		//			if (from != to) {
+		//				ChecklistNode data = mList.remove(dataPosition(from));
+		//				mList.add(dataPosition(to), data);
+		//				notifyDataSetChanged();
+		//			}
+		//		}
 
 		@Override
 		public int getCount() {
@@ -675,9 +701,9 @@ implements ChecklistBoxChildFragment{
 	private class SectionController extends DragSortController{
 
 		private int mPos;
-//		private int mDivPos;
+		//		private int mDivPos;
 		private ChecklistAdapter mAdapter;
-	    private int mDragHandleId;
+		private int mDragHandleId;
 
 		private DragSortListView mDslv;
 
@@ -687,92 +713,92 @@ implements ChecklistBoxChildFragment{
 			setRemoveEnabled(false);
 			mDslv = dslv;
 			mAdapter = adapter;
-//			mDivPos = adapter.getDivPosition();
+			//			mDivPos = adapter.getDivPosition();
 		}
 
 		@Override
 		public int startDragPosition(MotionEvent ev){
-            int res = super.dragHandleHitPosition(ev);
-            if (res == mAdapter.getDivPosition()) {
-                return DragSortController.MISS;
-            }
-            return res;
+			int res = super.dragHandleHitPosition(ev);
+			if (res == mAdapter.getDivPosition()) {
+				return DragSortController.MISS;
+			}
+			return res;
 
-//            ドラッグハンドルがsampleと異なるので削除
-//            int width = mDslv.getWidth();
-//
-//            if ((int) ev.getX() < width / 3) {
-//                return res;
-//            } else {
-//                return DragSortController.MISS;
-//            }
+			//            ドラッグハンドルがsampleと異なるので削除
+			//            int width = mDslv.getWidth();
+			//
+			//            if ((int) ev.getX() < width / 3) {
+			//                return res;
+			//            } else {
+			//                return DragSortController.MISS;
+			//            }
 		}
 
-        @Override
-        public View onCreateFloatView(int position) {
+		@Override
+		public View onCreateFloatView(int position) {
 
-//            return super.onCreateFloatView(position);
+			//            return super.onCreateFloatView(position);
 
 
-            mPos = position;
+			mPos = position;
 
-            View v = mAdapter.getView(position, null, mDslv);
-            if (position < mAdapter.getDivPosition()) {
-                v.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_handle_section1));
-            } else {
-                v.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_handle_section2));
-            }
-            v.getBackground().setLevel(10000);
-            return v;
-        }
+			View v = mAdapter.getView(position, null, mDslv);
+			if (position < mAdapter.getDivPosition()) {
+				v.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_handle_section1));
+			} else {
+				v.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_handle_section2));
+			}
+			v.getBackground().setLevel(10000);
+			return v;
+		}
 
-        private int origHeight = -1;
+		private int origHeight = -1;
 
-        @Override
-        public void onDragFloatView(View floatView, Point floatPoint, Point touchPoint) {
+		@Override
+		public void onDragFloatView(View floatView, Point floatPoint, Point touchPoint) {
 
-//        	super.onDragFloatView(floatView, floatPoint, touchPoint);
+			//        	super.onDragFloatView(floatView, floatPoint, touchPoint);
 
-            final int first = mDslv.getFirstVisiblePosition();
-            final int lvDivHeight = mDslv.getDividerHeight();
+			final int first = mDslv.getFirstVisiblePosition();
+			final int lvDivHeight = mDslv.getDividerHeight();
 
-            if (origHeight == -1) {
-                origHeight = floatView.getHeight();
-            }
+			if (origHeight == -1) {
+				origHeight = floatView.getHeight();
+			}
 
-            View div = mDslv.getChildAt(mAdapter.getDivPosition() - first);
+			View div = mDslv.getChildAt(mAdapter.getDivPosition() - first);
 
-            if (touchPoint.x > mDslv.getWidth() / 2) {
-                float scale = touchPoint.x - mDslv.getWidth() / 2;
-                scale /= (float) (mDslv.getWidth() / 5);
-                ViewGroup.LayoutParams lp = floatView.getLayoutParams();
-                lp.height = Math.max(origHeight, (int) (scale * origHeight));
-//                Log.d("mobeta", "setting height "+lp.height);
-                floatView.setLayoutParams(lp);
-            }
+			if (touchPoint.x > mDslv.getWidth() / 2) {
+				float scale = touchPoint.x - mDslv.getWidth() / 2;
+				scale /= (float) (mDslv.getWidth() / 5);
+				ViewGroup.LayoutParams lp = floatView.getLayoutParams();
+				lp.height = Math.max(origHeight, (int) (scale * origHeight));
+				//                Log.d("mobeta", "setting height "+lp.height);
+				floatView.setLayoutParams(lp);
+			}
 
-            if (div != null) {
-                if (mPos > mAdapter.getDivPosition()) {
-                    // don't allow floating View to go above
-                    // section divider
-                    final int limit = div.getBottom() + lvDivHeight;
-                    if (floatPoint.y < limit) {
-                        floatPoint.y = limit;
-                    }
-                } else {
-                    // don't allow floating View to go below
-                    // section divider
-                    final int limit = div.getTop() - lvDivHeight - floatView.getHeight();
-                    if (floatPoint.y > limit) {
-                        floatPoint.y = limit;
-                    }
-                }
-            }
-        }
+			if (div != null) {
+				if (mPos > mAdapter.getDivPosition()) {
+					// don't allow floating View to go above
+					// section divider
+					final int limit = div.getBottom() + lvDivHeight;
+					if (floatPoint.y < limit) {
+						floatPoint.y = limit;
+					}
+				} else {
+					// don't allow floating View to go below
+					// section divider
+					final int limit = div.getTop() - lvDivHeight - floatView.getHeight();
+					if (floatPoint.y > limit) {
+						floatPoint.y = limit;
+					}
+				}
+			}
+		}
 
-        @Override
-        public void onDestroyFloatView(View floatView) {
-            //do nothing; block super from crashing
-        }
+		@Override
+		public void onDestroyFloatView(View floatView) {
+			//do nothing; block super from crashing
+		}
 	}
 }
