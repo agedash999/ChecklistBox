@@ -77,7 +77,7 @@ public class HomeListAdapter extends ArrayAdapter<Checklist> {
 
 	public void refleshAdapter(){
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-		//いったん初期値を設定（本来はXMLから読み込みたい）
+		// TODO いったん初期値を設定（本来はXMLから読み込みたい）
 		this.viewItem = pref.getString(SettingActivity.KEY_VIEWITEM_HOME, "date");
 	}
 }

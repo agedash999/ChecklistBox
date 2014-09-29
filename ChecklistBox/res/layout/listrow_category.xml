@@ -6,15 +6,16 @@
 
     <ImageView
         android:id="@+id/iv_drag_handle"
-        android:layout_width="wrap_content"
+        android:layout_width="45dp"
         android:layout_height="match_parent"
-        android:layout_weight="0"
-        android:background="@drawable/drag" />
+        android:scaleType="fitCenter"
+        android:src="@drawable/drag" />
 
     <TextView
         android:id="@+id/title_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp" />
+        android:padding="8dp"
+        android:textSize="18sp" />
 
 </LinearLayout>

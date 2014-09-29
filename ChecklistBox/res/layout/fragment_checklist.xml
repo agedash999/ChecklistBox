@@ -1,31 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dslv="http://schemas.android.com/apk/res-auto"
     android:id="@+id/checklist_linear"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/button_test"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name" />
+        android:layout_margin="8dp"
+        android:background="#ffffff"
+        android:orientation="horizontal" >
 
+        <ImageView
+            android:id="@+id/iv_checklist"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_checklist" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="3dp" >
+
+            <TextView
+                android:id="@+id/title_checklist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_summery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
     <EditText
         android:id="@+id/etx_checklist_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:ems="10"
         android:hint="@string/checklist_addview_hint"
         android:visibility="gone"
-        android:ems="10" >
+        android:enabled="false">
     </EditText>
 
     <com.mobeta.android.dslv.DragSortListView
         android:id="@+id/list_checklist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@color/window_bg"
+        android:dividerHeight="6dp"
+        android:padding="3dp"
+        android:layout_marginLeft="18dp"
         dslv:collapsed_height="2dp"
         dslv:drag_enabled="true"
         dslv:drag_scroll_start="0.33"
@@ -33,6 +65,20 @@
         dslv:max_drag_scroll_speed="0.5"
         dslv:slide_shuffle_speed="0.3"
         dslv:track_drag_sort="false"
-        dslv:use_default_controller="false"
-        />
+        dslv:use_default_controller="false" />
+
 </LinearLayout>
+
+    <!--
+         <TextView
+        android:id="@+id/tv_chlist_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="6dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        />
+
+    -->

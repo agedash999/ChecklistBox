@@ -6,8 +6,10 @@ import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -52,6 +54,8 @@ implements ChecklistBoxChildFragment{
 
 	private ListView listChecklist;
 	private EditText etx_checklist_add;
+	private TextView tv_checklist_title;
+	private TextView tv_summery;
 
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -88,7 +92,37 @@ implements ChecklistBoxChildFragment{
 		this.activity = (MainActivity)getActivity();
 		this.mDslv = (DragSortListView)rootView.findViewById(R.id.list_checklist);
 		//		this.listChecklist = (ListView)rootView.findViewById(R.id.list_checklist);
+
+		this.tv_checklist_title = (TextView) rootView.findViewById(R.id.title_checklist);
+		this.tv_summery = (TextView) rootView.findViewById(R.id.tv_summery);
+
 		this.etx_checklist_add = (EditText)rootView.findViewById(R.id.etx_checklist_add);
+
+		tv_checklist_title.setText(mChecklist.getTitle());
+
+		//キーイベントリスナーの設定
+		etx_checklist_add.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				//TODO 後でコメント追加
+				if (keyCode == KeyEvent.KEYCODE_ENTER) {
+					if(event.getAction() == KeyEvent.ACTION_UP){
+						return true;
+					}
+					String nodeTitle = etx_checklist_add.getText().toString();
+					if (nodeTitle != null && nodeTitle.length() != 0) {
+						ChecklistNode node = new ChecklistNode(
+								nodeTitle, false);
+						activity.getChecklistManager().addNode(mChecklist, node);
+						mCLAdapter.notifyDataSetChanged();
+						etx_checklist_add.setText("");
+					}
+					return true;
+				}
+				return false;
+			}
+		});
+
 
 		//Adapterのインスタンスを生成してListViewにセット
 		mCLAdapter = new ChecklistAdapter(getActivity(), R.layout.listrow_checklist,
@@ -201,42 +235,28 @@ implements ChecklistBoxChildFragment{
 	private void activateAddView(){
 		//追加エリアの可視化
 		this.etx_checklist_add.setVisibility(View.VISIBLE);
+		this.etx_checklist_add.setEnabled(true);
 		this.etx_checklist_add.requestFocus();
 		//入力フォーカスの設定
 		InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(
 				Context.INPUT_METHOD_SERVICE);
 		inputMethodManager.showSoftInput(etx_checklist_add, 0);
+	}
 
-		//キーイベントリスナーの設定
-		etx_checklist_add.setOnKeyListener(new OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				//TODO 後でコメント追加
-				if (keyCode == KeyEvent.KEYCODE_ENTER) {
-					if(event.getAction() == KeyEvent.ACTION_UP){
-						return true;
-					}
-					String nodeTitle = etx_checklist_add.getText().toString();
-					if (nodeTitle != null && nodeTitle.length() != 0) {
-						ChecklistNode node = new ChecklistNode(
-								nodeTitle, false);
-						activity.getChecklistManager().addNode(mChecklist, node);
-						mCLAdapter.notifyDataSetChanged();
-						etx_checklist_add.setText("");
-					}
-					return true;
-				}
-				return false;
-			}
-		});
+	private void inactivateAddView(){
+		this.etx_checklist_add.setVisibility(View.GONE);
+		this.etx_checklist_add.setEnabled(false);
 	}
 
 	@Override
 	public void onClickMenu(int menuId) {
 		switch (menuId) {
 		case MainActivity.MENU_ADD_ID:
-			activateAddView();
-			//TODO もう一回押したらOFFにする
+			if(!etx_checklist_add.isEnabled()){
+				activateAddView();
+			}else{
+				inactivateAddView();
+			}
 			break;
 		case MainActivity.MENU_MOVE_ID:
 			mCLAdapter.changeMoveMode();
@@ -332,18 +352,68 @@ implements ChecklistBoxChildFragment{
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		this.tv_summery.setText(getSummery());
+	}
+
+	@Override
 	public String getFragmenTitle() {
 		return mFragmentTitle;
 	}
 
 	@Override
 	public int getFragmentIconID() {
-		return -1;
+		return parent.getFragmentIconID();
 	}
 
-	public String getFragmenSubTitle() {
-		return mChecklist.getTitle();
+
+	private String getSummery(){
+
+		String summery = null;
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(activity);
+		String summeryType;
+		String dateString = "";
+
+		switch (mChecklist.getType()) {
+		case Checklist.CHECKLIST_RUNNING:
+			// TODO いったん初期値を設定（本来はXMLから読み込みたい）
+			summeryType = pref.getString(SettingActivity.KEY_VIEWITEM_HOME, "date");
+			dateString = activity.getString(R.string.checklist_row_expdate);
+			break;
+
+		case Checklist.CHECKLIST_STORE:
+			// TODO いったん初期値を設定（本来はXMLから読み込みたい）
+			summeryType = pref.getString(SettingActivity.KEY_VIEWITEM_STOCK, "date");
+			dateString = activity.getString(R.string.checklist_row_credate);
+			break;
+
+		case Checklist.CHECKLIST_HISTORY:
+			// TODO いったん初期値を設定（本来はXMLから読み込みたい）
+			summeryType = pref.getString(SettingActivity.KEY_VIEWITEM_HISTORY, "date");
+			dateString = activity.getString(R.string.checklist_row_findate);
+			break;
+
+		default:
+			summeryType = "date";
+			break;
+		}
+
+		if(summeryType.equals("date")){
+			summery = dateString + mChecklist.getDateFormated();
+		}else if(summeryType.equals("node")){
+			// TODO ノード数
+			summery = "ノード数";
+		}else if(summeryType.equals("memo")){
+			summery = mChecklist.getMemo();
+		}
+
+		return summery;
 	}
+
+//	public String getFragmenSubTitle() {
+//		return mChecklist.getTitle();
+//	}
 
 
 	/**
