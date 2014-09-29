@@ -337,6 +337,10 @@ implements ChecklistBoxChildFragment{
 	}
 
 	@Override
+	public int getFragmentIconID() {
+		return -1;
+	}
+
 	public String getFragmenSubTitle() {
 		return mChecklist.getTitle();
 	}

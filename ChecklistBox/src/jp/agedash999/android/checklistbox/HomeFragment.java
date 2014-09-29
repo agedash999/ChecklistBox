@@ -36,7 +36,8 @@ implements ChecklistDialog.ChecklistDialogListener
     private DragSortController mController;
     private String mFragmentTitle;
 
-    private final int FRAGMENT_TITLE_ID = R.string.fragment_title_home;
+    private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_HOME_ID;
+    private final int FRAGMENT_ICON_ID = MainActivity.ICON_HOME_ID;
 
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -346,8 +347,8 @@ implements ChecklistDialog.ChecklistDialogListener
 	}
 
 	@Override
-	public String getFragmenSubTitle() {
-		return null;
+	public int getFragmentIconID() {
+		return FRAGMENT_ICON_ID;
 	}
 
 

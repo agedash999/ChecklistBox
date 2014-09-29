@@ -21,31 +21,42 @@
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-        android:background="#0F0F0F"
+        android:background="#111111"
         android:orientation="vertical" >
 
-        <ListView
-            android:id="@+id/list_drawer_main"
+        <!-- メニュー間の枠専用 -->
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:background="#0F0F0F"
-            android:choiceMode="singleChoice"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0dp" >
-        </ListView>
+            android:background="#FFFFFF"
+            android:orientation="vertical" >
 
-        <ListView
-            android:id="@+id/list_drawer_sub"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:background="#0F0F0F"
-            android:choiceMode="singleChoice"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0dp" >
-        </ListView>
+            <ListView
+                android:id="@+id/list_drawer_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginBottom="3dp"
+                android:padding="6dp"
+                android:background="#111111"
+                android:choiceMode="singleChoice"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="3dp" >
+            </ListView>
 
+            <ListView
+                android:id="@+id/list_drawer_sub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:padding="6dp"
+                android:background="#111111"
+                android:choiceMode="singleChoice"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="6dp" >
+            </ListView>
+        </LinearLayout>
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

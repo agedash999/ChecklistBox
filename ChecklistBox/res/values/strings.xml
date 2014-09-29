@@ -14,9 +14,6 @@
     <string name="category_name_daily">日常生活</string>
     <string name="category_name_buisiness">仕事関連</string>
     <string name="category_name_travel">旅行関連</string>
-    <string name="title_section1">進行中</string>
-    <string name="title_section2">一覧</string>
-    <string name="title_section3">履歴</string>
     <string name="drawer_open">開く</string>
     <string name="drawer_close">閉じる</string>
     <string name="checklist_row_expdate">実施日： </string>

@@ -5,7 +5,16 @@
         <item >保存一覧</item>
         <item >履歴一覧</item>
     </string-array>
+    <string-array name="drawer_menu1_icon">
+        <item >ic_home</item>
+        <item >ic_stock</item>
+        <item >ic_history</item>
+    </string-array>
     <string-array name="drawer_menu2">
+        <item >フォルダ編集</item>
+        <item >設定</item>
+    </string-array>
+    <string-array name="drawer_menu2_icon">
         <item >フォルダ編集</item>
         <item >設定</item>
     </string-array>

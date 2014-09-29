@@ -34,7 +34,7 @@ implements ChecklistBoxChildFragment {
     private DragSortController mController;
     private String mFragmentTitle;
 
-    private final int FRAGMENT_TITLE_ID = R.string.fragment_title_categoryedit;
+    private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_CATEGORYEDIT_ID;
 
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -280,8 +280,7 @@ implements ChecklistBoxChildFragment {
 	}
 
 	@Override
-	public String getFragmenSubTitle() {
-		return null;
+	public int getFragmentIconID() {
+		return 0;
 	}
-
 }

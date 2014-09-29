@@ -5,21 +5,26 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity{
+
+	public static final int TITLE_HOME_ID = R.string.fragment_title_home;
+	public static final int TITLE_STOCK_ID = R.string.fragment_title_stock;
+	public static final int TITLE_HISTORY_ID = R.string.fragment_title_history;
+
+	public static final int ICON_HOME_ID = R.drawable.ic_home;
+	public static final int ICON_STOCK_ID = R.drawable.ic_stock;
+	public static final int ICON_HISTORY_ID = R.drawable.ic_history;
+
+	public static final int TITLE_CATEGORYEDIT_ID = R.string.fragment_title_categoryedit;
 
 	public static final int MENU_ADD_ID = R.id.menu_add;
 	public static final int MENU_MOVE_ID = R.id.menu_move;
@@ -38,20 +43,10 @@ public class MainActivity extends FragmentActivity{
 
 	private ChecklistBoxChildFragment childFragment;
 
-	private DrawerLayout mDrawerLayout;
-	private LinearLayout mLeftDrawer;
-	private ListView mDrawerListMain;
-	private ListView mDrawerListSub;
-	private ActionBarDrawerToggle mDrawerToggle;
-
 	private String appName;
 
 	private TextView mTitleMain;
-	private TextView mTitleSub;
-
-	private String[] mDrawerMainMenuItems;
-	private String[] mDrawerSubMenuItems;
-	private DrawerMenuListener mDrawerListener;
+	private ImageView mTitleIcon;
 
 	private ChecklistManager mCLManager;
 	private SharedPreferences mPreferences;
@@ -74,61 +69,39 @@ public class MainActivity extends FragmentActivity{
 				new MyUncaughtExceptionHandler(getApplicationContext()));
 
 		// ActionBar関連の設定
+
+		// ※これだとうまくいかない※
+		// 　タイトルがセンタリングされない
+		// 　inflate と setCustomViewをそれぞれやってるのが問題？
+//		getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+//		getSupportActionBar().setCustomView(R.layout.action_bar);
+
+//		ActionBar bar = getActionBar();
+//		View actionBarView = getLayoutInflater().inflate(R.layout.action_bar, null);
+//
+//		mTitleMain = (TextView)actionBarView.findViewById(R.id.title_main);
+//		mTitleIcon = (ImageView) actionBarView.findViewById(R.id.iv_title);
+//
+//		bar.setCustomView(actionBarView);
+//		bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_USE_LOGO);
+//        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+//        bar.setDisplayShowHomeEnabled(true);
+
 		ActionBar bar = getActionBar();
-		View actionBarView = getLayoutInflater().inflate(R.layout.action_bar, null);
-
-		mTitleMain = (TextView)actionBarView.findViewById(R.id.title_main);
-		mTitleSub = (TextView)actionBarView.findViewById(R.id.title_sub);
-
-		bar.setCustomView(actionBarView);
 		bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_USE_LOGO);
+		bar.setCustomView(R.layout.action_bar);
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         bar.setDisplayShowHomeEnabled(true);
 
-        mDrawer = new DrawerMenu();
+		mTitleMain = (TextView)bar.getCustomView().findViewById(R.id.title_main);
+		mTitleIcon = (ImageView)bar.getCustomView().findViewById(R.id.iv_title);
 
-		// ドロワー関連のUI取得
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mLeftDrawer = (LinearLayout) findViewById(R.id.left_drawer);
-		mDrawerListMain = (ListView) findViewById(R.id.list_drawer_main);
-		mDrawerListSub = (ListView) findViewById(R.id.list_drawer_sub);
+        mDrawer = new DrawerMenu(this);
 
-		// ドロワーのメニュー文字列取得
-		mDrawerMainMenuItems = getResources().getStringArray(R.array.drawer_menu1);
-		mDrawerSubMenuItems = getResources().getStringArray(R.array.drawer_menu2);
+        //DrawerMenuのコンストラクタに移転
 
-		// ドロワーのListAdapterセット
-		mDrawerListMain.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1 , mDrawerMainMenuItems));
-		mDrawerListSub.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1 , mDrawerSubMenuItems));
 
-		// ドロワーのListItemクリックリスナーセット
-		mDrawerListener = new DrawerMenuListener();
-		mDrawerListMain.setOnItemClickListener(mDrawerListener);
-		mDrawerListSub.setOnItemClickListener(mDrawerListener);
-
-		//TODO タイトルをフラグメントごとに設定する
-		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-				R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
-			//TODO アクションバーのメニューON/OFF
-
-			/** Called when a drawer has settled in a completely closed state. */
-			public void onDrawerClosed(View view) {
-//				setTitle(mTitle);
-				invalidateOptionsMenu();
-			}
-
-			/** Called when a drawer has settled in a completely open state. */
-			public void onDrawerOpened(View drawerView) {
-//				setTitle(mDrawerTitle);
-				invalidateOptionsMenu();
-			}
-		};
-
-		// Set the drawer toggle as the DrawerListener
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 //		setTitle("");
 
 		// 起動時のFragmentとしてホーム画面をセットする
@@ -154,7 +127,7 @@ public class MainActivity extends FragmentActivity{
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		// Sync the toggle state after onRestoreInstanceState has occurred.
-		mDrawerToggle.syncState();
+		mDrawer.getDrawerToggle().syncState();
 	}
 
 	@Override
@@ -171,7 +144,7 @@ public class MainActivity extends FragmentActivity{
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// If the nav drawer is open, hide action items related to the content view
-		if(mDrawerLayout.isDrawerOpen(mLeftDrawer)){
+		if(mDrawer.isLeftDrawerOpen()){
 //			menu.findItem(R.id.menu_add).setEnabled(false);
 //			menu.findItem(R.id.menu_settings).setVisible(false);
 			for(int i = 0 ; i<menu.size() ; i++){
@@ -183,7 +156,7 @@ public class MainActivity extends FragmentActivity{
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (mDrawerToggle.onOptionsItemSelected(item)) {
+		if (mDrawer.getDrawerToggle().onOptionsItemSelected(item)) {
 			// アプリアイコンがタップされた場合、ここで処理しない（Drawerを開く）
 			return true;
 		}
@@ -217,72 +190,48 @@ public class MainActivity extends FragmentActivity{
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void callSettings(){
-		Intent intent = new Intent(this, SettingActivity.class);
-		startActivityForResult(intent, RQC_SETTINGS);
+	public void changeFragment(int position) {
+		switch (position) {
+		case 0:
+			childFragment = homeFragment;
+			break;
+
+		case 1:
+			childFragment = stockFragment;
+			break;
+
+		case 2:
+			childFragment = historyFragment;
+			break;
+
+//		default:
+//			break;
+		}
+		//			Bundle args = new Bundle();
+		//			args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+		//			fragment.setArguments(args);
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(R.id.main_layout, (Fragment)childFragment);
+		ft.addToBackStack(null);
+		ft.commit();
+
+		// Highlight the selected item, update the title, and close the drawer
+//		mDrawerListMain.setItemChecked(position, true);
+		//		    setTitle(mPlanetTitles[position]);
+//		mDrawerLayout.closeDrawer(mLeftDrawer);
 	}
 
-	private class DrawerMenuListener implements ListView.OnItemClickListener {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			if(parent.equals(mDrawerListMain)){
-				changeFragment(position);
-				mDrawerLayout.closeDrawer(mLeftDrawer);
-			}else if(parent.equals(mDrawerListSub)){
-				if(position == 0){
-					callCategoryEdit(position);
-					mDrawerLayout.closeDrawer(mLeftDrawer);
-				}else if(position == 1){
-					callSettings();
-					mDrawerLayout.closeDrawer(mLeftDrawer);
-				}
-			}
-		}
+	public void callCategoryEdit(int position){
+		childFragment = categoryEditFragment;
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(R.id.main_layout, (Fragment)childFragment);
+		ft.addToBackStack(null);
+		ft.commit();
+	}
 
-		private void changeFragment(int position) {
-			switch (position) {
-			case 0:
-				childFragment = homeFragment;
-				break;
-
-			case 1:
-				childFragment = stockFragment;
-				break;
-
-			case 2:
-				childFragment = historyFragment;
-				break;
-
-//			default:
-//				break;
-			}
-			//			Bundle args = new Bundle();
-			//			args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-			//			fragment.setArguments(args);
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.main_layout, (Fragment)childFragment);
-			ft.addToBackStack(null);
-			ft.commit();
-
-			// Highlight the selected item, update the title, and close the drawer
-//			mDrawerListMain.setItemChecked(position, true);
-			//		    setTitle(mPlanetTitles[position]);
-//			mDrawerLayout.closeDrawer(mLeftDrawer);
-		}
-
-		private void callCategoryEdit(int position){
-			childFragment = categoryEditFragment;
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.main_layout, (Fragment)childFragment);
-			ft.addToBackStack(null);
-			ft.commit();
-
-			// Highlight the selected item, update the title, and close the drawer
-			mDrawerListMain.setItemChecked(position, true);
-			//		    setTitle(mPlanetTitles[position]);
-			mDrawerLayout.closeDrawer(mLeftDrawer);
-		}
-
+	public void callSettings(){
+		Intent intent = new Intent(this, SettingActivity.class);
+		startActivityForResult(intent, RQC_SETTINGS);
 	}
 
 	public void notifyChangeFragment(ChecklistBoxChildFragment fragment){
@@ -290,17 +239,17 @@ public class MainActivity extends FragmentActivity{
 		//TODO メニューボタンのON/OFF
 
 		childFragment = fragment;
-		setTitleText(childFragment.getFragmenTitle(), childFragment.getFragmenSubTitle());
+		setTitleText(childFragment.getFragmenTitle() , childFragment.getFragmentIconID());
 	}
 
-	public void setTitleText(String main, String sub){
-		if(sub == null){
-			mTitleSub.setVisibility(View.GONE);
-			mTitleMain.setText(appName + "> " + main);
+	public void setTitleText(String title , int icon_id){
+
+		mTitleMain.setText(title);
+		if(icon_id==0){
+			mTitleIcon.setVisibility(View.GONE);
 		}else{
-			mTitleSub.setVisibility(View.VISIBLE);
-			mTitleMain.setText(appName + " > " + main);
-			mTitleSub.setText(sub);
+			mTitleIcon.setImageResource(icon_id);
+			mTitleIcon.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -325,7 +274,7 @@ public class MainActivity extends FragmentActivity{
 
 		public String getFragmenTitle();
 
-		public String getFragmenSubTitle();
+		public int getFragmentIconID();
 
 		public void onClickMenu(int menuId);
 

@@ -40,7 +40,8 @@ public class StockFragment extends Fragment
 
     private String initView;
 
-    private final int FRAGMENT_TITLE_ID = R.string.fragment_title_stock;
+    private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_STOCK_ID;
+    private final int FRAGMENT_ICON_ID = MainActivity.ICON_STOCK_ID;
 
 //	private int contextIndex;
 	private Checklist contextChecklist;
@@ -269,8 +270,8 @@ public class StockFragment extends Fragment
 	}
 
 	@Override
-	public String getFragmenSubTitle() {
-		return null;
+	public int getFragmentIconID() {
+		return FRAGMENT_ICON_ID;
 	}
 
 }
