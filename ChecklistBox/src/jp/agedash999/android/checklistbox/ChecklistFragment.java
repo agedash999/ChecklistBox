@@ -99,6 +99,8 @@ implements ChecklistBoxChildFragment{
 		this.etx_checklist_add = (EditText)rootView.findViewById(R.id.etx_checklist_add);
 
 		tv_checklist_title.setText(mChecklist.getTitle());
+		
+		
 
 		//キーイベントリスナーの設定
 		etx_checklist_add.setOnKeyListener(new OnKeyListener() {
@@ -402,8 +404,13 @@ implements ChecklistBoxChildFragment{
 		if(summeryType.equals("date")){
 			summery = dateString + mChecklist.getDateFormated();
 		}else if(summeryType.equals("node")){
-			// TODO ノード数
-			summery = "ノード数";
+			if(mChecklist.getType() == Checklist.CHECKLIST_RUNNING){
+				summery = activity.getString(R.string.checklist_row_node_fin_qty) +
+						mChecklist.getUncheckedQty() + "/" + mChecklist.getNodeQty();
+			}else{
+				summery = activity.getString(R.string.checklist_row_nodeqty) +
+						mChecklist.getNodeQty();
+			}
 		}else if(summeryType.equals("memo")){
 			summery = mChecklist.getMemo();
 		}
@@ -450,7 +457,7 @@ implements ChecklistBoxChildFragment{
 				enableSection = true;
 //				enableSection = false;
 				//仕切りのIndexを設定
-				mDivPos = mChecklist.getUncheckedNum();
+				mDivPos = mChecklist.getUncheckedQty();
 			}else{
 				enableSection = false;
 				mDivPos = -1;
@@ -479,11 +486,11 @@ implements ChecklistBoxChildFragment{
 			etx_title_node.setText(cnode.getTitle());
 
 			if(moveMode){
-				ImageView iv = ((ImageView)view.findViewById(R.id.iv_drag_handle));
-				iv.setVisibility(View.VISIBLE);
-
+				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
+				((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.GONE);
 			}else{
 				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+				((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
 				view.setLongClickable(true);
 			}
 
@@ -540,7 +547,7 @@ implements ChecklistBoxChildFragment{
 					node.setChecked(isChecked);
 					activity.getChecklistManager().nodeUpdated(mChecklist, node);
 					activity.getChecklistManager().sortNode(mChecklist);
-					mDivPos = mChecklist.getUncheckedNum();
+					mDivPos = mChecklist.getUncheckedQty();
 					mCLAdapter.notifyDataSetChanged();
 				}
 			});
@@ -656,7 +663,7 @@ implements ChecklistBoxChildFragment{
 		//        }
 		public void enableSection(boolean isEnable){
 			if(isEnable){
-				mDivPos = mChecklist.getUncheckedNum();
+				mDivPos = mChecklist.getUncheckedQty();
 			}else{
 				mDivPos = -1;
 			}

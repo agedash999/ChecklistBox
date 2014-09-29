@@ -20,7 +20,7 @@
     </string-array>
     <string-array name="entries_viewitem_checklist_home">
         <item >実施予定日</item>
-        <item >未完了数/完了数</item>
+        <item >未完了数/項目数</item>
         <item >メモ</item>
         </string-array>
     <string-array name="entryvalues_viewitem_checklist_home">

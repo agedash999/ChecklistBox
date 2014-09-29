@@ -52,7 +52,7 @@ public class HistoryListAdapter extends ArrayAdapter<Checklist> {
 					context.getString(R.string.checklist_row_findate) + clist.getDateFormated());
 		}else if(viewItem.equals("node")){
 			((TextView)view.findViewById(R.id.tv_summery)).setText(
-					"ノード数");
+					context.getString(R.string.checklist_row_nodeqty) + clist.getNodeQty());
 		}else if(viewItem.equals("memo")){
 			((TextView)view.findViewById(R.id.tv_summery)).setText(
 					clist.getMemo());

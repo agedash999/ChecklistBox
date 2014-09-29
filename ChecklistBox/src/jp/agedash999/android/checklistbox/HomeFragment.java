@@ -106,11 +106,6 @@ implements ChecklistDialog.ChecklistDialogListener
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
-            	//TODO スタックトレース保存の動作確認
-            	int index = 5;
-            	String strs[] = new String[index];
-            	String str = strs[index];
-
 
                 ListView listView = (ListView) parent;
                 Checklist clist = (Checklist)listView.getItemAtPosition(position);

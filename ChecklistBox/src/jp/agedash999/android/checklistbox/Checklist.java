@@ -190,7 +190,7 @@ public class Checklist {
 		this.sortNo = sortNo;
 	}
 
-	public int getUncheckedNum(){
+	public int getUncheckedQty(){
 		int i = 0;
 		Iterator<ChecklistNode> iter = checklist.iterator();
 		while(iter.hasNext()){
@@ -198,6 +198,10 @@ public class Checklist {
 			if(!node.isChecked()) i++;
 		}
 		return i;
+	}
+
+	public int getNodeQty(){
+		return checklist.size();
 	}
 
 	public static class ChecklistSortNoComp implements Comparator<Checklist>{

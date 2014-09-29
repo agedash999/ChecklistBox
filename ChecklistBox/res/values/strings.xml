@@ -16,9 +16,11 @@
     <string name="category_name_travel">旅行関連</string>
     <string name="drawer_open">開く</string>
     <string name="drawer_close">閉じる</string>
-    <string name="checklist_row_expdate">実施日： </string>
-    <string name="checklist_row_credate">作成日： </string>
-    <string name="checklist_row_findate">完了日： </string>
+    <string name="checklist_row_expdate">実施日 : </string>
+    <string name="checklist_row_credate">作成日 : </string>
+    <string name="checklist_row_findate">完了日 : </string>
+    <string name="checklist_row_node_fin_qty">未完了数/項目数 : </string>
+    <string name="checklist_row_nodeqty">項目数 : </string>
     <string name="checklist_addview_hint">決定ボタンで追加</string>
     <string name="checklist_imageview_desc">ドラッグで移動</string>
     <string name="conmenu_home_title">メニュー</string>

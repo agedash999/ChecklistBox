@@ -47,7 +47,8 @@ public class HomeListAdapter extends ArrayAdapter<Checklist> {
 					context.getString(R.string.checklist_row_expdate) + clist.getDateFormated());
 		}else if(viewItem.equals("node")){
 			((TextView)view.findViewById(R.id.tv_summery)).setText(
-					"ノード数");
+					context.getString(R.string.checklist_row_node_fin_qty) +
+					clist.getUncheckedQty() + "/" + clist.getNodeQty() );
 		}else if(viewItem.equals("memo")){
 			((TextView)view.findViewById(R.id.tv_summery)).setText(
 					clist.getMemo());
