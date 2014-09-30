@@ -36,12 +36,12 @@ public class MainActivity extends FragmentActivity{
 
 	private DrawerMenu mDrawer;
 
-	private ChecklistBoxChildFragment homeFragment = null;
-	private ChecklistBoxChildFragment stockFragment = null;
-	private ChecklistBoxChildFragment historyFragment = null;
-	private ChecklistBoxChildFragment categoryEditFragment = null;
+	private AbstractChildFragment homeFragment = null;
+	private AbstractChildFragment stockFragment = null;
+	private AbstractChildFragment historyFragment = null;
+	private AbstractChildFragment categoryEditFragment = null;
 
-	private ChecklistBoxChildFragment childFragment;
+	private AbstractChildFragment childFragment;
 
 	private String appName;
 
@@ -234,7 +234,7 @@ public class MainActivity extends FragmentActivity{
 		startActivityForResult(intent, RQC_SETTINGS);
 	}
 
-	public void notifyChangeFragment(ChecklistBoxChildFragment fragment){
+	public void notifyChangeFragment(AbstractChildFragment fragment){
 		//TODO 画面変更時の処理
 		//TODO メニューボタンのON/OFF
 
@@ -270,13 +270,4 @@ public class MainActivity extends FragmentActivity{
 		return mPreferences;
 	}
 
-	public interface ChecklistBoxChildFragment{
-
-		public String getFragmenTitle();
-
-		public int getFragmentIconID();
-
-		public void onClickMenu(int menuId);
-
-	}
 }
