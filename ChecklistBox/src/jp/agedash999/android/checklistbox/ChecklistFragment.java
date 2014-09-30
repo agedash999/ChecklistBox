@@ -2,7 +2,7 @@ package jp.agedash999.android.checklistbox;
 
 import java.util.List;
 
-import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
+import jp.agedash999.android.checklistbox.ContextMenuHandler.ContextMenuFragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -29,7 +28,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -40,27 +38,28 @@ import com.mobeta.android.dslv.DragSortListView;
 /**
  * チェックリストノード一覧画面のFragment
  */
-public class ChecklistFragment extends Fragment
-implements ChecklistBoxChildFragment{
+public class ChecklistFragment extends AbstractChildFragment
+implements ContextMenuFragment{
 
 	private MainActivity activity;
-	private ChecklistBoxChildFragment parent;
+	private AbstractChildFragment parent;
 	private View rootView;
 	private ChecklistAdapter mCLAdapter;
 	private DragSortListView mDslv;
 	private DragSortController mController;
 	private String mFragmentTitle;
+	private ContextMenuHandler mCMenuHandler;
 
 	private Checklist mChecklist;
 
-	private ListView listChecklist;
 	private EditText etx_checklist_add;
 	private TextView tv_checklist_title;
 	private TextView tv_summery;
 	private ViewGroup header;
 
-	private final int CONTEXT_MENUID_EDIT = 0;
-	private final int CONTEXT_MENUID_DELETE = 1;
+	private final int CONTEXT_MENU_THRESHOLD = 100;
+	private final int CONTEXT_MENUID_EDIT = 100;
+	private final int CONTEXT_MENUID_DELETE = 101;
 
 	//	private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
 	//		@Override
@@ -78,7 +77,7 @@ implements ChecklistBoxChildFragment{
 	}
 
 	public static ChecklistFragment newInstance
-	(Checklist clist, ChecklistBoxChildFragment parent){
+	(Checklist clist, AbstractChildFragment parent){
 		ChecklistFragment instance = new ChecklistFragment();
 		instance.mChecklist = clist;
 		instance.parent = parent;
@@ -95,14 +94,12 @@ implements ChecklistBoxChildFragment{
 		this.mDslv = (DragSortListView)rootView.findViewById(R.id.list_checklist);
 		//		this.listChecklist = (ListView)rootView.findViewById(R.id.list_checklist);
 
+		this.header = (ViewGroup) rootView.findViewById(R.id.checklist_header);
 		this.tv_checklist_title = (TextView) rootView.findViewById(R.id.title_checklist);
 		this.tv_summery = (TextView) rootView.findViewById(R.id.tv_summery);
 
 		this.etx_checklist_add = (EditText)rootView.findViewById(R.id.etx_checklist_add);
 
-		tv_checklist_title.setText(mChecklist.getTitle());
-
-		this.header = (ViewGroup) rootView.findViewById(R.id.checklist_header);
 		registerForContextMenu(header);
 		header.setOnClickListener(new OnClickListener() {
 
@@ -179,6 +176,8 @@ implements ChecklistBoxChildFragment{
 
 		if(v.getId() == header.getId()){
 
+			mCMenuHandler = ContextMenuHandler.getHandler(activity, this, mChecklist.getType());
+			mCMenuHandler.prepareContextMenu(menu);
 
 		}else{
 			menu.setHeaderTitle(getString(R.string.conmenu_home_title));
@@ -191,15 +190,17 @@ implements ChecklistBoxChildFragment{
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo)item.getMenuInfo();
-		final int contextIndex = menuInfo.position;
-		final ChecklistNode contextNode = mCLAdapter.getItem(contextIndex);
 
 		//ヘッダの場合
-		if(menuInfo.targetView.getId() == header.getId()){
-
+//		if(menuInfo.targetView.getId() == header.getId()){
+		if(item.getItemId() < CONTEXT_MENU_THRESHOLD){
+			mCMenuHandler.contextMenuSelected(item.getItemId(),mChecklist);
 
 			//ListView長押しの場合
 		}else{
+
+			final int contextIndex = menuInfo.position;
+			final ChecklistNode contextNode = mCLAdapter.getItem(contextIndex);
 
 			switch (item.getItemId()) {
 			case CONTEXT_MENUID_EDIT:
@@ -256,6 +257,36 @@ implements ChecklistBoxChildFragment{
 		}
 
 		return super.onContextItemSelected(item);
+
+	}
+
+	private void refleshHeader(){
+		this.tv_checklist_title.setText(mChecklist.getTitle());
+		this.tv_summery.setText(getSummery());
+
+	}
+
+	@Override
+	public void onFinishContextMenu(int menuType) {
+		if(menuType == ContextMenuHandler.CONTEXT_MENUID_EDIT){
+			refleshHeader();
+
+		}else if(menuType == ContextMenuHandler.CONTEXT_MENUID_DELETE){
+			getFragmentManager().popBackStack();
+//			activity.changeFragment(parent.getFragmentPositionID());
+
+		}else if(menuType == ContextMenuHandler.CONTEXT_MENUID_STOCK){
+			//TODO 画面遷移？
+
+		}else if(menuType == ContextMenuHandler.CONTEXT_MENUID_TOHOME){
+			//TODO 画面遷移？
+
+		}
+	}
+
+	@Override
+	public void onContextMenuCanceled(int menuType) {
+		// TODO 自動生成されたメソッド・スタブ
 
 	}
 
@@ -382,7 +413,7 @@ implements ChecklistBoxChildFragment{
 	@Override
 	public void onResume() {
 		super.onResume();
-		this.tv_summery.setText(getSummery());
+		refleshHeader();
 	}
 
 	@Override
@@ -393,6 +424,11 @@ implements ChecklistBoxChildFragment{
 	@Override
 	public int getFragmentIconID() {
 		return parent.getFragmentIconID();
+	}
+
+	@Override
+	public int getFragmentPositionID() {
+		return -1;
 	}
 
 
@@ -444,9 +480,11 @@ implements ChecklistBoxChildFragment{
 		return summery;
 	}
 
-	//	public String getFragmenSubTitle() {
-	//		return mChecklist.getTitle();
-	//	}
+
+
+
+
+
 
 
 	/**
@@ -520,44 +558,6 @@ implements ChecklistBoxChildFragment{
 				view.setLongClickable(true);
 			}
 
-			//ChecklisNodeクリック時の動作（タイトル編集UIの表示）
-			//			etx_title_node.setOnClickListener(new OnClickListener() {
-			//				@Override
-			//				public void onClick(View v) {
-			//					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-			//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
-			//					final int nodePosition = Integer.parseInt(txv_position.getText().toString());
-			//
-			//					final EditText editView = new EditText(activity);
-			//					editView.setText(mChecklist.getNodes().get(nodePosition).getTitle());
-			//					editView.setSelection(editView.getText().length());
-			//
-			//					//					final TextView hide = new TextView(activity);
-			//					//					hide.setVisibility(View.GONE);
-			//					//					TextView txv_position = (TextView)((View)v.getParent()).findViewById(R.id.txv_position_hide);
-			//					//					hide.setText(txv_position.getText());
-			//
-			//					builder.setView(editView)
-			//					.setTitle("テスト")
-			//					.setPositiveButton("保存", new DialogInterface.OnClickListener() {
-			//						@Override
-			//						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-			//							ChecklistNode node = mChecklist.getNodes().get(nodePosition);
-			//							node.setTitle(editView.getText().toString());
-			//							activity.getChecklistManager().nodeUpdated(mChecklist, node);
-			//							notifyDataSetChanged();
-			//						}
-			//					})
-			//					.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-			//						@Override
-			//						public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-			//							// TODO 自動生成されたメソッド・スタブ
-			//						}
-			//					})
-			//					.show();
-			//				}
-			//			});
-
 			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(position));
 			//TODO こっちに修正する予定
 			//			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(cnode.getID()));
@@ -595,15 +595,6 @@ implements ChecklistBoxChildFragment{
 		public void changeMoveMode(){
 			moveMode = (!moveMode);
 		}
-
-		//		@Override
-		//		public void drop(int from, int to) {
-		//			if (from != to) {
-		//				ChecklistNode data = mList.remove(dataPosition(from));
-		//				mList.add(dataPosition(to), data);
-		//				notifyDataSetChanged();
-		//			}
-		//		}
 
 		@Override
 		public int getCount() {
@@ -677,16 +668,6 @@ implements ChecklistBoxChildFragment{
 			}
 		}
 
-		//        public Drawable getBGDrawable(int type) {
-		//            Drawable d;
-		//            if (type == SECTION_ONE) {
-		//                d = getResources().getDrawable(R.drawable.bg_handle_section1_selector);
-		//            } else {
-		//                d = getResources().getDrawable(R.drawable.bg_handle_section2_selector);
-		//            }
-		//            d.setLevel(3000);
-		//            return d;
-		//        }
 		public void enableSection(boolean isEnable){
 			if(isEnable){
 				mDivPos = mChecklist.getUncheckedQty();
@@ -724,14 +705,6 @@ implements ChecklistBoxChildFragment{
 			}
 			return res;
 
-			//            ドラッグハンドルがsampleと異なるので削除
-			//            int width = mDslv.getWidth();
-			//
-			//            if ((int) ev.getX() < width / 3) {
-			//                return res;
-			//            } else {
-			//                return DragSortController.MISS;
-			//            }
 		}
 
 		@Override

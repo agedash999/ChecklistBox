@@ -1,11 +1,9 @@
 package jp.agedash999.android.checklistbox;
 
-import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -24,8 +22,7 @@ import android.widget.TextView;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 
-public class CategoryEditFragment extends Fragment
-implements ChecklistBoxChildFragment {
+public class CategoryEditFragment extends AbstractChildFragment{
 
 	private MainActivity activity;
 	private View rootView;
@@ -282,5 +279,10 @@ implements ChecklistBoxChildFragment {
 	@Override
 	public int getFragmentIconID() {
 		return 0;
+	}
+
+	@Override
+	public int getFragmentPositionID() {
+		return MainActivity.POS_FRAGMENT_CATEGORYEDIT;
 	}
 }

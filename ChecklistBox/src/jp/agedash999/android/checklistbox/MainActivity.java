@@ -20,6 +20,12 @@ public class MainActivity extends FragmentActivity{
 	public static final int TITLE_STOCK_ID = R.string.fragment_title_stock;
 	public static final int TITLE_HISTORY_ID = R.string.fragment_title_history;
 
+	public static final int POS_FRAGMENT_HOME = 0;
+	public static final int POS_FRAGMENT_STOCK = 1;
+	public static final int POS_FRAGMENT_HISTORY = 2;
+	public static final int POS_FRAGMENT_CATEGORYEDIT = 3;
+	public static final int POS_FRAGMENT_SETTING = 4;
+
 	public static final int ICON_HOME_ID = R.drawable.ic_home;
 	public static final int ICON_STOCK_ID = R.drawable.ic_stock;
 	public static final int ICON_HISTORY_ID = R.drawable.ic_history;
@@ -192,15 +198,15 @@ public class MainActivity extends FragmentActivity{
 
 	public void changeFragment(int position) {
 		switch (position) {
-		case 0:
+		case POS_FRAGMENT_HOME:
 			childFragment = homeFragment;
 			break;
 
-		case 1:
+		case POS_FRAGMENT_STOCK:
 			childFragment = stockFragment;
 			break;
 
-		case 2:
+		case POS_FRAGMENT_HISTORY:
 			childFragment = historyFragment;
 			break;
 

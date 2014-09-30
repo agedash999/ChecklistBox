@@ -10,4 +10,6 @@ public abstract class AbstractChildFragment extends Fragment {
 
 	public abstract void onClickMenu(int menuId);
 
+	public abstract int getFragmentPositionID();
+
 }

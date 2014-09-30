@@ -1,11 +1,10 @@
 package jp.agedash999.android.checklistbox;
 
-import jp.agedash999.android.checklistbox.MainActivity.ChecklistBoxChildFragment;
+import jp.agedash999.android.checklistbox.ContextMenuHandler.ContextMenuFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -23,11 +22,10 @@ import android.widget.RadioGroup;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 
-public class HomeFragment extends Fragment
-implements ChecklistDialog.ChecklistDialogListener
-,ChecklistBoxChildFragment {
+public class HomeFragment extends AbstractChildFragment
+implements ContextMenuFragment{
 
-	private ChecklistBoxChildFragment mInstance;
+	private static AbstractChildFragment mInstance = new HomeFragment();
 
 	private MainActivity activity;
 	private View rootView;
@@ -35,16 +33,10 @@ implements ChecklistDialog.ChecklistDialogListener
     private DragSortListView mDslv;
     private DragSortController mController;
     private String mFragmentTitle;
+    private ContextMenuHandler mCMenuHandler;
 
     private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_HOME_ID;
     private final int FRAGMENT_ICON_ID = MainActivity.ICON_HOME_ID;
-
-	private final int CONTEXT_MENUID_EDIT = 0;
-	private final int CONTEXT_MENUID_DELETE = 1;
-	private final int CONTEXT_MENUID_STOCK = 2;
-
-	private int contextIndex;
-	private Checklist contextChecklist;
 
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
         @Override
@@ -83,10 +75,8 @@ implements ChecklistDialog.ChecklistDialogListener
 		super();
 	}
 
-	public static ChecklistBoxChildFragment newInstance(){
-		HomeFragment instance = new HomeFragment();
-		instance.mInstance = instance;
-		return instance;
+	public static AbstractChildFragment newInstance(){
+		return mInstance;
 	}
 
 	@Override
@@ -135,52 +125,18 @@ implements ChecklistDialog.ChecklistDialogListener
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		menu.setHeaderTitle(getString(R.string.conmenu_home_title));
-		menu.add(0, CONTEXT_MENUID_EDIT, 0, R.string.conmenu_edit);
-		menu.add(0, CONTEXT_MENUID_DELETE, 0, R.string.conmenu_delete);
-		menu.add(0, CONTEXT_MENUID_STOCK, 0, R.string.conmenu_stock);
+
+		mCMenuHandler = ContextMenuHandler.getHandler(activity, this, Checklist.CHECKLIST_RUNNING);
+		mCMenuHandler.prepareContextMenu(menu);
+
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		this.contextIndex = ((AdapterContextMenuInfo)item.getMenuInfo()).position;
-		this.contextChecklist = mCLAdapter.getChecklist(contextIndex);
-		ChecklistDialog dialog;
-		switch (item.getItemId()) {
-		case CONTEXT_MENUID_EDIT:
-			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HOME_EDIT, contextChecklist);
-			dialog.setChecklistDialogListener(this);
-			dialog.show(getFragmentManager(), "edit");
-			break;
-		case CONTEXT_MENUID_DELETE:
-			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-			builder.setTitle(R.string.dialog_title_clist_delete_home);
-			builder.setMessage(R.string.dialog_message_clist_delete);
-			builder.setPositiveButton(R.string.dialog_button_clist_delete, new DialogInterface.OnClickListener() {
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					onDeleteChecklist(contextChecklist);
-				}
-			});
-			builder.setNegativeButton(R.string.dialog_button_clist_cansel, new DialogInterface.OnClickListener() {
+		mCMenuHandler.contextMenuSelected(item.getItemId(),
+				mCLAdapter.getChecklist(((AdapterContextMenuInfo)item.getMenuInfo()).position));
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					onDeleteCanseled();
-				}
-			});
-			builder.create().show();
-
-			break;
-		case CONTEXT_MENUID_STOCK:
-			dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HOME_STORE, contextChecklist);
-			dialog.setChecklistDialogListener(this);
-			dialog.show(getFragmentManager(), "store");
-			break;
-		default:
-			break;
-		}
 		return super.onContextItemSelected(item);
 	}
 
@@ -204,40 +160,13 @@ implements ChecklistDialog.ChecklistDialogListener
 	}
 
 	@Override
-	public void onChecklistInfoSave(Checklist clist, int dialogType) {
-		//チェックリスト新規作成・更新・保存　いずれの場合も同様
-		switch (dialogType) {
-		case ChecklistDialog.FOR_HOME_NEW:
-			activity.getChecklistManager().insertChecklist(clist);
-			activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_RUNNING);
-			mCLAdapter.notifyDataSetChanged();
-			break;
-		case ChecklistDialog.FOR_HOME_EDIT:
-			activity.getChecklistManager().updateChecklistInfo(clist);
-			activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_RUNNING);
-			mCLAdapter.notifyDataSetChanged();
-			break;
-		case ChecklistDialog.FOR_HOME_STORE:
-			activity.getChecklistManager().insertChecklist(clist);
-			mCLAdapter.notifyDataSetChanged();
-			//TODO 画面を写す？
-			break;
-//		default:
-//			break;
-		}
+	public void onContextMenuCanceled(int menuType){
+
 	}
 
 	@Override
-	public void onChecklistInfoCansel() {
-
-	}
-
-	private void onDeleteChecklist(Checklist clist){
-		activity.getChecklistManager().removeChecklist(clist);
+	public void onFinishContextMenu(int menuType) {
 		mCLAdapter.notifyDataSetChanged();
-	}
-
-	private void onDeleteCanseled(){
 
 	}
 
@@ -245,10 +174,10 @@ implements ChecklistDialog.ChecklistDialogListener
 	public void onClickMenu(int menuId) {
 		switch (menuId) {
 		case MainActivity.MENU_ADD_ID:
-			ChecklistDialog dialog;
-			dialog = ChecklistDialog.getDialogBlank(ChecklistDialog.FOR_HOME_NEW);
-			dialog.setChecklistDialogListener(this);
-			dialog.show(getFragmentManager(), "create");
+
+			mCMenuHandler = ContextMenuHandler.getHandler(activity, this, Checklist.CHECKLIST_RUNNING);
+			mCMenuHandler.contextMenuSelected(ContextMenuHandler.MENU_CREATE, null );
+
 			break;
 		case MainActivity.MENU_MOVE_ID:
 			mCLAdapter.changeMoveMode();
@@ -344,6 +273,11 @@ implements ChecklistDialog.ChecklistDialogListener
 	@Override
 	public int getFragmentIconID() {
 		return FRAGMENT_ICON_ID;
+	}
+
+	@Override
+	public int getFragmentPositionID() {
+		return MainActivity.POS_FRAGMENT_HOME;
 	}
 
 
