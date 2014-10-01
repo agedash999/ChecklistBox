@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="#87ceeb" >
+    android:background="#444444" >
 
     <TextView
         android:id="@+id/txv_title_node"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="15sp" />
+        android:textSize="3sp" />
 
 </LinearLayout>

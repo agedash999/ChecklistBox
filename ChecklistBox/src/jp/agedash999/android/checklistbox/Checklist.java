@@ -78,6 +78,11 @@ public class Checklist {
 		this.id = id;
 	}
 
+	//TODO 必要？
+	public void setType(int clType){
+		this.cltype = clType;
+	}
+
 	public int getType(){
 		return this.cltype;
 	}

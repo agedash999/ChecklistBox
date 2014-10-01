@@ -98,7 +98,7 @@ public class ChecklistManager {
 		clist1.setMemo("毎朝必ずやるリスト");
 		mDBAccess.testDataAdd(clist1);
 
-		Checklist clist2 = new Checklist(Checklist.CHECKLIST_RUNNING, "旅行の持ち物（国内）", null);
+		Checklist clist2 = new Checklist(Checklist.CHECKLIST_RUNNING, "旅行の持ち物（登別）", null);
 		clist2.addNode("パンツ", false);
 		clist2.addNode("靴下", true);
 		clist2.addNode("携帯バッテリー", false);
@@ -112,20 +112,6 @@ public class ChecklistManager {
 		clist2.setMemo("朝必ずチェックする");
 		mDBAccess.testDataAdd(clist2);
 
-		Checklist clist3 = new Checklist(Checklist.CHECKLIST_RUNNING, "旅行の持ち物（海外）", null);
-		clist3.addNode("パンツ", false);
-		clist3.addNode("靴下", true);
-		clist3.addNode("携帯バッテリー", false);
-		clist3.addNode("飲み物", false);
-		clist3.addNode("保険証", false);
-		clist3.addNode("かばん", false);
-		clist3.addNode("財布", true);
-		clist3.addNode("タバコ", false);
-		clist3.addNode("ライター", true);
-		clist3.addNode("爪切り", false);
-		clist3.setMemo("");
-		mDBAccess.testDataAdd(clist3);
-
 		Checklist clist4 = new Checklist(Checklist.CHECKLIST_RUNNING, "市役所でやること", null);
 		clist4.addNode("住民票をとる", false);
 		clist4.addNode("戸籍の写しを取る", false);
@@ -136,35 +122,35 @@ public class ChecklistManager {
 	private void addTestHistory(){
 		//TODO テストデータ
 		Checklist clist1 = new Checklist(Checklist.CHECKLIST_HISTORY, "夜やること", null);
-		clist1.addNode("歯磨き", false);
+		clist1.addNode("歯磨き", true);
 		clist1.addNode("明日の持ち物準備", true);
-		clist1.addNode("日記を書く", false);
-		clist1.addNode("明日の天気の確認", false);
+		clist1.addNode("日記を書く", true);
+		clist1.addNode("明日の天気の確認", true);
 		mDBAccess.testDataAdd(clist1);
 
 		Checklist clist2 = new Checklist(Checklist.CHECKLIST_HISTORY, "バイトの面接", null);
-		clist2.addNode("履歴書準備", false);
+		clist2.addNode("履歴書準備", true);
 		clist2.addNode("スーツ準備", true);
-		clist2.addNode("交通手段確認", false);
+		clist2.addNode("交通手段確認", true);
 		mDBAccess.testDataAdd(clist2);
 
 		Checklist clist3 = new Checklist(Checklist.CHECKLIST_HISTORY, "旅行の持ち物（大阪）", null);
-		clist3.addNode("パンツ", false);
+		clist3.addNode("パンツ", true);
 		clist3.addNode("靴下", true);
-		clist3.addNode("携帯バッテリー", false);
-		clist3.addNode("飲み物", false);
-		clist3.addNode("保険証", false);
-		clist3.addNode("かばん", false);
+		clist3.addNode("携帯バッテリー", true);
+		clist3.addNode("飲み物", true);
+		clist3.addNode("保険証", true);
+		clist3.addNode("かばん", true);
 		clist3.addNode("財布", true);
-		clist3.addNode("タバコ", false);
+		clist3.addNode("タバコ", true);
 		clist3.addNode("ライター", true);
-		clist3.addNode("地球の歩き方（大阪）", false);
+		clist3.addNode("地球の歩き方（大阪）", true);
 		mDBAccess.testDataAdd(clist3);
 
 		Checklist clist4 = new Checklist(Checklist.CHECKLIST_HISTORY, "市役所でやること", null);
-		clist4.addNode("住民票をとる", false);
-		clist4.addNode("戸籍の写しを取る", false);
-		clist4.addNode("住基カードの発行申請するうううううううううううう", false);
+		clist4.addNode("住民票をとる", true);
+		clist4.addNode("戸籍の写しを取る", true);
+		clist4.addNode("住基カードの発行申請するうううううううううううう", true);
 		mDBAccess.testDataAdd(clist4);
 	}
 
@@ -179,7 +165,7 @@ public class ChecklistManager {
 		Checklist clist1_1 = new Checklist
 				(Checklist.CHECKLIST_STORE, "保存用朝やること", category1);
 		clist1_1.addNode("歯磨き", false);
-		clist1_1.addNode("明日の持ち物準備", true);
+		clist1_1.addNode("明日の持ち物準備", false);
 		clist1_1.addNode("日記を書く", false);
 		clist1_1.addNode("明日の天気の確認", false);
 		mDBAccess.testDataAdd(clist1_1);
@@ -187,14 +173,14 @@ public class ChecklistManager {
 		Checklist clist1_2 = new Checklist
 				(Checklist.CHECKLIST_STORE, "保存用昼やること", category1);
 		clist1_2.addNode("昼食食べる", false);
-		clist1_2.addNode("歯磨き", true);
+		clist1_2.addNode("歯磨き", false);
 		clist1_2.addNode("昼寝", false);
 		mDBAccess.testDataAdd(clist1_2);
 
 		Checklist clist1_3 = new Checklist
 				(Checklist.CHECKLIST_STORE, "保存用夜やること", category1);
 		clist1_3.addNode("寝る準備", false);
-		clist1_3.addNode("音楽聞く", true);
+		clist1_3.addNode("音楽聞く", false);
 		clist1_3.addNode("日記書く", false);
 		clist1_3.addNode("ジョギング", false);
 		clist1_3.addNode("神に祈る", false);
@@ -211,7 +197,7 @@ public class ChecklistManager {
 		Checklist clist2_1 = new Checklist
 				(Checklist.CHECKLIST_STORE, "バイトの朝", category2);
 		clist2_1.addNode("行き方確認", false);
-		clist2_1.addNode("明日の持ち物準備", true);
+		clist2_1.addNode("明日の持ち物準備", false);
 		clist2_1.addNode("持ち物をもう一度確認", false);
 		clist2_1.addNode("朝食食べる", false);
 		mDBAccess.testDataAdd(clist2_1);
@@ -219,7 +205,7 @@ public class ChecklistManager {
 		Checklist clist2_2 = new Checklist
 				(Checklist.CHECKLIST_STORE, "バイトの面接", category2);
 		clist2_2.addNode("履歴書準備", false);
-		clist2_2.addNode("スーツ準備", true);
+		clist2_2.addNode("スーツ準備", false);
 		clist2_2.addNode("交通手段確認", false);
 		mDBAccess.testDataAdd(clist2_2);
 
@@ -229,7 +215,7 @@ public class ChecklistManager {
 		Checklist clist3_1 = new Checklist
 				(Checklist.CHECKLIST_STORE, "旅行一般", category3);
 		clist3_1.addNode("靴下", false);
-		clist3_1.addNode("パンツ", true);
+		clist3_1.addNode("パンツ", false);
 		clist3_1.addNode("頭痛薬", false);
 		clist3_1.addNode("地図", false);
 		clist3_1.addNode("保険証", false);
@@ -250,10 +236,10 @@ public class ChecklistManager {
 		Checklist clist3_3 = new Checklist
 				(Checklist.CHECKLIST_STORE, "海外旅行", category3);
 		clist3_3.addNode("地球の歩き方", false);
-		clist3_3.addNode("パスポート", true);
+		clist3_3.addNode("パスポート", false);
 		mDBAccess.testDataAdd(clist3_3);
 
-		ChecklistCategory category4 = new ChecklistCategory("空のカテゴリテスト");
+		ChecklistCategory category4 = new ChecklistCategory("空のフォルダテスト");
 		mDBAccess.insertNewCategory(category4);
 	}
 
@@ -443,7 +429,7 @@ public class ChecklistManager {
 	}
 
 	public void removeChecklist(Checklist clist){
-		//データベース更新（テーブル削除）
+		//TODO データベース更新（テーブル削除）
 		//リストから削除
 		int clType = clist.getType();
 		switch (clType) {
@@ -496,6 +482,14 @@ public class ChecklistManager {
 			clist.getCategory().getId(); //TODO nullじゃないことを確認
 		}
 		mDBAccess.updateChecklistInfo(clist);
+	}
+
+	public void completeChecklist(Checklist clist){
+		//TODO 全チェック入れる？
+		clist.setType(Checklist.CHECKLIST_HISTORY);
+		mDBAccess.completeChecklist(clist);
+		runningList.remove(clist);
+		historyList.add(clist);
 	}
 
 	public void updateNodeInfo(Checklist clist , ChecklistNode node){

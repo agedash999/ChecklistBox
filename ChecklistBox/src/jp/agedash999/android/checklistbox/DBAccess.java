@@ -196,6 +196,14 @@ public class DBAccess {
 		}
 	}
 
+	public void completeChecklist(Checklist clist){
+
+		//TODO もう少しメソッドを整理したい
+		//ホームから削除
+		deleteChecklist(Checklist.CHECKLIST_RUNNING, clist.getId());
+		insertChecklistCV(clist, DatabaseHelper.TABLE_HISTORYLIST);
+
+	}
 
 	public void updateChecklistInfo(Checklist clist){
 		String tableName;

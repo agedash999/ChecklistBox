@@ -7,7 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 
-public class CategoryDeleteDialog extends DialogFragment {
+public class DialogCategoryDelete extends DialogFragment {
 
 //	private final String KEY_DIALOG_TITLE = "dialog_title";
 //	private final String KEY_DIALOG_LABEL_DATE = "label_title";
@@ -18,8 +18,8 @@ public class CategoryDeleteDialog extends DialogFragment {
 	private ChecklistCategory mCategory;
 	private ChecklistDialogListener mListener;
 
-	public static CategoryDeleteDialog getDialog(ChecklistCategory category){
-		CategoryDeleteDialog dialog = new CategoryDeleteDialog();
+	public static DialogCategoryDelete getDialog(ChecklistCategory category){
+		DialogCategoryDelete dialog = new DialogCategoryDelete();
 		dialog.mCategory = category;
 
 		return dialog;

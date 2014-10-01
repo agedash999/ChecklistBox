@@ -28,8 +28,8 @@
     <string name="conmenu_delete">削除</string>
     <string name="conmenu_stock">保存</string>
     <string name="conmenu_tohome">ホームに追加</string>
-    <string name="dialog_edit_home_title"></string>
-    <string name="dialog_edit_stock_title"></string>
+    <string name="dialog_edit_home_title">※未使用</string>
+    <string name="dialog_edit_stock_title">※未使用</string>
     <string name="dialog_title_clist_edit_home">編集（ホーム）</string>
     <string name="dialog_title_clist_edit_stock">編集（ストック）</string>
     <string name="dialog_title_clist_delete_home">削除（ホーム）</string>
@@ -41,6 +41,7 @@
     <string name="dialog_title_clist_store_history">保存（履歴）</string>
     <string name="dialog_title_clist_copy_stock">ホームに追加（ストック）</string>
     <string name="dialog_title_clist_copy_history">ホームに追加（履歴）</string>
+    <string name="dialog_title_clist_complete">チェック完了</string>
     <string name="dialog_title_node_delete">削除</string>
     <string name="dialog_message_clist_delete">削除しますか？</string>
     <string name="dialog_message_node_delete">削除しますか？</string>
@@ -63,10 +64,12 @@
     <string name="dialog_radio_sort_check_down">完了済を上に</string>
     <string name="dialog_title_category_delete">フォルダ削除</string>
     <string name="dialog_message_category_delete">フォルダを削除します</string>
+    <string name="dialog_message_clist_complete">リストを完了し、履歴に送りますか？</string>
     <string name="dialog_label_category_delete_move">保持しているチェックリストの移動先</string>
     <string name="dialog_label_category_delete_delete">チェックリストを削除</string>
     <string name="dialog_button_category_delete">削除</string>
     <string name="dialog_button_category_cansel">キャンセル</string>
+    <string name="dialog_button_clist_complete">完了</string>
     <string name="setting_title_category_view">表示設定</string>
     <string name="setting_title_checklist_2_home">ホーム画面のサマリー表示項目</string>
     <string name="setting_title_checklist_2_stock">保存画面のサマリー表示項目</string>

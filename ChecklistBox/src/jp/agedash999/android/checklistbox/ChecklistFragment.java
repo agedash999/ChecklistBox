@@ -1,12 +1,11 @@
 package jp.agedash999.android.checklistbox;
 
-import java.util.List;
-
 import jp.agedash999.android.checklistbox.ContextMenuHandler.ContextMenuFragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -123,7 +122,7 @@ implements ContextMenuFragment{
 						ChecklistNode node = new ChecklistNode(
 								nodeTitle, false);
 						activity.getChecklistManager().addNode(mChecklist, node);
-						mCLAdapter.notifyDataSetChanged();
+						refreshList();
 						etx_checklist_add.setText("");
 					}
 					return true;
@@ -134,8 +133,7 @@ implements ContextMenuFragment{
 
 
 		//Adapterのインスタンスを生成してListViewにセット
-		mCLAdapter = new ChecklistAdapter(getActivity(), R.layout.listrow_checklist,
-				mChecklist.getNodes());
+		mCLAdapter = new ChecklistAdapter(getActivity(), R.layout.listrow_checklist,mChecklist);
 
 		mDslv.setDropListener(mCLAdapter);
 		//		listChecklist.setAdapter(mCLAdapter);//不要？
@@ -217,7 +215,7 @@ implements ContextMenuFragment{
 					public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 						contextNode.setTitle(editView.getText().toString());
 						activity.getChecklistManager().nodeUpdated(mChecklist, contextNode);
-						mCLAdapter.notifyDataSetChanged();
+						refreshList();
 					}
 				})
 				.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
@@ -290,6 +288,70 @@ implements ContextMenuFragment{
 
 	}
 
+	private void onDeleteNode(int nodeIndex){
+		mChecklist.getChecklist().remove(nodeIndex);
+		mCLAdapter.enableSection(true);
+		refreshList();
+	}
+
+	private void onDeleteNodeCanseled(int nodeIndex){
+
+	}
+
+	private void refreshList(){
+		mCLAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		refleshHeader();
+	}
+
+	@Override
+	public String getFragmenTitle() {
+		return mFragmentTitle;
+	}
+
+	@Override
+	public int getFragmentIconID() {
+		return parent.getFragmentIconID();
+	}
+
+	@Override
+	public int getFragmentPositionID() {
+		return -1;
+	}
+
+	private void verifyFinished(ChecklistNode node){
+		if(mChecklist.getUncheckedQty() == 0){
+
+			final ChecklistNode cnode = node;
+
+			AlertDialog.Builder builder_fin = new AlertDialog.Builder(activity);
+			builder_fin.setTitle(R.string.dialog_title_clist_complete);
+			builder_fin.setMessage(R.string.dialog_message_clist_complete);
+			builder_fin.setPositiveButton(R.string.dialog_button_clist_complete, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					//チェックリスト完了処理
+					activity.getChecklistManager().completeChecklist(mChecklist);
+
+					//TODO 画面遷移OK？
+					getFragmentManager().popBackStack();
+				}
+			});
+			builder_fin.setNegativeButton(R.string.dialog_button_clist_cansel, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					cnode.setChecked(false);
+				}
+			});
+			builder_fin.create().show();
+		}
+	}
 
 	private void activateAddView(){
 		//追加エリアの可視化
@@ -361,8 +423,8 @@ implements ContextMenuFragment{
 						section = true;
 					}
 					manager.sortNode(mChecklist);
-					mCLAdapter.notifyDataSetChanged();
 					mCLAdapter.enableSection(section);
+					refreshList();
 					mDslv.invalidateViews();
 				}
 			})
@@ -398,37 +460,6 @@ implements ContextMenuFragment{
 		controller.setRemoveMode(DragSortController.FLING_REMOVE);
 
 		return controller;
-	}
-
-	private void onDeleteNode(int nodeIndex){
-		mChecklist.getChecklist().remove(nodeIndex);
-		mCLAdapter.enableSection(true);
-		mCLAdapter.notifyDataSetChanged();
-	}
-
-	private void onDeleteNodeCanseled(int nodeIndex){
-
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		refleshHeader();
-	}
-
-	@Override
-	public String getFragmenTitle() {
-		return mFragmentTitle;
-	}
-
-	@Override
-	public int getFragmentIconID() {
-		return parent.getFragmentIconID();
-	}
-
-	@Override
-	public int getFragmentPositionID() {
-		return -1;
 	}
 
 
@@ -497,7 +528,8 @@ implements ContextMenuFragment{
 		private final static int SECTION_TWO = 2;
 
 		private Context context;
-		private List<ChecklistNode> mList;
+//		private List<ChecklistNode> mList;
+		private Checklist mChecklist;
 		private LayoutInflater mInflater;
 		private int mLayout;
 		private int mDivLayout;
@@ -506,13 +538,13 @@ implements ContextMenuFragment{
 
 		private boolean moveMode = false;
 
-		public ChecklistAdapter(Context context, int resource, List<ChecklistNode> objects) {
-			super(context, resource, objects);
+		public ChecklistAdapter(Context context, int resource, Checklist clist) {
+			super(context, resource, clist.getNodes());
 			this.context = context;
 			this.mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			this.mLayout = resource;
 			this.mDivLayout = R.layout.listrow_section_div;
-			this.mList = objects;
+			this.mChecklist = clist;
 			//TODO テスト的に指定
 			//			mDivPos = mList.size() /2 ;
 			if(activity.getChecklistManager().getNodeSortType()
@@ -545,38 +577,75 @@ implements ContextMenuFragment{
 				view = mInflater.inflate(mLayout, null);
 			}
 			//			cnode = mList.get(position);
-			cnode = mList.get(dataPosition);
+			cnode = mChecklist.getNodes().get(dataPosition);
 			TextView etx_title_node = (TextView)view.findViewById(R.id.txv_title_node);
 			etx_title_node.setText(cnode.getTitle());
-
-			if(moveMode){
-				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
-				((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.GONE);
-			}else{
-				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
-				((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
-				view.setLongClickable(true);
-			}
 
 			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(position));
 			//TODO こっちに修正する予定
 			//			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(cnode.getID()));
-			CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);
-			cbx_checked.setChecked(cnode.isChecked());
-			cbx_checked.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					TextView txv_position = (TextView)((View)buttonView.getParent()).findViewById(R.id.txv_position_hide);
-					int nodePosition = Integer.parseInt(txv_position.getText().toString());
-					ChecklistNode node = mChecklist.getNodes().get(dataPosition(nodePosition));
-					node.setChecked(isChecked);
-					activity.getChecklistManager().nodeUpdated(mChecklist, node);
-					activity.getChecklistManager().sortNode(mChecklist);
-					mDivPos = mChecklist.getUncheckedQty();
-					mCLAdapter.notifyDataSetChanged();
+			//ホーム画面の場合
+			if(mChecklist.getType() == Checklist.CHECKLIST_RUNNING){
+
+				//ドラッグアイコン表示
+				if(moveMode){
+					((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
+					((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.GONE);
+				}else{
+					((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+					((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
+					view.setLongClickable(true);
 				}
-			});
+
+				//チェックボックス
+				CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);
+				cbx_checked.setChecked(cnode.isChecked());
+				cbx_checked.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						TextView txv_position = (TextView)((View)buttonView.getParent()).findViewById(R.id.txv_position_hide);
+						int nodePosition = Integer.parseInt(txv_position.getText().toString());
+						ChecklistNode node = mChecklist.getNodes().get(dataPosition(nodePosition));
+						node.setChecked(isChecked);
+						activity.getChecklistManager().nodeUpdated(mChecklist, node);
+						activity.getChecklistManager().sortNode(mChecklist);
+						mDivPos = mChecklist.getUncheckedQty();
+						refreshList();
+
+						verifyFinished(node);
+					}
+				});
+
+				//保存画面の場合
+			}else if(mChecklist.getType() == Checklist.CHECKLIST_STORE){
+
+				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+				((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
+
+				//チェックボックス
+				CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);
+				cbx_checked.setChecked(false);
+				cbx_checked.setEnabled(false);
+
+				//TODO 色設定の統一
+				cbx_checked.setBackgroundColor(Color.GRAY);
+
+				//履歴画面の場合
+			}else if(mChecklist.getType() == Checklist.CHECKLIST_HISTORY){
+
+				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+				((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
+
+				//チェックボックス
+				CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);
+				cbx_checked.setChecked(true);
+				cbx_checked.setEnabled(false);
+				//TODO 色設定の統一
+				cbx_checked.setBackgroundColor(Color.GRAY);
+
+			}
 			return view;
 
 		}
@@ -587,7 +656,7 @@ implements ContextMenuFragment{
 				ChecklistNode node = mCLAdapter.getItem(from);
 
 				activity.getChecklistManager().moveNode(mChecklist, node, dataPosition(to));
-				mCLAdapter.notifyDataSetChanged();
+				refreshList();
 
 			}
 		}
@@ -599,9 +668,9 @@ implements ContextMenuFragment{
 		@Override
 		public int getCount() {
 			if(enableSection){
-				return mList.size() + 1;
+				return mChecklist.getNodes().size() + 1;
 			}else{
-				return mList.size();
+				return mChecklist.getNodes().size();
 			}
 		}
 
@@ -638,7 +707,7 @@ implements ContextMenuFragment{
 				//TODO null返して大丈夫？
 				return null;
 			} else {
-				return mList.get(dataPosition(position));
+				return mChecklist.getNodes().get(dataPosition(position));
 			}
 		}
 
