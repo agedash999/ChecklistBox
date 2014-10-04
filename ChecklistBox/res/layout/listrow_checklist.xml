@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:background="#ffffff"
+    android:background="@drawable/listitem_bg"
     android:orientation="horizontal" >
 
     <ImageView
@@ -24,12 +24,14 @@
         android:id="@+id/txv_title_node"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@drawable/text_dark"
         android:textSize="15sp" />
 
     <TextView
         android:id="@+id/txv_position_hide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@drawable/text_dark"
         android:textSize="15sp"
         android:visibility="gone" />
 

@@ -8,9 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:divider="@color/window_bg"
+        android:divider="@drawable/window_bg"
         android:dividerHeight="8dp"
-        android:childDivider="@color/window_bg"
+        android:childDivider="@drawable/window_bg"
         >
     </ExpandableListView>
 

@@ -8,6 +8,7 @@
     android:textAlignment="viewStart"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:background="#ffffff"
+    android:background="@drawable/listitem_bg"
+    android:textColor="@drawable/text_dark"
     android:textSize="18sp"
 />

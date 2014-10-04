@@ -21,7 +21,7 @@
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-        android:background="#111111"
+        android:background="@color/midnightblue"
         android:orientation="vertical" >
 
         <!-- メニュー間の枠専用 -->
@@ -29,7 +29,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
             android:orientation="vertical" >
 
             <ListView
@@ -39,7 +38,6 @@
                 android:layout_gravity="start"
                 android:layout_marginBottom="3dp"
                 android:padding="6dp"
-                android:background="#111111"
                 android:choiceMode="singleChoice"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="3dp" >
@@ -51,7 +49,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:padding="6dp"
-                android:background="#111111"
                 android:choiceMode="singleChoice"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="6dp" >

@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:paddingRight="45dp"
     android:gravity="center"
-    android:background="#555555"
     android:orientation="horizontal" >
 
     <ImageView
@@ -21,7 +20,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:textSize="24sp"
-        android:textColor="@color/white"
+        android:textColor="@drawable/text_light"
         />
 
 </LinearLayout>

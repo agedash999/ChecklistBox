@@ -13,7 +13,7 @@
         android:layout_margin="6dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:background="#ffffff"
+        android:background="@drawable/listitem_bg"
         android:orientation="horizontal" >
 
         <ImageView
@@ -34,6 +34,7 @@
                 android:id="@+id/title_checklist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@drawable/text_dark"
                 android:textSize="15sp" />
 
             <TextView
@@ -41,6 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="9dp"
+                android:textColor="@drawable/text_dark"
                 android:textSize="12sp" />
 
             <TextView
@@ -48,6 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="9dp"
+                android:textColor="@drawable/text_dark"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
@@ -69,7 +72,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="8dp"
-        android:divider="@color/window_bg"
+        android:divider="@drawable/window_bg"
         android:dividerHeight="6dp"
         android:padding="3dp"
         dslv:collapsed_height="2dp"

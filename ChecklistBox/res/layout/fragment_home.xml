@@ -22,7 +22,7 @@
         dslv:use_default_controller="false"
         android:padding="8dp"
         android:dividerHeight="8dp"
-        android:divider="@color/window_bg"
+        android:divider="@drawable/window_bg"
         />
 
 </LinearLayout>

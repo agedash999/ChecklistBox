@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -13,15 +13,19 @@
     </style>
 
     <!-- Application theme. -->
-<!--     <style name="AppTheme" parent="AppBaseTheme">
+    <style name="AppTheme" parent="@android:Theme.Holo.Light.DarkActionBar">
         <item name="@android:windowBackground">@drawable/window_bg</item>
-        <item name="@android:colorBackground">@color/window_bg</item>
-        All customizations that are NOT specific to a particular API-level can go here.
-    </style>
- -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="@android:windowBackground">@drawable/window_bg</item>
-        <item name="@android:colorBackground">@color/window_bg</item>
+        <item name="android:actionBarStyle">@style/actionBar</item>
+        <item name="android:actionButtonStyle">@style/actionButton</item>
     </style>
 
-</resources>
+    <style name="actionBar" parent="@android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+    <!-- タイトルバーの背景色 -->
+        <item name="android:background">@drawable/action_menu_bg</item>
+    </style>
+    <style name="actionButton" parent="@android:Widget.Holo.ActionButton">
+    <!-- メニューの背景色 -->
+        <item name="android:background">@drawable/action_menu_bg</item>
+    </style>
+
+ </resources>

@@ -2,12 +2,27 @@
 <resources>
     <color name="white">#ffffff</color>
     <color name="blue">#33b5e5</color>
+    <color name="midnightblue">#001e43</color>
+    <color name="ironblue">#003399</color>
+    <color name="orientalblue">#26499d</color>
+    <color name="orientalblue_light">#52669a</color>
     <color name="darkblue">#0099cc</color>
+    <color name="powderblue">#bccddb</color>
+    <color name="silvergray">#cccccc</color>
+    <color name="orchidgray">#bcc7d7</color>
+    <color name="skygray">#cbd0d3</color>
+    <color name="slategray">#626063</color>
+    <color name="graphite">#594e52</color>
     <color name="red">#ff4444</color>
     <color name="grayStart">#adadad</color>
     <color name="grayEnd">#ffffff</color>
     <color name="black">#000000</color>
     <color name="bg_handle_pressed">#a0a0a0</color>
     <color name="window_bg">#cccccc</color>
-    <drawable name="window_bg">@color/window_bg</drawable>
+    <drawable name="actionbar">@color/orientalblue</drawable>
+    <drawable name="actionbar_pressed">@color/orientalblue_light</drawable>
+    <drawable name="window_bg">@color/skygray</drawable>
+    <drawable name="text_dark">@color/graphite</drawable>
+    <drawable name="text_light">@color/silvergray</drawable>
+
 </resources>
