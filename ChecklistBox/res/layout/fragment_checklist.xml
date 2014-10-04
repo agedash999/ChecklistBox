@@ -20,6 +20,7 @@
             android:id="@+id/iv_checklist"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:layout_gravity="center_vertical"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_checklist" />
 
@@ -41,28 +42,36 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="9dp"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_summery2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="9dp"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
+
     <EditText
         android:id="@+id/etx_checklist_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="18dp"
         android:ems="10"
+        android:enabled="false"
         android:hint="@string/checklist_addview_hint"
-        android:visibility="gone"
-        android:enabled="false">
+        android:visibility="gone" >
     </EditText>
 
     <com.mobeta.android.dslv.DragSortListView
         android:id="@+id/list_checklist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="8dp"
         android:divider="@color/window_bg"
         android:dividerHeight="6dp"
         android:padding="3dp"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="8dp"
         dslv:collapsed_height="2dp"
         dslv:drag_enabled="true"
         dslv:drag_scroll_start="0.33"
@@ -74,16 +83,3 @@
 
 </LinearLayout>
 
-    <!--
-         <TextView
-        android:id="@+id/tv_chlist_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="3dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="6dp"
-        android:gravity="center"
-        android:textSize="18sp"
-        />
-
-    -->

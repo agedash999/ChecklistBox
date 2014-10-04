@@ -13,6 +13,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -54,6 +55,7 @@ implements ContextMenuFragment{
 	private EditText etx_checklist_add;
 	private TextView tv_checklist_title;
 	private TextView tv_summery;
+	private TextView tv_summery2;
 	private ViewGroup header;
 
 	private final int CONTEXT_MENU_THRESHOLD = 100;
@@ -96,6 +98,7 @@ implements ContextMenuFragment{
 		this.header = (ViewGroup) rootView.findViewById(R.id.checklist_header);
 		this.tv_checklist_title = (TextView) rootView.findViewById(R.id.title_checklist);
 		this.tv_summery = (TextView) rootView.findViewById(R.id.tv_summery);
+		this.tv_summery2 = (TextView) rootView.findViewById(R.id.tv_summery2);
 
 		this.etx_checklist_add = (EditText)rootView.findViewById(R.id.etx_checklist_add);
 
@@ -121,8 +124,11 @@ implements ContextMenuFragment{
 					if (nodeTitle != null && nodeTitle.length() != 0) {
 						ChecklistNode node = new ChecklistNode(
 								nodeTitle, false);
-						activity.getChecklistManager().addNode(mChecklist, node);
+						ChecklistManager manager = activity.getChecklistManager();
+						manager.addNode(mChecklist, node);
+						manager.sortNode(mChecklist);
 						refreshList();
+						mDslv.invalidateViews();
 						etx_checklist_add.setText("");
 					}
 					return true;
@@ -164,6 +170,8 @@ implements ContextMenuFragment{
 
 		activity.getChecklistManager().sortNode(mChecklist);
 		activity.notifyChangeFragment(this);
+
+		setHasOptionsMenu(true);
 
 		return rootView;
 	}
@@ -260,7 +268,14 @@ implements ContextMenuFragment{
 
 	private void refleshHeader(){
 		this.tv_checklist_title.setText(mChecklist.getTitle());
-		this.tv_summery.setText(getSummery());
+		// サマリー１にはメモ・２には日付を表示
+
+		if(mChecklist.getMemo().equals("")){
+			this.tv_summery.setText(" ");
+		}else{
+			this.tv_summery.setText(mChecklist.getMemo());
+		}
+		this.tv_summery2.setText(getDateSummery());
 
 	}
 
@@ -297,6 +312,23 @@ implements ContextMenuFragment{
 	private void onDeleteNodeCanseled(int nodeIndex){
 
 	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		if(mChecklist.getType() == Checklist.CHECKLIST_RUNNING){
+
+		}else if(mChecklist.getType() == Checklist.CHECKLIST_STORE){
+			menu.getItem(2).setEnabled(false);
+			menu.getItem(2).setIcon(R.drawable.ic_alpha);
+		}else if(mChecklist.getType() == Checklist.CHECKLIST_HISTORY){
+			menu.getItem(1).setEnabled(false);
+			menu.getItem(1).setIcon(R.drawable.ic_alpha);
+			menu.getItem(2).setEnabled(false);
+			menu.getItem(2).setIcon(R.drawable.ic_alpha);
+		}
+		super.onPrepareOptionsMenu(menu);
+	}
+
 
 	private void refreshList(){
 		mCLAdapter.notifyDataSetChanged();
@@ -388,7 +420,7 @@ implements ContextMenuFragment{
 		case MainActivity.MENU_SORT_ID:
 			//TODO ソート順ダイアログ表示処理
 			final ChecklistManager manager = activity.getChecklistManager();
-			int sortType = manager.getNodeSortType();
+			int sortType = manager.getNodeSortType(mChecklist.getType());
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
@@ -416,10 +448,10 @@ implements ContextMenuFragment{
 					int checked = group.getCheckedRadioButtonId();
 					boolean section = false;
 					if(checked == radioSortNo.getId()){
-						manager.setNodeSortType(ChecklistManager.SORTTYPE_SORTNO);
+						manager.setNodeSortType(mChecklist.getType(),ChecklistManager.SORTTYPE_SORTNO);
 						section = false;
 					}else if(checked == radioCheckDown.getId()){
-						manager.setNodeSortType(ChecklistManager.SORTTYPE_SORTNO_CHECKED);
+						manager.setNodeSortType(mChecklist.getType(),ChecklistManager.SORTTYPE_SORTNO_CHECKED);
 						section = true;
 					}
 					manager.sortNode(mChecklist);
@@ -463,55 +495,77 @@ implements ContextMenuFragment{
 	}
 
 
-	private String getSummery(){
+//	private String getSummery(){
+//
+//		String summery = null;
+//		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(activity);
+//		String summeryType;
+//		String dateString = "";
+//
+//		switch (mChecklist.getType()) {
+//		case Checklist.CHECKLIST_RUNNING:
+//			// TODO いったん初期値を設定（本来はXMLから読み込みたい）
+//			summeryType = pref.getString(SettingActivity.KEY_VIEWITEM_HOME, "date");
+//			dateString = activity.getString(R.string.checklist_row_expdate);
+//			break;
+//
+//		case Checklist.CHECKLIST_STORE:
+//			// TODO いったん初期値を設定（本来はXMLから読み込みたい）
+//			summeryType = pref.getString(SettingActivity.KEY_VIEWITEM_STOCK, "date");
+//			dateString = activity.getString(R.string.checklist_row_credate);
+//			break;
+//
+//		case Checklist.CHECKLIST_HISTORY:
+//			// TODO いったん初期値を設定（本来はXMLから読み込みたい）
+//			summeryType = pref.getString(SettingActivity.KEY_VIEWITEM_HISTORY, "date");
+//			dateString = activity.getString(R.string.checklist_row_findate);
+//			break;
+//
+//		default:
+//			summeryType = "date";
+//			break;
+//		}
+//
+//		if(summeryType.equals("date")){
+//			summery = dateString + mChecklist.getDateFormated();
+//		}else if(summeryType.equals("node")){
+//			if(mChecklist.getType() == Checklist.CHECKLIST_RUNNING){
+//				summery = activity.getString(R.string.checklist_row_node_fin_qty) +
+//						mChecklist.getUncheckedQty() + "/" + mChecklist.getNodeQty();
+//			}else{
+//				summery = activity.getString(R.string.checklist_row_nodeqty) +
+//						mChecklist.getNodeQty();
+//			}
+//		}else if(summeryType.equals("memo")){
+//			summery = mChecklist.getMemo();
+//		}
+//
+//		return summery;
+//	}
+
+	private String getDateSummery(){
 
 		String summery = null;
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(activity);
-		String summeryType;
 		String dateString = "";
 
 		switch (mChecklist.getType()) {
 		case Checklist.CHECKLIST_RUNNING:
-			// TODO いったん初期値を設定（本来はXMLから読み込みたい）
-			summeryType = pref.getString(SettingActivity.KEY_VIEWITEM_HOME, "date");
 			dateString = activity.getString(R.string.checklist_row_expdate);
 			break;
 
 		case Checklist.CHECKLIST_STORE:
-			// TODO いったん初期値を設定（本来はXMLから読み込みたい）
-			summeryType = pref.getString(SettingActivity.KEY_VIEWITEM_STOCK, "date");
 			dateString = activity.getString(R.string.checklist_row_credate);
 			break;
 
 		case Checklist.CHECKLIST_HISTORY:
-			// TODO いったん初期値を設定（本来はXMLから読み込みたい）
-			summeryType = pref.getString(SettingActivity.KEY_VIEWITEM_HISTORY, "date");
 			dateString = activity.getString(R.string.checklist_row_findate);
 			break;
 
-		default:
-			summeryType = "date";
-			break;
 		}
-
-		if(summeryType.equals("date")){
-			summery = dateString + mChecklist.getDateFormated();
-		}else if(summeryType.equals("node")){
-			if(mChecklist.getType() == Checklist.CHECKLIST_RUNNING){
-				summery = activity.getString(R.string.checklist_row_node_fin_qty) +
-						mChecklist.getUncheckedQty() + "/" + mChecklist.getNodeQty();
-			}else{
-				summery = activity.getString(R.string.checklist_row_nodeqty) +
-						mChecklist.getNodeQty();
-			}
-		}else if(summeryType.equals("memo")){
-			summery = mChecklist.getMemo();
-		}
-
+		summery = dateString + mChecklist.getDateFormated();
 		return summery;
 	}
-
-
 
 
 
@@ -547,7 +601,7 @@ implements ContextMenuFragment{
 			this.mChecklist = clist;
 			//TODO テスト的に指定
 			//			mDivPos = mList.size() /2 ;
-			if(activity.getChecklistManager().getNodeSortType()
+			if(activity.getChecklistManager().getNodeSortType(mChecklist.getType())
 					== ChecklistManager.SORTTYPE_SORTNO_CHECKED){
 				//TODO ちょっと止めとく
 				enableSection = true;
@@ -621,8 +675,15 @@ implements ContextMenuFragment{
 				//保存画面の場合
 			}else if(mChecklist.getType() == Checklist.CHECKLIST_STORE){
 
-				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
-				((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
+				//ドラッグアイコン表示
+				if(moveMode){
+					((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
+					((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.GONE);
+				}else{
+					((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
+					((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
+					view.setLongClickable(true);
+				}
 
 				//チェックボックス
 				CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);

@@ -62,6 +62,10 @@ public class MainActivity extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		//設定の読み込み（初回起動のみ）
+		PreferenceManager.setDefaultValues(this, R.xml.setting, false);
+		loadPreference();
+
 		homeFragment = HomeFragment.newInstance();
 		stockFragment = StockFragment.newInstance();
 		historyFragment = HistoryFragment.newInstance();
@@ -110,10 +114,11 @@ public class MainActivity extends FragmentActivity{
         getActionBar().setDisplayHomeAsUpEnabled(true);
 //		setTitle("");
 
+        // TODO changeFragmentを通す？
 		// 起動時のFragmentとしてホーム画面をセットする
-//		getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
-//		.commit();
-		callSettings();
+		getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
+		.commit();
+//		callSettings();
 
 		mCLManager = new ChecklistManager(this);
 	}

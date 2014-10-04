@@ -57,6 +57,9 @@ public class MyUncaughtExceptionHandler implements UncaughtExceptionHandler {
 		File file = BUG_REPORT_FILE;
         PrintWriter pw = null;
         pw = new PrintWriter(new FileOutputStream(file));
+
+        pw.println(e.toString());
+
         StringBuilder sb = new StringBuilder();
         int len = stacks.length;
         for (int i = 0; i < len; i++) {

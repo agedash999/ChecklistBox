@@ -11,6 +11,7 @@
         android:id="@+id/iv_drag_handle"
         android:layout_width="45dp"
         android:layout_height="45dp"
+        android:layout_gravity="center_vertical"
         android:src="@drawable/drag"
         android:scaleType="fitCenter"
         />

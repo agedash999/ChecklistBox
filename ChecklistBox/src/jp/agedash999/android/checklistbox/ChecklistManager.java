@@ -1,9 +1,11 @@
 package jp.agedash999.android.checklistbox;
 
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 public class ChecklistManager {
@@ -32,9 +34,12 @@ public class ChecklistManager {
 	public static final int SORTTYPE_DATE_DESC = 3;
 	public static final int SORTTYPE_SORTNO_CHECKED = 4;
 
-	private int runninglistSortType;
-	private int nodeSortType;
-	private int categorySortType;
+	private static final String PREF_KEY_SORT_HOME = "key_sort_home";
+	private static final String PREF_KEY_SORT_STOCK = "key_sort_stock";
+	private static final String PREF_KEY_SORT_HISTORY = "key_sort_history";
+	private static final String PREF_KEY_SORT_NODEHOME = "key_sort_nodehome";
+	private static final String PREF_KEY_SORT_NODESTOCK = "key_sort_nodestock";
+	private static final String PREF_KEY_SORT_NODEHISTORY = "key_sort_nodehistory";
 
 	public ChecklistManager(MainActivity activity){
 		mActivity = activity;
@@ -77,9 +82,8 @@ public class ChecklistManager {
 		this.historyList = mDBAccess.getHistoryListAll();
 
 		//TODO 設定処理差し込み
-		runninglistSortType = SORTTYPE_SORTNO;
-		nodeSortType = SORTTYPE_SORTNO_CHECKED;
-		categorySortType = SORTTYPE_SORTNO;
+
+		SharedPreferences pref = mActivity.getPreference();
 
 		//TODO デバッグ出力
 		testRunningDBoutput();
@@ -96,6 +100,7 @@ public class ChecklistManager {
 		clist1.addNode("ストレッチ", false);
 		clist1.addNode("天気の確認", false);
 		clist1.setMemo("毎朝必ずやるリスト");
+		clist1.setDate(new GregorianCalendar(2014, 10, 15));
 		mDBAccess.testDataAdd(clist1);
 
 		Checklist clist2 = new Checklist(Checklist.CHECKLIST_RUNNING, "旅行の持ち物（登別）", null);
@@ -110,12 +115,14 @@ public class ChecklistManager {
 		clist2.addNode("ライター", true);
 		clist2.addNode("爪切り", false);
 		clist2.setMemo("朝必ずチェックする");
+		clist2.setDate(new GregorianCalendar(2015, 3, 25));
 		mDBAccess.testDataAdd(clist2);
 
 		Checklist clist4 = new Checklist(Checklist.CHECKLIST_RUNNING, "市役所でやること", null);
 		clist4.addNode("住民票をとる", false);
 		clist4.addNode("戸籍の写しを取る", false);
 		clist4.addNode("住基カードの発行申請するうううううううううううう", false);
+		clist4.setDate(new GregorianCalendar(2014, 12, 20));
 		mDBAccess.testDataAdd(clist4);
 	}
 
@@ -126,12 +133,14 @@ public class ChecklistManager {
 		clist1.addNode("明日の持ち物準備", true);
 		clist1.addNode("日記を書く", true);
 		clist1.addNode("明日の天気の確認", true);
+		clist1.setDate(new GregorianCalendar(2014, 9, 20));
 		mDBAccess.testDataAdd(clist1);
 
 		Checklist clist2 = new Checklist(Checklist.CHECKLIST_HISTORY, "バイトの面接", null);
 		clist2.addNode("履歴書準備", true);
 		clist2.addNode("スーツ準備", true);
 		clist2.addNode("交通手段確認", true);
+		clist1.setDate(new GregorianCalendar(2011, 2, 1));
 		mDBAccess.testDataAdd(clist2);
 
 		Checklist clist3 = new Checklist(Checklist.CHECKLIST_HISTORY, "旅行の持ち物（大阪）", null);
@@ -145,12 +154,14 @@ public class ChecklistManager {
 		clist3.addNode("タバコ", true);
 		clist3.addNode("ライター", true);
 		clist3.addNode("地球の歩き方（大阪）", true);
+		clist1.setDate(new GregorianCalendar(2014, 5, 1));
 		mDBAccess.testDataAdd(clist3);
 
 		Checklist clist4 = new Checklist(Checklist.CHECKLIST_HISTORY, "市役所でやること", null);
 		clist4.addNode("住民票をとる", true);
 		clist4.addNode("戸籍の写しを取る", true);
 		clist4.addNode("住基カードの発行申請するうううううううううううう", true);
+		clist1.setDate(new GregorianCalendar(2014, 7, 28));
 		mDBAccess.testDataAdd(clist4);
 	}
 
@@ -168,6 +179,7 @@ public class ChecklistManager {
 		clist1_1.addNode("明日の持ち物準備", false);
 		clist1_1.addNode("日記を書く", false);
 		clist1_1.addNode("明日の天気の確認", false);
+		clist1_1.setDate(new GregorianCalendar(2014, 7, 28));
 		mDBAccess.testDataAdd(clist1_1);
 
 		Checklist clist1_2 = new Checklist
@@ -175,6 +187,7 @@ public class ChecklistManager {
 		clist1_2.addNode("昼食食べる", false);
 		clist1_2.addNode("歯磨き", false);
 		clist1_2.addNode("昼寝", false);
+		clist1_2.setDate(new GregorianCalendar(2014, 5, 20));
 		mDBAccess.testDataAdd(clist1_2);
 
 		Checklist clist1_3 = new Checklist
@@ -184,6 +197,7 @@ public class ChecklistManager {
 		clist1_3.addNode("日記書く", false);
 		clist1_3.addNode("ジョギング", false);
 		clist1_3.addNode("神に祈る", false);
+		clist1_3.setDate(new GregorianCalendar(2014, 8, 8));
 		mDBAccess.testDataAdd(clist1_3);
 
 //		stockList.put(98765432, list1);
@@ -200,6 +214,7 @@ public class ChecklistManager {
 		clist2_1.addNode("明日の持ち物準備", false);
 		clist2_1.addNode("持ち物をもう一度確認", false);
 		clist2_1.addNode("朝食食べる", false);
+		clist2_1.setDate(new GregorianCalendar(2014, 6, 8));
 		mDBAccess.testDataAdd(clist2_1);
 
 		Checklist clist2_2 = new Checklist
@@ -207,6 +222,7 @@ public class ChecklistManager {
 		clist2_2.addNode("履歴書準備", false);
 		clist2_2.addNode("スーツ準備", false);
 		clist2_2.addNode("交通手段確認", false);
+		clist2_2.setDate(new GregorianCalendar(2012, 6, 8));
 		mDBAccess.testDataAdd(clist2_2);
 
 		ChecklistCategory category3 = new ChecklistCategory("旅行関連");
@@ -231,6 +247,7 @@ public class ChecklistManager {
 				(Checklist.CHECKLIST_STORE, "国内旅行", category3);
 		clist3_2.addNode("免許証", false);
 		clist3_2.addNode("交通手段確認", false);
+		clist3_2.setDate(new GregorianCalendar(2014, 9,14));
 		mDBAccess.testDataAdd(clist3_2);
 
 		Checklist clist3_3 = new Checklist
@@ -454,7 +471,6 @@ public class ChecklistManager {
 		//データベース更新
 		//リストに追加
 
-		int id;
 		switch (clist.getType()) {
 		case Checklist.CHECKLIST_RUNNING:
 			mDBAccess.insertNewChecklist(clist);
@@ -565,23 +581,24 @@ public class ChecklistManager {
 	}
 
 	public void sortChecklist(int cltype){
-		if(runninglistSortType==SORTTYPE_SORTNO){
+		int sortType = getChecklistSortType(cltype);
+		if(sortType==SORTTYPE_SORTNO){
 			sortChecklistSortNo(cltype);
-		}else if(runninglistSortType== SORTTYPE_DATE_ASC){
+		}else if(sortType== SORTTYPE_DATE_ASC){
 			sortChecklistDate(cltype ,false);
-		}else if(runninglistSortType== SORTTYPE_DATE_DESC){
+		}else if(sortType== SORTTYPE_DATE_DESC){
 			sortChecklistDate(cltype ,true);
-			//TODO reverse
 		}else{
 			//ここには入らない
 		}
 	}
 
 	public void sortNode(Checklist clist){
-		if(nodeSortType==SORTTYPE_SORTNO_CHECKED){
+		int sortType = getNodeSortType(clist.getType());
+		if(sortType==SORTTYPE_SORTNO_CHECKED){
 			sortNodeSortNo(clist);
 			sortNodeChecked(clist);
-		}else if(nodeSortType==SORTTYPE_SORTNO){
+		}else if(sortType==SORTTYPE_SORTNO){
 			sortNodeSortNo(clist);
 		}else{
 			//ここには入らない
@@ -589,7 +606,7 @@ public class ChecklistManager {
 	}
 
 	public void sortCategory(){
-		if(categorySortType==SORTTYPE_SORTNO){
+		if(getCategorySortType()==SORTTYPE_SORTNO){
 			sortCategorySortNo();
 		}else{
 			//ここには入らない
@@ -726,32 +743,74 @@ public class ChecklistManager {
 		Collections.sort(stockList, new ChecklistCategory.CategorySortNoComp());
 	}
 
-	private void reverseChecklist(int cltype){
-
+	public int getChecklistSortType(int clType){
+		if(clType == Checklist.CHECKLIST_RUNNING){
+			return mActivity.getPreference().getInt(PREF_KEY_SORT_HOME, SORTTYPE_SORTNO);
+		}else if(clType == Checklist.CHECKLIST_STORE){
+			return SORTTYPE_SORTNO;
+		}else if(clType == Checklist.CHECKLIST_HISTORY){
+			return SORTTYPE_DATE_DESC;
+		}
+		//TODO 例外
+		return 0;
 	}
 
-	public int getRunninglistSortType() {
-		return runninglistSortType;
+	public int getNodeSortType(int clType){
+		if(clType == Checklist.CHECKLIST_RUNNING){
+			return mActivity.getPreference().getInt(PREF_KEY_SORT_NODEHOME, SORTTYPE_SORTNO_CHECKED);
+		}else if(clType == Checklist.CHECKLIST_STORE){
+			return SORTTYPE_SORTNO;
+		}else if(clType == Checklist.CHECKLIST_HISTORY){
+			return SORTTYPE_SORTNO;
+		}
+		//TODO 例外
+		return 0;
 	}
 
-	public void setRunninglistSortType(int runninglistSortType) {
-		this.runninglistSortType = runninglistSortType;
+	public int getCategorySortType(){
+		return SORTTYPE_SORTNO;
 	}
 
-	public int getNodeSortType() {
-		return nodeSortType;
+	public void setChecklistSortType(int clType, int sortType){
+		if(clType == Checklist.CHECKLIST_RUNNING){
+			if(1 <= sortType & sortType <= 3){
+				SharedPreferences.Editor editor = mActivity.getPreference().edit();
+				editor.putInt(PREF_KEY_SORT_HOME, sortType);
+				editor.apply();
+			}else{
+				//TODO 例外
+				throw new Error();
+			}
+		}else if(clType == Checklist.CHECKLIST_STORE){
+			//いまのところ不要 任意のみ
+			//TODO 例外
+			throw new Error();
+
+		}else if(clType == Checklist.CHECKLIST_HISTORY){
+			//いまのところ不要 日付降順のみ
+			//TODO 例外
+			throw new Error();
+		}
 	}
 
-	public void setNodeSortType(int nodeSortType) {
-		this.nodeSortType = nodeSortType;
+	public void setNodeSortType(int clType, int sortType){
+		if(clType == Checklist.CHECKLIST_RUNNING){
+			if(1 == sortType | sortType == 4){
+				SharedPreferences.Editor editor = mActivity.getPreference().edit();
+				editor.putInt(PREF_KEY_SORT_NODEHOME, sortType);
+				editor.apply();
+			}else{
+				//TODO 例外
+				throw new Error();
+			}
+		}else if(clType == Checklist.CHECKLIST_STORE){
+			//いまのところ不要 任意のみ
+			//TODO 例外
+			throw new Error();
+		}else if(clType == Checklist.CHECKLIST_HISTORY){
+			//いまのところ不要 任意のみ
+			//TODO 例外
+			throw new Error();
+		}
 	}
-
-	public int getCategorySortType() {
-		return categorySortType;
-	}
-
-	public void setCategorySortType(int categorySortType) {
-		this.categorySortType = categorySortType;
-	}
-
 }

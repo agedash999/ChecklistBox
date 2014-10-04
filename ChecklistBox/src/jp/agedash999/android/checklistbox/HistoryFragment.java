@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,8 @@ implements ContextMenuFragment{
 		activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_HISTORY);
 		activity.notifyChangeFragment(this);
 
+		setHasOptionsMenu(true);
+
 		return rootView;
 	}
 
@@ -89,6 +92,19 @@ implements ContextMenuFragment{
 
 		return super.onContextItemSelected(item);
 	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.getItem(0).setEnabled(false);
+		menu.getItem(0).setIcon(R.drawable.ic_alpha);
+		menu.getItem(1).setEnabled(false);
+		menu.getItem(1).setIcon(R.drawable.ic_alpha);
+		menu.getItem(2).setEnabled(false);
+		menu.getItem(2).setIcon(R.drawable.ic_alpha);
+
+		super.onPrepareOptionsMenu(menu);
+	}
+
 
 	@Override
 	public void onAttach(Activity activity) {

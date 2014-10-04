@@ -188,7 +188,7 @@ implements ContextMenuFragment{
 		case MainActivity.MENU_SORT_ID:
 			//TODO ソート順ダイアログ表示処理
 			final ChecklistManager manager = activity.getChecklistManager();
-			int sortType = manager.getRunninglistSortType();
+			int sortType = manager.getChecklistSortType(Checklist.CHECKLIST_RUNNING);
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
@@ -220,11 +220,14 @@ implements ContextMenuFragment{
 					// TODO 自動生成されたメソッド・スタブ
 					int checked = group.getCheckedRadioButtonId();
 					if(checked == radioSortNo.getId()){
-						manager.setRunninglistSortType(ChecklistManager.SORTTYPE_SORTNO);
+						manager.setChecklistSortType(
+								Checklist.CHECKLIST_RUNNING, ChecklistManager.SORTTYPE_SORTNO);
 					}else if(checked == radioDateAsc.getId()){
-						manager.setRunninglistSortType(ChecklistManager.SORTTYPE_DATE_ASC);
+						manager.setChecklistSortType(
+								Checklist.CHECKLIST_RUNNING, ChecklistManager.SORTTYPE_DATE_ASC);
 					}else if(checked == radioDateDesc.getId()){
-						manager.setRunninglistSortType(ChecklistManager.SORTTYPE_DATE_DESC);
+						manager.setChecklistSortType(
+								Checklist.CHECKLIST_RUNNING, ChecklistManager.SORTTYPE_DATE_DESC);
 					}
 					manager.sortChecklist(Checklist.CHECKLIST_RUNNING);
 					mDslv.invalidateViews();
