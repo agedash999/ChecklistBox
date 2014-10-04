@@ -425,6 +425,7 @@ public class ChecklistManager {
 			updateNodeInfo(clist, node);
 		}
 
+		//TODO テスト出力
 		Log.d("checklist_box", node.getTitle() + " " + to + " " + node.getSortNo());
 		testNodeDBOutput(clist);
 		Log.d("checklist_box", "*************************************************");
@@ -603,6 +604,12 @@ public class ChecklistManager {
 		}else{
 			//ここには入らない
 		}
+
+		Log.d("checklist_box", "*************************************************");
+		testNodeDBOutput(clist);
+		Log.d("checklist_box", "*************************************************");
+		testNodeFieldOutput(clist);
+
 	}
 
 	public void sortCategory(){
@@ -668,6 +675,7 @@ public class ChecklistManager {
 			updateCategoryInfo(category);
 		}
 
+		//TODO テスト出力
 		Log.d("checklist_box", category.getTitle() + " " + to + " " + category.getSortNo());
 		testCategoryDBOutput();
 		Log.d("checklist_box", "*************************************************");
@@ -729,7 +737,6 @@ public class ChecklistManager {
 			Log.d("checklist_box", str);
 		}
 	}
-
 
 	private void sortNodeSortNo(Checklist clist){
 		Collections.sort(clist.getChecklist(), new ChecklistNode.NodeSortNoComp());

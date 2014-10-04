@@ -128,7 +128,7 @@ implements ContextMenuFragment{
 						manager.addNode(mChecklist, node);
 						manager.sortNode(mChecklist);
 						refreshList();
-						mDslv.invalidateViews();
+//						mDslv.invalidateViews();
 						etx_checklist_add.setText("");
 					}
 					return true;
@@ -331,6 +331,7 @@ implements ContextMenuFragment{
 
 
 	private void refreshList(){
+		mCLAdapter.refleshDivPos();
 		mCLAdapter.notifyDataSetChanged();
 	}
 
@@ -639,21 +640,26 @@ implements ContextMenuFragment{
 			//TODO こっちに修正する予定
 			//			((TextView)view.findViewById(R.id.txv_position_hide)).setText(Integer.toString(cnode.getID()));
 
+			CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);
 			//ホーム画面の場合
 			if(mChecklist.getType() == Checklist.CHECKLIST_RUNNING){
 
 				//ドラッグアイコン表示
 				if(moveMode){
 					((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
-					((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.GONE);
+					cbx_checked.setVisibility(View.VISIBLE);
+					cbx_checked.setEnabled(false);
+					//TODO 色設定の統一
+					cbx_checked.setBackgroundColor(Color.GRAY);
+					view.setLongClickable(false);
 				}else{
 					((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
-					((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
+					cbx_checked.setVisibility(View.VISIBLE);
+					cbx_checked.setEnabled(true);
 					view.setLongClickable(true);
 				}
 
 				//チェックボックス
-				CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);
 				cbx_checked.setChecked(cnode.isChecked());
 				cbx_checked.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -665,7 +671,7 @@ implements ContextMenuFragment{
 						node.setChecked(isChecked);
 						activity.getChecklistManager().nodeUpdated(mChecklist, node);
 						activity.getChecklistManager().sortNode(mChecklist);
-						mDivPos = mChecklist.getUncheckedQty();
+//						mDivPos = mChecklist.getUncheckedQty(); ※処理が重複する
 						refreshList();
 
 						verifyFinished(node);
@@ -678,15 +684,14 @@ implements ContextMenuFragment{
 				//ドラッグアイコン表示
 				if(moveMode){
 					((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.VISIBLE);
-					((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.GONE);
+					cbx_checked.setVisibility(View.GONE);
 				}else{
 					((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
-					((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
+					cbx_checked.setVisibility(View.VISIBLE);
 					view.setLongClickable(true);
 				}
 
 				//チェックボックス
-				CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);
 				cbx_checked.setChecked(false);
 				cbx_checked.setEnabled(false);
 
@@ -697,10 +702,9 @@ implements ContextMenuFragment{
 			}else if(mChecklist.getType() == Checklist.CHECKLIST_HISTORY){
 
 				((ImageView)view.findViewById(R.id.iv_drag_handle)).setVisibility(View.GONE);
-				((CheckBox)view.findViewById(R.id.cbx_checked)).setVisibility(View.VISIBLE);
+				cbx_checked.setVisibility(View.VISIBLE);
 
 				//チェックボックス
-				CheckBox cbx_checked = (CheckBox)view.findViewById(R.id.cbx_checked);
 				cbx_checked.setChecked(true);
 				cbx_checked.setEnabled(false);
 				//TODO 色設定の統一
@@ -805,6 +809,14 @@ implements ContextMenuFragment{
 				mDivPos = -1;
 			}
 			enableSection = isEnable;
+		}
+
+		public void refleshDivPos(){
+			if(enableSection){
+				mDivPos = mChecklist.getUncheckedQty();
+			}else{
+				mDivPos = -1;
+			}
 		}
 
 	}

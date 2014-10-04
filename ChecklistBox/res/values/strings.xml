@@ -61,7 +61,7 @@
     <string name="dialog_radio_sort_expdate_asc">実施日(昇順)</string>
     <string name="dialog_radio_sort_expdate_desc">実施日(降順)</string>
     <string name="dialog_radio_sort_check_off">任意の並び順</string>
-    <string name="dialog_radio_sort_check_down">完了済を上に</string>
+    <string name="dialog_radio_sort_check_down">完了済を下に</string>
     <string name="dialog_title_category_delete">フォルダ削除</string>
     <string name="dialog_message_category_delete">フォルダを削除します</string>
     <string name="dialog_message_clist_complete">リストを完了し、履歴に送りますか？</string>

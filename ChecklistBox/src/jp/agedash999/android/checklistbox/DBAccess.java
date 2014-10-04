@@ -361,6 +361,7 @@ public class DBAccess {
 		int id = (int)mDBHelper.getWritableDatabase().insert(
 				tableName, null, mCV);
 		node.setID(id);
+		node.setSortNo(sortNum);
 		mCV.clear();
 	}
 
