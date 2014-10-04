@@ -1,5 +1,6 @@
 package jp.agedash999.android.checklistbox;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -504,6 +505,7 @@ public class ChecklistManager {
 	public void completeChecklist(Checklist clist){
 		//TODO 全チェック入れる？
 		clist.setType(Checklist.CHECKLIST_HISTORY);
+		clist.setDate(Calendar.getInstance());
 		mDBAccess.completeChecklist(clist);
 		runningList.remove(clist);
 		historyList.add(clist);
