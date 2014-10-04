@@ -1,5 +1,9 @@
 package jp.agedash999.android.checklistbox;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -19,6 +23,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
@@ -28,11 +33,11 @@ public class CategoryEditFragment extends AbstractChildFragment{
 	private MainActivity activity;
 	private View rootView;
 	private CategoryListAdapter mCLAdapter;
-    private DragSortListView mDslv;
-    private DragSortController mController;
-    private String mFragmentTitle;
+	private DragSortListView mDslv;
+	private DragSortController mController;
+	private String mFragmentTitle;
 
-    private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_CATEGORYEDIT_ID;
+	private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_CATEGORYEDIT_ID;
 
 	private final int CONTEXT_MENUID_EDIT = 0;
 	private final int CONTEXT_MENUID_DELETE = 1;
@@ -40,24 +45,24 @@ public class CategoryEditFragment extends AbstractChildFragment{
 	private final int idDeleteDialogLayout = R.layout.dialog_category_delete;
 	private final int idDeleteDialogTitle = R.string.dialog_title_category_delete;
 
-    private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
-        @Override
-        public void drop(int from, int to) {
-            if (from != to) {
-                ChecklistCategory category = mCLAdapter.getItem(from);
+	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
+		@Override
+		public void drop(int from, int to) {
+			if (from != to) {
+				ChecklistCategory category = mCLAdapter.getItem(from);
 
-                activity.getChecklistManager().moveCategory(category, to);
-                mCLAdapter.notifyDataSetChanged();
+				activity.getChecklistManager().moveCategory(category, to);
+				mCLAdapter.notifyDataSetChanged();
 
-                //TODO テスト用
-                activity.getChecklistManager().testCategoryFieldOutput();
-            }
-        }
-    };
+				//TODO テスト用
+				activity.getChecklistManager().testCategoryFieldOutput();
+			}
+		}
+	};
 
-    public DragSortController getController() {
-        return mController;
-    }
+	public DragSortController getController() {
+		return mController;
+	}
 
 	public CategoryEditFragment(){
 		super();
@@ -136,62 +141,70 @@ public class CategoryEditFragment extends AbstractChildFragment{
 			break;
 
 		case CONTEXT_MENUID_DELETE:
-			AlertDialog.Builder builder_del = new AlertDialog.Builder(activity);
-			View view = activity.getLayoutInflater().inflate(idDeleteDialogLayout, null);
+			if(activity.getChecklistManager().verifyDeleteCategory(contextCategory)){
 
-			//EditTextにカテゴリタイトルを設定・編集不可に
-			EditText categoryTitle = (EditText)view.findViewById(R.id.edt_category_title);
-			categoryTitle.setText(contextCategory.getTitle());
-			categoryTitle.setFocusable(false);
+				AlertDialog.Builder builder_del = new AlertDialog.Builder(activity);
+				View view = activity.getLayoutInflater().inflate(idDeleteDialogLayout, null);
+
+				//EditTextにカテゴリタイトルを設定・編集不可に
+				EditText categoryTitle = (EditText)view.findViewById(R.id.edt_category_title);
+				categoryTitle.setText(contextCategory.getTitle());
+				categoryTitle.setFocusable(false);
 
 
-			final Spinner spinner = (Spinner)view.findViewById(R.id.spn_category);
-			spinner.setAdapter(new ArrayAdapter<ChecklistCategory>(
-					activity, android.R.layout.simple_spinner_item,
-					activity.getChecklistManager().getStockList()));
+				final Spinner spinner = (Spinner)view.findViewById(R.id.spn_category);
+				spinner.setAdapter(new ArrayAdapter<ChecklistCategory>(
+						activity, android.R.layout.simple_spinner_item,
+						createCategoryListForDelete(activity.getChecklistManager().getStockList(), contextCategory)));
+//				spinner.setAdapter(new ArrayAdapter<ChecklistCategory>(
+//						activity, android.R.layout.simple_spinner_item,
+//						activity.getChecklistManager().getStockList()));
 
-			final TextView tv_spinner = (TextView)view.findViewById(R.id.tv_label_category);
+				final TextView tv_spinner = (TextView)view.findViewById(R.id.tv_label_category);
 
-			final CheckBox cbx = (CheckBox)view.findViewById(R.id.cbx_delete);
+				final CheckBox cbx = (CheckBox)view.findViewById(R.id.cbx_delete);
 
-			cbx.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					if(isChecked){
-						spinner.setVisibility(View.GONE);
-						tv_spinner.setVisibility(View.GONE);
-					}else{
-						spinner.setVisibility(View.VISIBLE);
-						tv_spinner.setVisibility(View.VISIBLE);
+				cbx.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						if(isChecked){
+							spinner.setVisibility(View.GONE);
+							tv_spinner.setVisibility(View.GONE);
+						}else{
+							spinner.setVisibility(View.VISIBLE);
+							tv_spinner.setVisibility(View.VISIBLE);
+						}
 					}
-				}
-			});
+				});
 
-			cbx.setChecked(true);
-			spinner.setVisibility(View.GONE);
-			tv_spinner.setVisibility(View.GONE);
+				cbx.setChecked(true);
+				spinner.setVisibility(View.GONE);
+				tv_spinner.setVisibility(View.GONE);
 
-			builder_del.setView(view)
-			.setTitle(idDeleteDialogTitle)
-			.setPositiveButton(R.string.dialog_button_category_delete, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-					if(!cbx.isChecked()){
-						activity.getChecklistManager().moveChecklistToCategory(
-								contextCategory,
-								activity.getChecklistManager().getStockList().get(spinner.getSelectedItemPosition()));
+				builder_del.setView(view)
+				.setTitle(idDeleteDialogTitle)
+				.setPositiveButton(R.string.dialog_button_category_delete, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+						if(!cbx.isChecked()){
+							activity.getChecklistManager().moveChecklistToCategory(
+									contextCategory,
+									(ChecklistCategory)spinner.getSelectedItem());
+						}
+						activity.getChecklistManager().deleteCategory(contextCategory);
+						mCLAdapter.notifyDataSetChanged();
 					}
-					activity.getChecklistManager().deleteCategory(contextCategory);
-					mCLAdapter.notifyDataSetChanged();
-				}
-			})
-			.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-					// TODO 自動生成されたメソッド・スタブ
-				}
-			})
-			.show();
+				})
+				.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+						// TODO 自動生成されたメソッド・スタブ
+					}
+				})
+				.show();
+			}else{
+				Toast.makeText(activity, R.string.dialog_message_category_notdelete, Toast.LENGTH_SHORT).show();
+			}
 
 			break;
 
@@ -200,6 +213,22 @@ public class CategoryEditFragment extends AbstractChildFragment{
 		}
 
 		return super.onContextItemSelected(item);
+	}
+
+	private List<ChecklistCategory> createCategoryListForDelete(
+			List<ChecklistCategory> catList , ChecklistCategory deleteCategory){
+		List<ChecklistCategory> forDelete = new ArrayList<ChecklistCategory>();
+
+		Iterator<ChecklistCategory> iter = catList.iterator();
+		ChecklistCategory category;
+		while(iter.hasNext()){
+			category = iter.next();
+			if(category != deleteCategory){
+				forDelete.add(category);
+			}
+		}
+
+		return forDelete;
 	}
 
 	@Override
@@ -263,24 +292,24 @@ public class CategoryEditFragment extends AbstractChildFragment{
 			//TODO 設定の場合はここでは処理しない？
 
 			break;
-//		default:
-//			break;
+			//		default:
+			//			break;
 		}
 	}
 
 	public DragSortController buildController(DragSortListView dslv) {
-        // defaults are
-        //   dragStartMode = onDown
-        //   removeMode = flingRight
-        DragSortController controller = new DragSortController(dslv);
-        controller.setDragHandleId(R.id.iv_drag_handle);
-        controller.setRemoveEnabled(false);
-        controller.setSortEnabled(true);
-        controller.setDragInitMode(DragSortController.ON_DOWN);
-        controller.setRemoveMode(DragSortController.FLING_REMOVE);
+		// defaults are
+		//   dragStartMode = onDown
+		//   removeMode = flingRight
+		DragSortController controller = new DragSortController(dslv);
+		controller.setDragHandleId(R.id.iv_drag_handle);
+		controller.setRemoveEnabled(false);
+		controller.setSortEnabled(true);
+		controller.setDragInitMode(DragSortController.ON_DOWN);
+		controller.setRemoveMode(DragSortController.FLING_REMOVE);
 
-        return controller;
-    }
+		return controller;
+	}
 
 	@Override
 	public String getFragmenTitle() {

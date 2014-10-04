@@ -161,7 +161,7 @@ public class DrawerMenu {
 				mDrawerLayout.closeDrawer(mLeftDrawer);
 			}else if(parent.equals(mDrawerListSub)){
 				if(position == 0){
-					activity.callCategoryEdit(position);
+					activity.callCategoryEdit();
 					mDrawerLayout.closeDrawer(mLeftDrawer);
 					// Highlight the selected item, update the title, and close the drawer
 					mDrawerListMain.setItemChecked(position, true);

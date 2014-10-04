@@ -232,7 +232,7 @@ public class MainActivity extends FragmentActivity{
 //		mDrawerLayout.closeDrawer(mLeftDrawer);
 	}
 
-	public void callCategoryEdit(int position){
+	public void callCategoryEdit(){
 		childFragment = categoryEditFragment;
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.replace(R.id.main_layout, (Fragment)childFragment);

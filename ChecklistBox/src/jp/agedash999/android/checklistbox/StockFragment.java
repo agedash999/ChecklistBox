@@ -67,7 +67,6 @@ public class StockFragment extends AbstractChildFragment
 
 		mCLAdapter = new StockListAdapter(getActivity(), stockList);
 		listStock.setAdapter(mCLAdapter);
-
 		listStock.setOnChildClickListener(new OnChildClickListener(){
 
 			@Override
@@ -117,6 +116,28 @@ public class StockFragment extends AbstractChildFragment
 
 			mCMenuHandler = ContextMenuHandler.getHandler(activity, this, Checklist.CHECKLIST_STORE);
 			mCMenuHandler.prepareContextMenu(menu);
+
+			//TODO グループを長押しした場合に、フォルダ編集画面に移動する
+			//シングルタップをうまく無効化できず、実装見送り
+//		}else if(type == ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+//			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+//			builder.setTitle(R.string.dialog_title_to_categoryedit);
+//			builder.setMessage(R.string.dialog_message_to_categoryedit);
+//			builder.setPositiveButton(R.string.dialog_button_to_categoryedit_yes, new DialogInterface.OnClickListener() {
+//
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					activity.callCategoryEdit();
+//				}
+//			});
+//			builder.setNegativeButton(R.string.dialog_button_to_categoryedit_no, new DialogInterface.OnClickListener() {
+//
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					onContextMenuCanceled(ContextMenuHandler.CONTEXT_MENUID_DELETE);
+//				}
+//			});
+//			builder.create().show();
 
 		}
 	}

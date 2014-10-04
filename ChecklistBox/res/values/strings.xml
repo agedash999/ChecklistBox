@@ -43,6 +43,10 @@
     <string name="dialog_title_clist_copy_history">ホームに追加（履歴）</string>
     <string name="dialog_title_clist_complete">チェック完了</string>
     <string name="dialog_title_node_delete">削除</string>
+    <string name="dialog_title_to_categoryedit">フォルダ編集</string>
+    <string name="dialog_message_to_categoryedit">フォルダ編集画面に移動しますか？</string>
+    <string name="dialog_button_to_categoryedit_yes">移動</string>
+    <string name="dialog_button_to_categoryedit_no">キャンセル</string>
     <string name="dialog_message_clist_delete">削除しますか？</string>
     <string name="dialog_message_node_delete">削除しますか？</string>
     <string name="dialog_label_clist_title">タイトル</string>
@@ -65,6 +69,7 @@
     <string name="dialog_title_category_delete">フォルダ削除</string>
     <string name="dialog_message_category_delete">フォルダを削除します</string>
     <string name="dialog_message_clist_complete">リストを完了し、履歴に送りますか？</string>
+    <string name="dialog_message_category_notdelete">フォルダが１つしかないため、削除できません</string>
     <string name="dialog_label_category_delete_move">保持しているチェックリストの移動先</string>
     <string name="dialog_label_category_delete_delete">チェックリストを削除</string>
     <string name="dialog_button_category_delete">削除</string>
