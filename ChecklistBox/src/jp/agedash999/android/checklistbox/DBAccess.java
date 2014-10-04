@@ -1,6 +1,7 @@
 package jp.agedash999.android.checklistbox;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -389,7 +390,6 @@ public class DBAccess {
 	}
 
 	public void deleteCategoryInfo(ChecklistCategory category){
-		mCV.clear();
 		mDBHelper.getWritableDatabase().delete(
 				DatabaseHelper.TABLE_CATEGORY, DatabaseHelper.COLUMN_ID + "=?",
 				new String[]{String.valueOf(category.getId()) });
@@ -403,22 +403,18 @@ public class DBAccess {
 	public void deleteChecklist(int clType, int id){
 		switch (clType) {
 		case Checklist.CHECKLIST_RUNNING:
-			mCV.clear();
 			mDBHelper.getWritableDatabase().delete(
 					DatabaseHelper.TABLE_CURRENTLIST,
 					DatabaseHelper.COLUMN_ID + "=?",
 					new String[]{String.valueOf(id)});
-			mCV.clear();
 			break;
 		case Checklist.CHECKLIST_STORE:
 			break;
 		case Checklist.CHECKLIST_HISTORY:
-			mCV.clear();
 			mDBHelper.getWritableDatabase().delete(
 					DatabaseHelper.TABLE_HISTORYLIST,
 					DatabaseHelper.COLUMN_ID + "=?",
 					new String[]{String.valueOf(id)});
-			mCV.clear();
 			break;
 		default:
 			break;
@@ -434,6 +430,33 @@ public class DBAccess {
 				new String[]{String.valueOf(category.getId())});
 		mCV.clear();
 	}
+
+	public void deleteOldHistory(Calendar calDelete){
+		String wherStr = "select * from " + DatabaseHelper.TABLE_HISTORYLIST +
+				" where " + DatabaseHelper.COLUMN_DATE + " <= " + calDelete.getTimeInMillis();
+		Cursor cursor = mDBHelper.getReadableDatabase().rawQuery(wherStr, null);
+		if(cursor.moveToFirst()){
+			String sql;
+			int id;
+			while(!cursor.isAfterLast()){
+				id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
+
+				//テーブル削除
+				sql = "drop table " + mDBHelper.getTableName(id, Checklist.CHECKLIST_HISTORY) + ";";
+				mDBHelper.getWritableDatabase().execSQL(sql);
+				//履歴テーブルからエントリ削除
+				mDBHelper.getWritableDatabase().delete(
+						DatabaseHelper.TABLE_HISTORYLIST,
+						DatabaseHelper.COLUMN_ID + "=?",
+						new String[]{String.valueOf(id)});
+
+				cursor.moveToNext();
+			}
+		}
+	}
+
+
+
 
 
 	public void testDataAdd(Checklist clist){

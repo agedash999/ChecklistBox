@@ -42,11 +42,21 @@ public class ChecklistManager {
 	private static final String PREF_KEY_SORT_NODESTOCK = "key_sort_nodestock";
 	private static final String PREF_KEY_SORT_NODEHISTORY = "key_sort_nodehistory";
 
+	private static final String PREF_KEY_DELETE_HISTORY_FLAG = "history_delete";
+	private static final String PREF_KEY_DELETE_HISTORY_DATE = "history_delete_date";
+
 	public ChecklistManager(MainActivity activity){
 		mActivity = activity;
 		mDBAccess = new DBAccess(mActivity);
+		SharedPreferences pref = mActivity.getPreference();
+
+		//履歴削除
+		if(pref.getBoolean(PREF_KEY_DELETE_HISTORY_FLAG, false)){
+			deleteOldData();
+		}
 
 		this.runningList = mDBAccess.getCurrentListAll();
+
 		//TODO テスト用データ生成
 		boolean testFlag = false;
 		if(runningList.isEmpty()){
@@ -84,7 +94,9 @@ public class ChecklistManager {
 
 		//TODO 設定処理差し込み
 
-		SharedPreferences pref = mActivity.getPreference();
+		//初回ソート
+		sortChecklist(Checklist.CHECKLIST_RUNNING);
+		sortChecklist(Checklist.CHECKLIST_HISTORY);
 
 		//TODO デバッグ出力
 		testRunningDBoutput();
@@ -101,7 +113,7 @@ public class ChecklistManager {
 		clist1.addNode("ストレッチ", false);
 		clist1.addNode("天気の確認", false);
 		clist1.setMemo("毎朝必ずやるリスト");
-		clist1.setDate(new GregorianCalendar(2014, 10, 15));
+		clist1.setDate(new GregorianCalendar(2014, 9, 15));
 		mDBAccess.testDataAdd(clist1);
 
 		Checklist clist2 = new Checklist(Checklist.CHECKLIST_RUNNING, "旅行の持ち物（登別）", null);
@@ -116,14 +128,14 @@ public class ChecklistManager {
 		clist2.addNode("ライター", true);
 		clist2.addNode("爪切り", false);
 		clist2.setMemo("朝必ずチェックする");
-		clist2.setDate(new GregorianCalendar(2015, 3, 25));
+		clist2.setDate(new GregorianCalendar(2015, 2, 25));
 		mDBAccess.testDataAdd(clist2);
 
 		Checklist clist4 = new Checklist(Checklist.CHECKLIST_RUNNING, "市役所でやること", null);
 		clist4.addNode("住民票をとる", false);
 		clist4.addNode("戸籍の写しを取る", false);
 		clist4.addNode("住基カードの発行申請するうううううううううううう", false);
-		clist4.setDate(new GregorianCalendar(2014, 12, 20));
+		clist4.setDate(new GregorianCalendar(2014, 11, 20));
 		mDBAccess.testDataAdd(clist4);
 	}
 
@@ -134,14 +146,14 @@ public class ChecklistManager {
 		clist1.addNode("明日の持ち物準備", true);
 		clist1.addNode("日記を書く", true);
 		clist1.addNode("明日の天気の確認", true);
-		clist1.setDate(new GregorianCalendar(2014, 9, 20));
+		clist1.setDate(new GregorianCalendar(2014, 8, 20));
 		mDBAccess.testDataAdd(clist1);
 
 		Checklist clist2 = new Checklist(Checklist.CHECKLIST_HISTORY, "バイトの面接", null);
 		clist2.addNode("履歴書準備", true);
 		clist2.addNode("スーツ準備", true);
 		clist2.addNode("交通手段確認", true);
-		clist1.setDate(new GregorianCalendar(2011, 2, 1));
+		clist2.setDate(new GregorianCalendar(2011, 1, 1));
 		mDBAccess.testDataAdd(clist2);
 
 		Checklist clist3 = new Checklist(Checklist.CHECKLIST_HISTORY, "旅行の持ち物（大阪）", null);
@@ -155,16 +167,24 @@ public class ChecklistManager {
 		clist3.addNode("タバコ", true);
 		clist3.addNode("ライター", true);
 		clist3.addNode("地球の歩き方（大阪）", true);
-		clist1.setDate(new GregorianCalendar(2014, 5, 1));
+		clist3.setDate(new GregorianCalendar(2014, 4, 1));
 		mDBAccess.testDataAdd(clist3);
 
 		Checklist clist4 = new Checklist(Checklist.CHECKLIST_HISTORY, "市役所でやること", null);
 		clist4.addNode("住民票をとる", true);
 		clist4.addNode("戸籍の写しを取る", true);
 		clist4.addNode("住基カードの発行申請するうううううううううううう", true);
-		clist1.setDate(new GregorianCalendar(2014, 7, 28));
+		clist4.setDate(new GregorianCalendar(2014, 6, 28));
 		mDBAccess.testDataAdd(clist4);
-	}
+
+		Checklist clist5 = new Checklist(Checklist.CHECKLIST_HISTORY, "履歴削除テスト１", null);
+		clist5.addNode("履歴削除をとる", true);
+		clist5.addNode("履歴削除の写しを取る", true);
+		clist5.addNode("住基履歴削除の発行申請するうううううううううううう", true);
+		clist5.setDate(new GregorianCalendar(2014, 9, 3));
+		mDBAccess.testDataAdd(clist5);
+
+}
 
 	private void addTestStock(){
 
@@ -180,7 +200,7 @@ public class ChecklistManager {
 		clist1_1.addNode("明日の持ち物準備", false);
 		clist1_1.addNode("日記を書く", false);
 		clist1_1.addNode("明日の天気の確認", false);
-		clist1_1.setDate(new GregorianCalendar(2014, 7, 28));
+		clist1_1.setDate(new GregorianCalendar(2014, 6, 28));
 		mDBAccess.testDataAdd(clist1_1);
 
 		Checklist clist1_2 = new Checklist
@@ -188,7 +208,7 @@ public class ChecklistManager {
 		clist1_2.addNode("昼食食べる", false);
 		clist1_2.addNode("歯磨き", false);
 		clist1_2.addNode("昼寝", false);
-		clist1_2.setDate(new GregorianCalendar(2014, 5, 20));
+		clist1_2.setDate(new GregorianCalendar(2014, 4, 20));
 		mDBAccess.testDataAdd(clist1_2);
 
 		Checklist clist1_3 = new Checklist
@@ -198,7 +218,7 @@ public class ChecklistManager {
 		clist1_3.addNode("日記書く", false);
 		clist1_3.addNode("ジョギング", false);
 		clist1_3.addNode("神に祈る", false);
-		clist1_3.setDate(new GregorianCalendar(2014, 8, 8));
+		clist1_3.setDate(new GregorianCalendar(2014, 9, 8));
 		mDBAccess.testDataAdd(clist1_3);
 
 //		stockList.put(98765432, list1);
@@ -215,7 +235,7 @@ public class ChecklistManager {
 		clist2_1.addNode("明日の持ち物準備", false);
 		clist2_1.addNode("持ち物をもう一度確認", false);
 		clist2_1.addNode("朝食食べる", false);
-		clist2_1.setDate(new GregorianCalendar(2014, 6, 8));
+		clist2_1.setDate(new GregorianCalendar(2014, 5, 8));
 		mDBAccess.testDataAdd(clist2_1);
 
 		Checklist clist2_2 = new Checklist
@@ -223,7 +243,7 @@ public class ChecklistManager {
 		clist2_2.addNode("履歴書準備", false);
 		clist2_2.addNode("スーツ準備", false);
 		clist2_2.addNode("交通手段確認", false);
-		clist2_2.setDate(new GregorianCalendar(2012, 6, 8));
+		clist2_2.setDate(new GregorianCalendar(2012, 5, 8));
 		mDBAccess.testDataAdd(clist2_2);
 
 		ChecklistCategory category3 = new ChecklistCategory("旅行関連");
@@ -248,7 +268,7 @@ public class ChecklistManager {
 				(Checklist.CHECKLIST_STORE, "国内旅行", category3);
 		clist3_2.addNode("免許証", false);
 		clist3_2.addNode("交通手段確認", false);
-		clist3_2.setDate(new GregorianCalendar(2014, 9,14));
+		clist3_2.setDate(new GregorianCalendar(2014, 8,14));
 		mDBAccess.testDataAdd(clist3_2);
 
 		Checklist clist3_3 = new Checklist
@@ -515,6 +535,14 @@ public class ChecklistManager {
 		mDBAccess.updateChecklistNode(clist, node);
 	}
 
+	public void deleteOldData(){
+		Calendar cal = Calendar.getInstance();
+		int date = Integer.parseInt(
+				mActivity.getPreference().getString(PREF_KEY_DELETE_HISTORY_DATE, "10000"));
+		cal.add(Calendar.DATE, date * -1);
+		mDBAccess.deleteOldHistory(cal);
+	}
+
 	private void testRunningFieldOutput(){
 		Iterator<Checklist> i = runningList.iterator();
 		while(i.hasNext()){
@@ -626,27 +654,27 @@ public class ChecklistManager {
 		if(cltype == Checklist.CHECKLIST_RUNNING){
 			Collections.sort(runningList, new Checklist.ChecklistSortNoComp());
 		}else if(cltype == Checklist.CHECKLIST_STORE){
-			//ここには入らない
+			// ここには入らない想定
 		}else if(cltype == Checklist.CHECKLIST_HISTORY){
-			//ここには入らない
+			// TODO 例外処理
+			throw new Error();
 		}else{
-			//ここには入らない
+			// TODO 例外処理
+			throw new Error();
 		}
 	}
 
 	private void sortChecklistDate(int cltype, boolean isReverse){
-		List<Checklist> list;
+		List<Checklist> list = runningList;
 		if(cltype == Checklist.CHECKLIST_RUNNING){
 			list = runningList;
 		}else if(cltype == Checklist.CHECKLIST_STORE){
-			//ここには入らない
-			list = runningList;
+			// ここには入らない想定
 		}else if(cltype == Checklist.CHECKLIST_HISTORY){
-			//ここには入らない
-			list = runningList;
+			list = historyList;
 		}else{
-			//ここには入らない
-			list = runningList;
+			// TODO 例外処理
+			throw new Error();
 		}
 		Collections.sort(list, new Checklist.ChecklistDateComp());
 		if(isReverse){

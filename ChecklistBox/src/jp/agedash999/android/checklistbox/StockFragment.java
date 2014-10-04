@@ -87,7 +87,7 @@ public class StockFragment extends AbstractChildFragment
 		});
 
 		registerForContextMenu(listStock);
-		activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_STORE);
+//		activity.getChecklistManager().sortChecklist(Checklist.CHECKLIST_STORE);
 		activity.notifyChangeFragment(this);
 
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
