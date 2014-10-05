@@ -20,6 +20,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
@@ -61,6 +64,9 @@ implements ContextMenuFragment{
 	private final int CONTEXT_MENU_THRESHOLD = 100;
 	private final int CONTEXT_MENUID_EDIT = 100;
 	private final int CONTEXT_MENUID_DELETE = 101;
+
+	private final static boolean ENABLE_ANIMATION_NODE = true;
+	private final long ANIMATION_NODE_DURATION = 100;
 
 	//	private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
 	//		@Override
@@ -381,6 +387,7 @@ implements ContextMenuFragment{
 				public void onClick(DialogInterface dialog, int which) {
 					cnode.setChecked(false);
 					mCLAdapter.refleshDivPos();
+					activity.getChecklistManager().sortNode(mChecklist);
 					refreshList();
 				}
 			});
@@ -578,11 +585,14 @@ implements ContextMenuFragment{
 	/**
 	 * チェックリストノード一覧画面のAdapter
 	 */
-	class ChecklistAdapter extends ArrayAdapter<ChecklistNode> implements DragSortListView.DropListener {
+	class ChecklistAdapter extends ArrayAdapter<ChecklistNode>
+	implements DragSortListView.DropListener , AnimationListener {
 
 		private final static int SECTION_DIV = 0;
 		private final static int SECTION_ONE = 1;
 		private final static int SECTION_TWO = 2;
+
+		private final ChecklistAdapter mInstance;
 
 		private Context context;
 //		private List<ChecklistNode> mList;
@@ -602,6 +612,7 @@ implements ContextMenuFragment{
 			this.mLayout = resource;
 			this.mDivLayout = R.layout.listrow_section_div;
 			this.mChecklist = clist;
+			this.mInstance = this;
 			//TODO テスト的に指定
 			//			mDivPos = mList.size() /2 ;
 			if(activity.getChecklistManager().getNodeSortType(mChecklist.getType())
@@ -620,7 +631,7 @@ implements ContextMenuFragment{
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent){
 			final int vType = getItemViewType(position);
-			View view = convertView;
+			final View view;
 			final int dataPosition = dataPosition(position);
 			ChecklistNode cnode;
 			if(vType == SECTION_DIV){
@@ -631,6 +642,14 @@ implements ContextMenuFragment{
 			}else{
 				view = mInflater.inflate(mLayout, null);
 			}
+
+//			}else if(convertView == null){
+//				view = mInflater.inflate(mLayout, null);
+//			}else{
+//				view = convertView;
+//			}
+
+
 			//			cnode = mList.get(position);
 			cnode = mChecklist.getNodes().get(dataPosition);
 			TextView etx_title_node = (TextView)view.findViewById(R.id.txv_title_node);
@@ -670,11 +689,17 @@ implements ContextMenuFragment{
 						ChecklistNode node = mChecklist.getNodes().get(dataPosition(nodePosition));
 						node.setChecked(isChecked);
 						activity.getChecklistManager().nodeUpdated(mChecklist, node);
-						activity.getChecklistManager().sortNode(mChecklist);
-//						mDivPos = mChecklist.getUncheckedQty(); ※処理が重複する
-						refreshList();
-
 						verifyFinished(node);
+						if(ENABLE_ANIMATION_NODE){
+							AlphaAnimation anim = new AlphaAnimation(1, 0);
+							anim.setAnimationListener(mInstance);
+							anim.setDuration(ANIMATION_NODE_DURATION);
+							view.startAnimation(anim);
+						}else{
+							activity.getChecklistManager().sortNode(mChecklist);
+							refreshList();
+						}
+
 					}
 				});
 
@@ -714,6 +739,8 @@ implements ContextMenuFragment{
 			return view;
 
 		}
+
+
 
 		@Override
 		public void drop(int from, int to) {
@@ -819,6 +846,24 @@ implements ContextMenuFragment{
 			}
 		}
 
+		@Override
+		public void onAnimationStart(Animation animation) {
+			// TODO 自動生成されたメソッド・スタブ
+
+		}
+
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			activity.getChecklistManager().sortNode(mChecklist);
+			refreshList();
+		}
+
+		@Override
+		public void onAnimationRepeat(Animation animation) {
+			// TODO 自動生成されたメソッド・スタブ
+
+		}
+
 	}
 
 	private class SectionController extends DragSortController{
@@ -909,11 +954,6 @@ implements ContextMenuFragment{
 					}
 				}
 			}
-		}
-
-		@Override
-		public void onDestroyFloatView(View floatView) {
-			//do nothing; block super from crashing
 		}
 	}
 }
