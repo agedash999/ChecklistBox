@@ -26,9 +26,9 @@ public class MainActivity extends FragmentActivity{
 	public static final int POS_FRAGMENT_CATEGORYEDIT = 3;
 	public static final int POS_FRAGMENT_SETTING = 4;
 
-	public static final int ICON_HOME_ID = R.drawable.ic_home;
-	public static final int ICON_STOCK_ID = R.drawable.ic_stock;
-	public static final int ICON_HISTORY_ID = R.drawable.ic_history;
+	public static final int ICON_TITLE_HOME_ID = R.drawable.ic_home;
+	public static final int ICON_TITLE_STOCK_ID = R.drawable.ic_stock;
+	public static final int ICON_TITLE_HISTORY_ID = R.drawable.ic_history;
 
 	public static final int TITLE_CATEGORYEDIT_ID = R.string.fragment_title_categoryedit;
 

@@ -21,7 +21,7 @@
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-        android:background="@color/midnightblue"
+        android:background="@color/oyster_white"
         android:orientation="vertical" >
 
         <!-- メニュー間の枠専用 -->
@@ -29,6 +29,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:divider="@layout/divider_drawer"
+            android:showDividers="middle|end"
             android:orientation="vertical" >
 
             <ListView
@@ -36,11 +38,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:layout_marginBottom="3dp"
-                android:padding="6dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:padding="3dp"
                 android:choiceMode="singleChoice"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="3dp" >
+                android:divider="@drawable/divider_drawer"
+                android:dividerHeight="1dp" >
             </ListView>
 
             <ListView
@@ -48,10 +51,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:padding="6dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:padding="3dp"
                 android:choiceMode="singleChoice"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="6dp" >
+                android:divider="@drawable/divider_drawer"
+                android:dividerHeight="1dp" >
             </ListView>
         </LinearLayout>
     </LinearLayout>

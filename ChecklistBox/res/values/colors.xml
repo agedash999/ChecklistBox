@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#ffffff</color>
+    <color name="ivory">#f8f4e6</color>
+    <color name="oyster_white">#eae8e1</color>
+    <color name="kinunezu">#dddcd6</color>
+
     <color name="blue">#33b5e5</color>
     <color name="midnightblue">#001e43</color>
     <color name="ironblue">#003399</color>
@@ -11,8 +15,13 @@
     <color name="silvergray">#cccccc</color>
     <color name="orchidgray">#bcc7d7</color>
     <color name="skygray">#cbd0d3</color>
+
+    <color name="elephant_skin">#9f9f98</color>
+
     <color name="slategray">#626063</color>
     <color name="graphite">#594e52</color>
+    <color name="charcoalgray">#4e454a</color>
+
     <color name="red">#ff4444</color>
     <color name="grayStart">#adadad</color>
     <color name="grayEnd">#ffffff</color>
@@ -23,6 +32,7 @@
     <drawable name="actionbar_pressed">@color/orientalblue_light</drawable>
     <drawable name="window_bg">@color/skygray</drawable>
     <drawable name="text_dark">@color/graphite</drawable>
+    <drawable name="text_drawer">@color/slategray</drawable>
     <drawable name="text_light">@color/silvergray</drawable>
-
+    <drawable name="divider_drawer">@color/elephant_skin</drawable>
 </resources>

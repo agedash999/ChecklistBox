@@ -6,9 +6,9 @@
         <item >履歴一覧</item>
     </string-array>
     <string-array name="drawer_menu1_icon">
-        <item >ic_home</item>
-        <item >ic_stock</item>
-        <item >ic_history</item>
+        <item >ic_home_2</item>
+        <item >ic_stock_2</item>
+        <item >ic_history_2</item>
     </string-array>
     <string-array name="drawer_menu2">
         <item >フォルダ編集</item>

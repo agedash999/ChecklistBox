@@ -29,7 +29,7 @@ implements ContextMenuFragment{
     private ContextMenuHandler mCMenuHandler;
 
     private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_HISTORY_ID;
-    private final int FRAGMENT_ICON_ID = MainActivity.ICON_HISTORY_ID;
+    private final int FRAGMENT_ICON_ID = MainActivity.ICON_TITLE_HISTORY_ID;
 
 	public HistoryFragment() {
 		super();

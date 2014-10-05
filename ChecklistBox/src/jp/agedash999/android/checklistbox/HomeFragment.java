@@ -36,7 +36,7 @@ implements ContextMenuFragment{
     private ContextMenuHandler mCMenuHandler;
 
     private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_HOME_ID;
-    private final int FRAGMENT_ICON_ID = MainActivity.ICON_HOME_ID;
+    private final int FRAGMENT_ICON_ID = MainActivity.ICON_TITLE_HOME_ID;
 
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
         @Override

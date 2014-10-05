@@ -380,6 +380,8 @@ implements ContextMenuFragment{
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					cnode.setChecked(false);
+					mCLAdapter.refleshDivPos();
+					refreshList();
 				}
 			});
 			builder_fin.create().show();
@@ -604,9 +606,7 @@ implements ContextMenuFragment{
 			//			mDivPos = mList.size() /2 ;
 			if(activity.getChecklistManager().getNodeSortType(mChecklist.getType())
 					== ChecklistManager.SORTTYPE_SORTNO_CHECKED){
-				//TODO ちょっと止めとく
 				enableSection = true;
-				//				enableSection = false;
 				//仕切りのIndexを設定
 				mDivPos = mChecklist.getUncheckedQty();
 			}else{

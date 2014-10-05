@@ -35,7 +35,7 @@ public class StockFragment extends AbstractChildFragment
     private String initView;
 
     private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_STOCK_ID;
-    private final int FRAGMENT_ICON_ID = MainActivity.ICON_STOCK_ID;
+    private final int FRAGMENT_ICON_ID = MainActivity.ICON_TITLE_STOCK_ID;
 
 	public static final String KEY_TITLE = "title";
 	public static final String KEY_CATEGORY_ID = "category_id";
