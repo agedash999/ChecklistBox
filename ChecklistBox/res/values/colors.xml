@@ -36,6 +36,6 @@
     <drawable name="window_bg">@color/skygray</drawable>
     <drawable name="text_dark">@color/graphite</drawable>
     <drawable name="text_drawer">@color/slategray</drawable>
-    <drawable name="text_light">@color/silvergray</drawable>
+    <drawable name="text_light">@color/ivory</drawable>
     <drawable name="divider_drawer">@color/elephant_skin</drawable>
 </resources>
