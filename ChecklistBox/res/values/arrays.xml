@@ -58,6 +58,14 @@
         <item >open</item>
         <item >first_open</item>
     </string-array>
+    <string-array name="entries_clist_complete_confirm">
+        <item >表示する</item>
+        <item >表示しない</item>
+    </string-array>
+    <string-array name="entryvalues_clist_complete_confirm">
+        <item >true</item>
+        <item >false</item>
+    </string-array>
     <string-array name="entries_initsort_home">
         <item >実施日</item>
         <item >任意</item>

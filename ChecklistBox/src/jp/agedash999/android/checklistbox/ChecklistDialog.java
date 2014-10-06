@@ -8,13 +8,14 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -47,7 +48,9 @@ public class ChecklistDialog extends DialogFragment {
 	private EditText etx_memo;
 	private TextView txv_date;
 	private Spinner spn_category;
-	private Button btn_modify_date;
+
+	private int idPositiveLabel;
+	private int idNegativeLabel;
 
 	private ChecklistDialogListener mListener;
 
@@ -85,11 +88,15 @@ public class ChecklistDialog extends DialogFragment {
 			dialog.mChecklist = clist;
 			dialog.idDialogTitle = R.string.dialog_title_clist_edit_home;
 			dialog.idLabelDate = R.string.dialog_label_clist_expdate;
+			dialog.idPositiveLabel = R.string.dialog_button_clist_update;
+			dialog.idNegativeLabel = R.string.dialog_button_clist_cansel;
 			break;
 		case FOR_STOCK_EDIT:
 			dialog.mChecklist = clist;
 			dialog.idDialogTitle = R.string.dialog_title_clist_edit_stock;
 			dialog.idLabelDate = R.string.dialog_label_clist_credate;
+			dialog.idPositiveLabel = R.string.dialog_button_clist_update;
+			dialog.idNegativeLabel = R.string.dialog_button_clist_cansel;
 			break;
 		case FOR_HOME_STORE:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE,
@@ -98,6 +105,8 @@ public class ChecklistDialog extends DialogFragment {
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_store_home;
 			dialog.idLabelDate = R.string.dialog_label_clist_credate;
+			dialog.idPositiveLabel = R.string.dialog_button_clist_save;
+			dialog.idNegativeLabel = R.string.dialog_button_clist_cansel;
 			break;
 		case FOR_HISTORY_STORE:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_STORE,
@@ -106,6 +115,8 @@ public class ChecklistDialog extends DialogFragment {
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_store_history;
 			dialog.idLabelDate = R.string.dialog_label_clist_credate;
+			dialog.idPositiveLabel = R.string.dialog_button_clist_save;
+			dialog.idNegativeLabel = R.string.dialog_button_clist_cansel;
 			break;
 		case FOR_STOCK_TOHOME:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING,
@@ -114,6 +125,8 @@ public class ChecklistDialog extends DialogFragment {
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_copy_stock;
 			dialog.idLabelDate = R.string.dialog_label_clist_expdate;
+			dialog.idPositiveLabel = R.string.dialog_button_clist_tohome;
+			dialog.idNegativeLabel = R.string.dialog_button_clist_cansel;
 			break;
 		case FOR_HISTORY_TOHOME:
 			dialog.mChecklist = new Checklist(Checklist.CHECKLIST_RUNNING,
@@ -122,6 +135,8 @@ public class ChecklistDialog extends DialogFragment {
 			dialog.mChecklist.setChecklist(clist.getChecklistCopy(false));
 			dialog.idDialogTitle = R.string.dialog_title_clist_copy_history;
 			dialog.idLabelDate = R.string.dialog_label_clist_expdate;
+			dialog.idPositiveLabel = R.string.dialog_button_clist_tohome;
+			dialog.idNegativeLabel = R.string.dialog_button_clist_cansel;
 			break;
 		default:
 			break;
@@ -161,84 +176,49 @@ public class ChecklistDialog extends DialogFragment {
 		txv_date = (TextView)view.findViewById(R.id.tv_date);
 		mDate = mChecklist.getDate();
 		txv_date.setText(mChecklist.getDateFormated());
+		txv_date.setOnTouchListener(new OnTouchListener() {
 
-		//TODO 日付変更不要の場合ある？
-		btn_modify_date = (Button)view.findViewById(R.id.btn_modify_date);
-		btn_modify_date.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				// TODO 自動生成されたメソッド・スタブ
-				Calendar cal = mChecklist.getDate();
-				DatePickerDialog datePickerDialog = new DatePickerDialog(
-						activity, new OnDateSetListener() {
+			public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_DOWN){
+					Calendar cal = mChecklist.getDate();
+					DatePickerDialog datePickerDialog = new DatePickerDialog(
+							activity, new OnDateSetListener() {
 
-							@Override
-							public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-								mDate.set(year, monthOfYear, dayOfMonth);
-								reloadDate();
-							}
-						} , cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-				datePickerDialog.show();
+								@Override
+								public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+									mDate.set(year, monthOfYear, dayOfMonth);
+									reloadDate();
+								}
+							} , cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+					datePickerDialog.show();
+				}
+				return true;
 			}
 		});
 
 		builder.setView(view);
 		builder.setTitle(getString(idDialogTitle));
 
-		((Button)view.findViewById(R.id.btn_save)).setOnClickListener(new OnClickListener() {
+		builder.setPositiveButton(idPositiveLabel, new DialogInterface.OnClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick(DialogInterface dialog, int which) {
 				//ここでデータの更新を行う
-				//現状処理が同じなので不要
 				mChecklist.setTitle(etx_title.getText().toString());
 				mChecklist.setMemo(etx_memo.getText().toString());
 				if(spn_category.getVisibility() == Spinner.VISIBLE){
 					ChecklistCategory category = (ChecklistCategory)spn_category.getSelectedItem();
-//					List<Integer> categoryIDs = activity.getChecklistManager().getCategoryOrder();
-//					mChecklist.setCategoryID(categoryIDs.get(spn_category.getSelectedItemPosition()));
 					mChecklist.setCategory(category);
 				}
 				mChecklist.setDate(mDate);
 				mListener.onChecklistInfoSave(mChecklist, mDialogType);
-//				switch (mDialogType) {
-//				case FOR_HOME_EDIT:
-//				case FOR_STOCK_EDIT:
-//					mChecklist.setTitle(etx_title.getText().toString());
-//					mChecklist.setMemo(etx_memo.getText().toString());
-//					mListener.onChecklistInfoSave(mChecklist, mDialogType);
-//					break;
-//				case FOR_HOME_STORE:
-//				case FOR_HISTORY_STORE:
-//					mChecklist.setTitle(etx_title.getText().toString());
-//					mChecklist.setMemo(etx_memo.getText().toString());
-//					mListener.onChecklistInfoSave(mChecklist, mDialogType);
-//					break;
-//				case FOR_STOCK_TOHOME:
-//				case FOR_HISTORY_TOHOME:
-//					mChecklist.setTitle(etx_title.getText().toString());
-//					mChecklist.setMemo(etx_memo.getText().toString());
-//					mListener.onChecklistInfoSave(mChecklist, mDialogType);
-//					break;
-//				case FOR_HOME_NEW:
-//					mChecklist.setTitle(etx_title.getText().toString());
-//					mChecklist.setMemo(etx_memo.getText().toString());
-//					mListener.onChecklistInfoSave(mChecklist, mDialogType);
-//					break;
-//				case FOR_STOCK_NEW:
-//					mChecklist.setTitle(etx_title.getText().toString());
-//					mChecklist.setMemo(etx_memo.getText().toString());
-//					mListener.onChecklistInfoSave(mChecklist, mDialogType);
-//					break;
-//				default:
-//					break;
-//				}
 				dismiss();
 			}
 		});
 
-		((Button)view.findViewById(R.id.btn_cansel)).setOnClickListener(new OnClickListener() {
+		builder.setNegativeButton(idNegativeLabel, new DialogInterface.OnClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick(DialogInterface dialog, int which) {
 				mListener.onChecklistInfoCansel();
 				dismiss();
 			}

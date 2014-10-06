@@ -20,6 +20,7 @@ public class SettingActivity extends Activity{
 	public static final String KEY_STOCK_INIT = "stock_init";
 	public static final String KEY_HISTORY_DELETE = "history_delete";
 	public static final String KEY_HISTORY_DATE = "history_delete_date";
+	public static final String PREF_COMPLETE_COMFIRM = "clist_complete_confirm";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,8 @@ public class SettingActivity extends Activity{
 		        	key.equals(KEY_VIEWITEM_STOCK) ||
 		        	key.equals(KEY_VIEWITEM_HISTORY) ||
 		        	key.equals(KEY_STOCK_INIT) ||
-		        	key.equals(KEY_HISTORY_DATE)
+		        	key.equals(KEY_HISTORY_DATE) ||
+		        	key.equals(PREF_COMPLETE_COMFIRM)
 		        		) {
 		        	ListPreference pref = (ListPreference)findPreference(key);
 		            pref.setSummary(pref.getEntry());
@@ -77,6 +79,8 @@ public class SettingActivity extends Activity{
             pref = (ListPreference)findPreference(KEY_STOCK_INIT);
             pref.setSummary(pref.getEntry());
             pref = (ListPreference)findPreference(KEY_HISTORY_DATE);
+            pref.setSummary(pref.getEntry());
+            pref = (ListPreference)findPreference(PREF_COMPLETE_COMFIRM);
             pref.setSummary(pref.getEntry());
             pref = null;
         }

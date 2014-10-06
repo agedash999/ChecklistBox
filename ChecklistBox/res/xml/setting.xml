@@ -37,6 +37,14 @@
             android:entryValues="@array/entryvalues_stock_init"
             android:defaultValue="close"
             />
+        <ListPreference
+            android:key="clist_complete_confirm"
+            android:title="@string/setting_title_clist_complete_confirm"
+            android:dialogTitle="@string/setting_title_clist_complete_confirm"
+            android:entries="@array/entries_clist_complete_confirm"
+            android:entryValues="@array/entryvalues_clist_complete_confirm"
+            android:defaultValue="true"
+            />
 <!--         <ListPreference
             android:key="initsort_home"
             android:title="@string/setting_title_initsort_home"

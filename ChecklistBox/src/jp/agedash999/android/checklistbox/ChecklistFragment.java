@@ -65,6 +65,8 @@ implements ContextMenuFragment{
 	private final int CONTEXT_MENUID_EDIT = 100;
 	private final int CONTEXT_MENUID_DELETE = 101;
 
+	private final String PREF_ID_CLIST_COMPLETE_COMFIRM = "clist_complete_confirm";
+
 	private final static boolean ENABLE_ANIMATION_NODE = true;
 	private final long ANIMATION_NODE_DURATION = 100;
 
@@ -363,35 +365,63 @@ implements ContextMenuFragment{
 	}
 
 	private void verifyFinished(ChecklistNode node){
+
+		//未完了が残ってる場合は空振り
 		if(mChecklist.getUncheckedQty() == 0){
 
-			final ChecklistNode cnode = node;
+			boolean isConfirm = Boolean.valueOf(
+					activity.getPreference().getString(PREF_ID_CLIST_COMPLETE_COMFIRM, "true"));
 
-			AlertDialog.Builder builder_fin = new AlertDialog.Builder(activity);
-			builder_fin.setTitle(R.string.dialog_title_clist_complete);
-			builder_fin.setMessage(R.string.dialog_message_clist_complete);
-			builder_fin.setPositiveButton(R.string.dialog_button_clist_complete, new DialogInterface.OnClickListener() {
+			//確認ポップアップを表示する設定になっている場合
+			if(isConfirm){
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					//チェックリスト完了処理
-					activity.getChecklistManager().completeChecklist(mChecklist);
+				final ChecklistNode cnode = node;
+				final CheckBox cbox = new CheckBox(activity);
 
-					//TODO 画面遷移OK？
-					getFragmentManager().popBackStack();
-				}
-			});
-			builder_fin.setNegativeButton(R.string.dialog_button_clist_cansel, new DialogInterface.OnClickListener() {
+				cbox.setChecked(false);
+				cbox.setText(R.string.dialog_label_clist_complete_confirm);
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					cnode.setChecked(false);
-					mCLAdapter.refleshDivPos();
-					activity.getChecklistManager().sortNode(mChecklist);
-					refreshList();
-				}
-			});
-			builder_fin.create().show();
+				AlertDialog.Builder builder_fin = new AlertDialog.Builder(activity);
+				builder_fin.setTitle(R.string.dialog_title_clist_complete);
+				builder_fin.setMessage(R.string.dialog_message_clist_complete);
+				builder_fin.setView(cbox);
+				builder_fin.setPositiveButton(R.string.dialog_button_clist_complete, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						//チェックリスト完了処理
+						activity.getChecklistManager().completeChecklist(mChecklist);
+
+						//設定変更処理
+						if(cbox.isChecked()){
+							SharedPreferences.Editor edit = activity.getPreference().edit();
+							edit.putString(PREF_ID_CLIST_COMPLETE_COMFIRM, "false");
+							edit.apply();
+						}
+
+						//TODO 画面遷移OK？
+						getFragmentManager().popBackStack();
+					}
+				});
+				builder_fin.setNegativeButton(R.string.dialog_button_clist_cansel, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						cnode.setChecked(false);
+						mCLAdapter.refleshDivPos();
+						activity.getChecklistManager().sortNode(mChecklist);
+						refreshList();
+					}
+				});
+				builder_fin.create().show();
+
+				//確認ポップアップを表示しない場合
+			}else{
+				//チェックリスト完了処理
+				activity.getChecklistManager().completeChecklist(mChecklist);
+				//TODO 画面遷移OK？
+				getFragmentManager().popBackStack();
+			}
 		}
 	}
 
