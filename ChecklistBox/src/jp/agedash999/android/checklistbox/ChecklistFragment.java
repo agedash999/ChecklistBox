@@ -927,12 +927,11 @@ implements ContextMenuFragment{
 		@Override
 		public View onCreateFloatView(int position) {
 
-			//            return super.onCreateFloatView(position);
-
-
 			mPos = position;
 
-			View v = mAdapter.getView(position, null, mDslv);
+			View v = super.onCreateFloatView(position);
+//			View v = mAdapter.getView(position, null, mDslv);
+
 			if (position < mAdapter.getDivPosition()) {
 				v.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_handle_section1));
 			} else {

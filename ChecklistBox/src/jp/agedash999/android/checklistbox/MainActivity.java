@@ -1,24 +1,26 @@
 package jp.agedash999.android.checklistbox;
 
 import android.app.ActionBar;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MainActivity extends FragmentActivity{
+public class MainActivity extends Activity{
 
 	public static final int TITLE_HOME_ID = R.string.fragment_title_home;
 	public static final int TITLE_STOCK_ID = R.string.fragment_title_stock;
 	public static final int TITLE_HISTORY_ID = R.string.fragment_title_history;
+	public static final int TITLE_CATEGORYEDIT_ID = R.string.fragment_title_categoryedit;
+	public static final int TITLE_SETTINGS_ID = R.string.fragment_title_settings;
 
 	public static final int POS_FRAGMENT_HOME = 0;
 	public static final int POS_FRAGMENT_STOCK = 1;
@@ -30,8 +32,6 @@ public class MainActivity extends FragmentActivity{
 	public static final int ICON_TITLE_STOCK_ID = R.drawable.ic_stock;
 	public static final int ICON_TITLE_HISTORY_ID = R.drawable.ic_history;
 
-	public static final int TITLE_CATEGORYEDIT_ID = R.string.fragment_title_categoryedit;
-
 	public static final int MENU_ADD_ID = R.id.menu_add;
 	public static final int MENU_MOVE_ID = R.id.menu_move;
 	public static final int MENU_SORT_ID = R.id.menu_sort;
@@ -42,12 +42,13 @@ public class MainActivity extends FragmentActivity{
 
 	private DrawerMenu mDrawer;
 
-	private AbstractChildFragment homeFragment = null;
-	private AbstractChildFragment stockFragment = null;
-	private AbstractChildFragment historyFragment = null;
-	private AbstractChildFragment categoryEditFragment = null;
+	private IChildFragment homeFragment = null;
+	private IChildFragment stockFragment = null;
+	private IChildFragment historyFragment = null;
+	private IChildFragment categoryEditFragment = null;
+	private IChildFragment settingsFragment = null;
 
-	private AbstractChildFragment childFragment;
+	private IChildFragment childFragment;
 
 	private String appName;
 
@@ -70,6 +71,7 @@ public class MainActivity extends FragmentActivity{
 		stockFragment = StockFragment.newInstance();
 		historyFragment = HistoryFragment.newInstance();
 		categoryEditFragment = new CategoryEditFragment();
+		settingsFragment = new SettingsFragment();
 
 		childFragment = homeFragment;
 
@@ -116,7 +118,7 @@ public class MainActivity extends FragmentActivity{
 
         // TODO changeFragmentを通す？
 		// 起動時のFragmentとしてホーム画面をセットする
-		getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
+		getFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
 		.commit();
 //		callSettings();
 
@@ -221,7 +223,8 @@ public class MainActivity extends FragmentActivity{
 		//			Bundle args = new Bundle();
 		//			args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
 		//			fragment.setArguments(args);
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.replace(R.id.main_layout, (Fragment)childFragment);
 		ft.addToBackStack(null);
 		ft.commit();
@@ -234,18 +237,24 @@ public class MainActivity extends FragmentActivity{
 
 	public void callCategoryEdit(){
 		childFragment = categoryEditFragment;
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.replace(R.id.main_layout, (Fragment)childFragment);
 		ft.addToBackStack(null);
 		ft.commit();
 	}
 
 	public void callSettings(){
-		Intent intent = new Intent(this, SettingActivity.class);
-		startActivityForResult(intent, RQC_SETTINGS);
+		childFragment = settingsFragment;
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.replace(R.id.main_layout, (Fragment)childFragment);
+		ft.addToBackStack(null);
+		ft.commit();
+
+//		Intent intent = new Intent(this, SettingActivity.class);
+//		startActivityForResult(intent, RQC_SETTINGS);
 	}
 
-	public void notifyChangeFragment(AbstractChildFragment fragment){
+	public void notifyChangeFragment(IChildFragment fragment){
 		//TODO 画面変更時の処理
 		//TODO メニューボタンのON/OFF
 

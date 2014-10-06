@@ -2,8 +2,8 @@ package jp.agedash999.android.checklistbox;
 
 import jp.agedash999.android.checklistbox.ChecklistDialog.ChecklistDialogListener;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
-import android.support.v4.app.FragmentManager;
 import android.view.ContextMenu;
 
 public class ContextMenuHandler implements ChecklistDialogListener{
