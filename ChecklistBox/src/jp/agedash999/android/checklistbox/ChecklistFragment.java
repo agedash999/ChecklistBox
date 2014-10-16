@@ -1,6 +1,9 @@
 package jp.agedash999.android.checklistbox;
 
+import java.util.List;
+
 import jp.agedash999.android.checklistbox.ContextMenuHandler.ContextMenuFragment;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -99,7 +102,6 @@ implements ContextMenuFragment{
 			Bundle savedInstanceState) {
 		//使用するView・Activityをフィールドに格納
 		this.rootView = inflater.inflate(R.layout.fragment_checklist, container, false);
-		this.activity = (MainActivity)getActivity();
 		this.mDslv = (DragSortListView)rootView.findViewById(R.id.list_checklist);
 		//		this.listChecklist = (ListView)rootView.findViewById(R.id.list_checklist);
 
@@ -147,7 +149,8 @@ implements ContextMenuFragment{
 
 
 		//Adapterのインスタンスを生成してListViewにセット
-		mCLAdapter = new ChecklistAdapter(getActivity(), R.layout.listrow_checklist,mChecklist);
+//		mCLAdapter = new ChecklistAdapter(getActivity(), R.layout.listrow_checklist,mChecklist);
+		mCLAdapter = new ChecklistAdapter(getActivity(), R.layout.listrow_checklist,mChecklist , mChecklist.getNodes());
 
 		mDslv.setDropListener(mCLAdapter);
 		//		listChecklist.setAdapter(mCLAdapter);//不要？
@@ -341,6 +344,17 @@ implements ContextMenuFragment{
 	private void refreshList(){
 		mCLAdapter.refleshDivPos();
 		mCLAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		this.activity = (MainActivity)activity;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -635,8 +649,9 @@ implements ContextMenuFragment{
 
 		private boolean moveMode = false;
 
-		public ChecklistAdapter(Context context, int resource, Checklist clist) {
-			super(context, resource, clist.getNodes());
+//		public ChecklistAdapter(Context context, int resource, Checklist clist) {
+		public ChecklistAdapter(Context context, int resource, Checklist clist ,List<ChecklistNode> clists) {
+			super(context, resource, clists);
 			this.context = context;
 			this.mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			this.mLayout = resource;

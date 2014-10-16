@@ -16,7 +16,6 @@ public class DialogCategoryDelete extends DialogFragment {
 
 	private MainActivity activity;
 	private ChecklistCategory mCategory;
-	private ChecklistDialogListener mListener;
 
 	public static DialogCategoryDelete getDialog(ChecklistCategory category){
 		DialogCategoryDelete dialog = new DialogCategoryDelete();
@@ -36,33 +35,4 @@ public class DialogCategoryDelete extends DialogFragment {
 //		return super.onCreateDialog(savedInstanceState);
 	}
 
-
-
-
-	public void setChecklistDialogListener(ChecklistDialogListener listener){
-		mListener = listener;
-	}
-
-	public void removeChecklistDialogListener(){
-		mListener = null;
-	}
-
-	public interface ChecklistDialogListener
-	//extends EventListener {
-	{
-		public void onChecklistInfoSave(Checklist clist, int dialogType);
-
-		public void onChecklistInfoCansel();
-
-	}
-
-//	public class DateSetListener implements OnDateSetListener{
-//
-//		@Override
-//		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//			Calendar cal;
-//
-//		}
-//
-//	}
 }

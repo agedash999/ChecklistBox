@@ -55,6 +55,7 @@
     <string name="dialog_label_clist_credate">作成日</string>
     <string name="dialog_label_clist_findate">完了日</string>
     <string name="dialog_label_clist_category">フォルダ</string>
+    <string name="dialog_button_clist_create">作成</string>
     <string name="dialog_button_clist_update">更新</string>
     <string name="dialog_button_clist_save">保存</string>
     <string name="dialog_button_clist_tohome">ホームに追加</string>

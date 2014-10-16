@@ -1,6 +1,6 @@
 package jp.agedash999.android.checklistbox;
 
-import jp.agedash999.android.checklistbox.ChecklistDialog.ChecklistDialogListener;
+import jp.agedash999.android.checklistbox.ChecklistDialogHandler.ChecklistDialogListener;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
@@ -69,37 +69,37 @@ public class ContextMenuHandler implements ChecklistDialogListener{
 		}
 	}
 
-	public void addMenuSelected(){
-		this.mChecklist = null;
-		this.menuSelected = MENU_CREATE;
-
-		ChecklistDialog dialog;
-		dialog = ChecklistDialog.getDialogBlank(ChecklistDialog.FOR_HOME_NEW);
-		dialog.setChecklistDialogListener(this);
-		dialog.show(fragment.getFragmentManager(), "create");
-
-	}
+//	public void addMenuSelected(){
+//		this.mChecklist = null;
+//		this.menuSelected = MENU_CREATE;
+//
+//		ChecklistDialogHandler handler;
+//		handler = ChecklistDialogHandler.getHandlerBlank(ChecklistDialogHandler.FOR_HOME_NEW);
+//		handler.setChecklistDialogListener(this);
+//		handler.createAlertDialog(activity).show();
+//
+//	}
 
 	public void contextMenuSelected(int menuType , Checklist clist){
 		this.mChecklist = clist;
 		this.menuSelected = menuType;
 
-		ChecklistDialog dialog;
+		ChecklistDialogHandler handler;
 
 		switch (menuSelected) {
 
 		case MENU_CREATE:
 			switch (mClistType) {
 			case Checklist.CHECKLIST_RUNNING:
-				dialog = ChecklistDialog.getDialogBlank(ChecklistDialog.FOR_HOME_NEW);
-				dialog.setChecklistDialogListener(this);
-				dialog.show(fragment.getFragmentManager(), "create");
+				handler = ChecklistDialogHandler.getHandlerBlank(ChecklistDialogHandler.FOR_HOME_NEW);
+				handler.setChecklistDialogListener(this);
+				handler.createAlertDialog(activity).show();
 
 				break;
 			case Checklist.CHECKLIST_STORE:
-				dialog = ChecklistDialog.getDialogBlank(ChecklistDialog.FOR_STOCK_NEW);
-				dialog.setChecklistDialogListener(this);
-				dialog.show(fragment.getFragmentManager(), "create");
+				handler = ChecklistDialogHandler.getHandlerBlank(ChecklistDialogHandler.FOR_STOCK_NEW);
+				handler.setChecklistDialogListener(this);
+				handler.createAlertDialog(activity).show();
 
 				break;
 			case Checklist.CHECKLIST_HISTORY:
@@ -114,15 +114,15 @@ public class ContextMenuHandler implements ChecklistDialogListener{
 
 			switch (mClistType) {
 			case Checklist.CHECKLIST_RUNNING:
-				dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HOME_EDIT, mChecklist);
-				dialog.setChecklistDialogListener(this);
-				dialog.show(fragment.getFragmentManager(), "edit");
+				handler = ChecklistDialogHandler.getHandler(ChecklistDialogHandler.FOR_HOME_EDIT, mChecklist);
+				handler.setChecklistDialogListener(this);
+				handler.createAlertDialog(activity).show();
 
 				break;
 			case Checklist.CHECKLIST_STORE:
-				dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_STOCK_EDIT, mChecklist);
-				dialog.setChecklistDialogListener(this);
-				dialog.show(fragment.getFragmentManager(), "edit");
+				handler = ChecklistDialogHandler.getHandler(ChecklistDialogHandler.FOR_STOCK_EDIT, mChecklist);
+				handler.setChecklistDialogListener(this);
+				handler.createAlertDialog(activity).show();
 
 				break;
 			case Checklist.CHECKLIST_HISTORY:
@@ -212,18 +212,18 @@ public class ContextMenuHandler implements ChecklistDialogListener{
 
 			switch (mClistType) {
 			case Checklist.CHECKLIST_RUNNING:
-				dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HOME_STORE, mChecklist);
-				dialog.setChecklistDialogListener(this);
-				dialog.show(fragment.getFragmentManager(), "store");
+				handler = ChecklistDialogHandler.getHandler(ChecklistDialogHandler.FOR_HOME_STORE, mChecklist);
+				handler.setChecklistDialogListener(this);
+				handler.createAlertDialog(activity).show();
 
 				break;
 			case Checklist.CHECKLIST_STORE:
 				//ここには入らない想定
 				break;
 			case Checklist.CHECKLIST_HISTORY:
-				dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HISTORY_STORE , mChecklist);
-				dialog.setChecklistDialogListener(this);
-				dialog.show(fragment.getFragmentManager(), "store");
+				handler = ChecklistDialogHandler.getHandler(ChecklistDialogHandler.FOR_HISTORY_STORE, mChecklist);
+				handler.setChecklistDialogListener(this);
+				handler.createAlertDialog(activity).show();
 
 				break;
 			default:
@@ -238,15 +238,15 @@ public class ContextMenuHandler implements ChecklistDialogListener{
 				//ここには入らない想定
 				break;
 			case Checklist.CHECKLIST_STORE:
-				dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_STOCK_TOHOME, mChecklist);
-				dialog.setChecklistDialogListener(this);
-				dialog.show(fragment.getFragmentManager(), "tohome");
+				handler = ChecklistDialogHandler.getHandler(ChecklistDialogHandler.FOR_STOCK_TOHOME, mChecklist);
+				handler.setChecklistDialogListener(this);
+				handler.createAlertDialog(activity).show();
 
 				break;
 			case Checklist.CHECKLIST_HISTORY:
-				dialog = ChecklistDialog.getDialog(ChecklistDialog.FOR_HISTORY_TOHOME , mChecklist);
-				dialog.setChecklistDialogListener(this);
-				dialog.show(fragment.getFragmentManager(), "tohome");
+				handler = ChecklistDialogHandler.getHandler(ChecklistDialogHandler.FOR_HISTORY_TOHOME, mChecklist);
+				handler.setChecklistDialogListener(this);
+				handler.createAlertDialog(activity).show();
 
 				break;
 			default:

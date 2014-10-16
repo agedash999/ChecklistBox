@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -38,7 +37,7 @@ public class MainActivity extends Activity{
 	public static final int MENU_SETTINGS_ID = R.id.menu_settings;
 	public static final int APL_NAME_ID = R.string.app_name;
 
-	private static final int RQC_SETTINGS = 100;
+//	private static final int RQC_SETTINGS = 100;
 
 	private DrawerMenu mDrawer;
 
@@ -50,13 +49,11 @@ public class MainActivity extends Activity{
 
 	private IChildFragment childFragment;
 
-	private String appName;
 
 	private TextView mTitleMain;
 	private ImageView mTitleIcon;
 
 	private ChecklistManager mCLManager;
-	private SharedPreferences mPreferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +62,10 @@ public class MainActivity extends Activity{
 
 		//設定の読み込み（初回起動のみ）
 		PreferenceManager.setDefaultValues(this, R.xml.setting, false);
-		loadPreference();
+		Thread.setDefaultUncaughtExceptionHandler(
+				new MyUncaughtExceptionHandler(getApplicationContext()));
+
+		mCLManager = new ChecklistManager(this);
 
 		homeFragment = HomeFragment.newInstance();
 		stockFragment = StockFragment.newInstance();
@@ -74,11 +74,6 @@ public class MainActivity extends Activity{
 		settingsFragment = new SettingsFragment();
 
 		childFragment = homeFragment;
-
-		appName = getResources().getString(APL_NAME_ID);
-
-		Thread.setDefaultUncaughtExceptionHandler(
-				new MyUncaughtExceptionHandler(getApplicationContext()));
 
 		// ActionBar関連の設定
 
@@ -118,11 +113,10 @@ public class MainActivity extends Activity{
 
         // TODO changeFragmentを通す？
 		// 起動時のFragmentとしてホーム画面をセットする
-		getFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
-		.commit();
+//		getFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
+//		.commit();
 //		callSettings();
 
-		mCLManager = new ChecklistManager(this);
 	}
 
 	@Override
@@ -131,6 +125,20 @@ public class MainActivity extends Activity{
 		//前回バグで強制終了した場合はダイアログ表示
 		//TODO バグレポートダイアログをどこから呼び出すか
 //		MyUncaughtExceptionHandler.showBugReportDialogIfExist();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		getFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
+		.commit();
+
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO 自動生成されたメソッド・スタブ
+		super.onPause();
 	}
 
 	public ChecklistManager getChecklistManager(){
@@ -273,21 +281,17 @@ public class MainActivity extends Activity{
 		}
 	}
 
-	@Override
-	protected void onActivityResult(
-			int requestCode,int resultCode,Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (RQC_SETTINGS == resultCode){
-			loadPreference();
-		}
-	}
-
-	public void loadPreference(){
-		mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-	}
+//	@Override
+//	protected void onActivityResult(
+//			int requestCode,int resultCode,Intent data) {
+//		super.onActivityResult(requestCode, resultCode, data);
+//		if (RQC_SETTINGS == resultCode){
+//			loadPreference();
+//		}
+//	}
 
 	public SharedPreferences getPreference(){
-		return mPreferences;
+		return PreferenceManager.getDefaultSharedPreferences(this);
 	}
 
 }

@@ -70,7 +70,26 @@ public class MyUncaughtExceptionHandler implements UncaughtExceptionHandler {
             sb.append(stack.getLineNumber());
             pw.println(sb.toString());
         }
+
+        Throwable  t;
+        t = e.getCause();
+        while(t!=null){
+        	pw.println("Caused by:" + t.getClass());
+            pw.println(t.toString());
+    		stacks = t.getStackTrace();
+            len = stacks.length;
+            for (int i = 0; i < len; i++) {
+                StackTraceElement stack = stacks[i];
+                sb.setLength(0);
+                sb.append(stack.getClassName()).append("#");
+                sb.append(stack.getMethodName()).append(":");
+                sb.append(stack.getLineNumber());
+                pw.println(sb.toString());
+            }
+            t = t.getCause();
+        }
         pw.close();
+
 	}
 
 	public static final void showBugReportDialogIfExist() {

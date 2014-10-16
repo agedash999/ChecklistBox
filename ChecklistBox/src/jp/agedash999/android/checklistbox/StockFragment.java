@@ -1,7 +1,5 @@
 package jp.agedash999.android.checklistbox;
 
-import java.util.List;
-
 import jp.agedash999.android.checklistbox.ContextMenuHandler.ContextMenuFragment;
 import android.app.Activity;
 import android.app.FragmentTransaction;
@@ -28,7 +26,6 @@ public class StockFragment extends AbstractChildFragment
 	private View rootView;
 	private ExpandableListView listStock;
 	private StockListAdapter mCLAdapter;
-	private ChecklistManager mCLManager;
     private String mFragmentTitle;
     private ContextMenuHandler mCMenuHandler;
 
@@ -62,10 +59,8 @@ public class StockFragment extends AbstractChildFragment
 //		List<List<Checklist>> stockList = new ArrayList<List<Checklist>>();
 //		mCLManager.getStockAndCategory(categoryList, stockList);
 
-		List<ChecklistCategory> stockList = mCLManager.getStockList();
-
-
-		mCLAdapter = new StockListAdapter(getActivity(), stockList);
+		mCLAdapter = new StockListAdapter(getActivity(),
+				activity.getChecklistManager().getStockList());
 		listStock.setAdapter(mCLAdapter);
 		listStock.setOnChildClickListener(new OnChildClickListener(){
 
@@ -175,7 +170,6 @@ public class StockFragment extends AbstractChildFragment
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		this.activity = (MainActivity) activity;
-		this.mCLManager = this.activity.getChecklistManager();
 	}
 
 	@Override
