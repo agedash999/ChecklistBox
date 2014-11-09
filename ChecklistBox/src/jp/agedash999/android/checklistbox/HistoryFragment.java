@@ -4,6 +4,7 @@ import jp.agedash999.android.checklistbox.ContextMenuHandler.ContextMenuFragment
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -25,11 +26,11 @@ implements ContextMenuFragment{
 	private View rootView;
 	private ListView listHistory;
 	private HistoryListAdapter mCLAdapter;
-    private String mFragmentTitle;
     private ContextMenuHandler mCMenuHandler;
 
     private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_HISTORY_ID;
-    private final int FRAGMENT_ICON_ID = MainActivity.ICON_TITLE_HISTORY_ID;
+    public static final int FRAGMENT_ICON_ID = MainActivity.ICON_TITLE_HISTORY_ID;
+    public static String mFragmentTitle;
 
 	public HistoryFragment() {
 		super();
@@ -42,8 +43,12 @@ implements ContextMenuFragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onCreateView called");
+
 		this.rootView = inflater.inflate(R.layout.fragment_history, container, false);
-		this.mFragmentTitle = activity.getResources().getString(FRAGMENT_TITLE_ID);
+		mFragmentTitle = activity.getResources().getString(FRAGMENT_TITLE_ID);
 
 		listHistory = (ListView)rootView.findViewById(R.id.list_history);
 
@@ -58,7 +63,15 @@ implements ContextMenuFragment{
 				ListView listView = (ListView) parent;
 				Checklist clist = (Checklist)listView.getItemAtPosition(position);
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ChecklistFragment fragment = ChecklistFragment.newInstance(clist, mInstance);
+//				ChecklistFragment fragment = ChecklistFragment.newInstance(clist, mInstance);
+                ChecklistFragment fragment = new ChecklistFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(ChecklistFragment.KEY_BUNDLE_CLIST_INDEX,
+                		activity.getChecklistManager().addFragmentCheckList(clist));
+                bundle.putString(ChecklistFragment.KEY_BUNDLE_PARENT_TYPE, ChecklistFragment.VALUE_BUNDLE_PARENT_HISTORY);
+                fragment.setArguments(bundle);
+
 				ft.replace(R.id.main_layout, fragment);
 				ft.addToBackStack(null);
 				ft.commit();
@@ -110,11 +123,17 @@ implements ContextMenuFragment{
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		this.activity = (MainActivity) activity;
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onAttach called");
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onCreate called");
 	}
 
 	@Override
@@ -122,6 +141,18 @@ implements ContextMenuFragment{
 		super.onResume();
 		this.mCLAdapter.refleshAdapter();
 		this.listHistory.invalidateViews();
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onResume called");
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO 自動生成されたメソッド・スタブ
+		super.onSaveInstanceState(outState);
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onSaveInstanceState called");
 	}
 
 

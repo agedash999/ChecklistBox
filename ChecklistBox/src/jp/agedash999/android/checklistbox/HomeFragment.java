@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -32,11 +33,11 @@ implements ContextMenuFragment{
 	private HomeListAdapter mCLAdapter;
     private DragSortListView mDslv;
     private DragSortController mController;
-    private String mFragmentTitle;
     private ContextMenuHandler mCMenuHandler;
 
     private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_HOME_ID;
-    private final int FRAGMENT_ICON_ID = MainActivity.ICON_TITLE_HOME_ID;
+    public static final int FRAGMENT_ICON_ID = MainActivity.ICON_TITLE_HOME_ID;
+    public static String mFragmentTitle;
 
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
         @Override
@@ -82,10 +83,14 @@ implements ContextMenuFragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onCreateView called");
+
 		//使用するView・Activityをフィールドに格納
 		this.rootView = inflater.inflate(R.layout.fragment_home, container, false);
 		this.mDslv = (DragSortListView)rootView.findViewById(R.id.list_home);
-		this.mFragmentTitle = activity.getResources().getString(FRAGMENT_TITLE_ID);
+		mFragmentTitle = activity.getResources().getString(FRAGMENT_TITLE_ID);
 
 		//Adapterのインスタンスを生成してListViewにセット
 		mCLAdapter = new HomeListAdapter(getActivity(), R.layout.listrow_home,
@@ -100,7 +105,15 @@ implements ContextMenuFragment{
                 ListView listView = (ListView) parent;
                 Checklist clist = (Checklist)listView.getItemAtPosition(position);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ChecklistFragment fragment = ChecklistFragment.newInstance(clist, mInstance);
+//                ChecklistFragment fragment = ChecklistFragment.newInstance(clist, mInstance);
+                ChecklistFragment fragment = new ChecklistFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(ChecklistFragment.KEY_BUNDLE_CLIST_INDEX,
+                		activity.getChecklistManager().addFragmentCheckList(clist));
+                bundle.putString(ChecklistFragment.KEY_BUNDLE_PARENT_TYPE, ChecklistFragment.VALUE_BUNDLE_PARENT_HOME);
+                fragment.setArguments(bundle);
+
                 ft.replace(R.id.main_layout, fragment);
                 ft.addToBackStack(null);
                 ft.commit();
@@ -144,6 +157,10 @@ implements ContextMenuFragment{
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		this.activity = (MainActivity) activity;
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onAttach called");
+
 	}
 
 	@Override
@@ -151,13 +168,19 @@ implements ContextMenuFragment{
 		super.onResume();
 		this.mCLAdapter.refleshAdapter();
 		this.mDslv.invalidateViews();
-	}
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onResume called");
+}
 
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	}
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onCreate called");
+}
 
 	@Override
 	public void onContextMenuCanceled(int menuType){

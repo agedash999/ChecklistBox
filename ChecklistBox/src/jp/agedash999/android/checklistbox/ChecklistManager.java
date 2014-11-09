@@ -1,5 +1,6 @@
 package jp.agedash999.android.checklistbox;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -30,6 +31,8 @@ public class ChecklistManager {
 
 	//	private static ChecklistCategory undef;
 
+	private List<Checklist> fragmentList;
+
 	public static final int SORTTYPE_SORTNO = 1;
 	public static final int SORTTYPE_DATE_ASC = 2;
 	public static final int SORTTYPE_DATE_DESC = 3;
@@ -48,6 +51,7 @@ public class ChecklistManager {
 	public ChecklistManager(MainActivity activity){
 		mActivity = activity;
 		mDBAccess = new DBAccess(mActivity);
+		fragmentList = new ArrayList<Checklist>();
 		SharedPreferences pref = mActivity.getPreference();
 
 		//履歴削除
@@ -857,5 +861,14 @@ public class ChecklistManager {
 			//TODO 例外
 			throw new Error();
 		}
+	}
+
+	public int addFragmentCheckList(Checklist clist){
+		fragmentList.add(clist);
+		return fragmentList.size() - 1;
+	}
+
+	public Checklist getFragmentChecklist(int index){
+		return fragmentList.get(index);
 	}
 }

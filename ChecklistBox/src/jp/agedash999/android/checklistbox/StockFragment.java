@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -26,13 +27,13 @@ public class StockFragment extends AbstractChildFragment
 	private View rootView;
 	private ExpandableListView listStock;
 	private StockListAdapter mCLAdapter;
-    private String mFragmentTitle;
     private ContextMenuHandler mCMenuHandler;
 
     private String initView;
 
     private final int FRAGMENT_TITLE_ID = MainActivity.TITLE_STOCK_ID;
-    private final int FRAGMENT_ICON_ID = MainActivity.ICON_TITLE_STOCK_ID;
+    public static final int FRAGMENT_ICON_ID = MainActivity.ICON_TITLE_STOCK_ID;
+	public static String mFragmentTitle;
 
 	public static final String KEY_TITLE = "title";
 	public static final String KEY_CATEGORY_ID = "category_id";
@@ -48,6 +49,10 @@ public class StockFragment extends AbstractChildFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onCreateView called");
+
 		this.rootView = inflater.inflate(R.layout.fragment_stock, container, false);
 		this.mFragmentTitle = activity.getResources().getString(FRAGMENT_TITLE_ID);
 
@@ -70,7 +75,17 @@ public class StockFragment extends AbstractChildFragment
 				Checklist clist = (Checklist)parent.getExpandableListAdapter()
 						.getChild(groupPosition, childPosition);
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				AbstractChildFragment fragment = ChecklistFragment.newInstance(clist,mInstance);
+//				AbstractChildFragment fragment = ChecklistFragment.newInstance(clist,mInstance);
+
+                ChecklistFragment fragment = new ChecklistFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(ChecklistFragment.KEY_BUNDLE_CLIST_INDEX,
+                		activity.getChecklistManager().addFragmentCheckList(clist));
+                bundle.putString(ChecklistFragment.KEY_BUNDLE_PARENT_TYPE, ChecklistFragment.VALUE_BUNDLE_PARENT_STOCK);
+                fragment.setArguments(bundle);
+
+
 				ft.replace(R.id.main_layout, fragment);
 				ft.addToBackStack(null);
                 activity.notifyChangeFragment(fragment);
@@ -170,11 +185,17 @@ public class StockFragment extends AbstractChildFragment
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		this.activity = (MainActivity) activity;
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onAttach called");
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onCreate called");
 	}
 
 	@Override
@@ -182,6 +203,18 @@ public class StockFragment extends AbstractChildFragment
 		super.onResume();
 		this.mCLAdapter.refleshAdapter();
 		this.listStock.invalidateViews();
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onResume called");
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO 自動生成されたメソッド・スタブ
+		super.onSaveInstanceState(outState);
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onSaveInstanceState called");
 	}
 
 	@Override

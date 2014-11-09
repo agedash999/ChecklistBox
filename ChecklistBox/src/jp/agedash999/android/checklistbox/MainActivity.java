@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +59,10 @@ public class MainActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onCreate called");
+
 		setContentView(R.layout.activity_main);
 
 		//設定の読み込み（初回起動のみ）
@@ -125,6 +130,10 @@ public class MainActivity extends Activity{
 		//前回バグで強制終了した場合はダイアログ表示
 		//TODO バグレポートダイアログをどこから呼び出すか
 //		MyUncaughtExceptionHandler.showBugReportDialogIfExist();
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onStart called");
+
 	}
 
 	@Override
@@ -133,12 +142,19 @@ public class MainActivity extends Activity{
 		getFragmentManager().beginTransaction().replace(R.id.main_layout, (Fragment)childFragment)
 		.commit();
 
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onResume called");
+
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO 自動生成されたメソッド・スタブ
 		super.onPause();
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onPause called");
+
 	}
 
 	public ChecklistManager getChecklistManager(){

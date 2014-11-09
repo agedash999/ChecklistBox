@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -47,14 +48,19 @@ import com.mobeta.android.dslv.DragSortListView;
 public class ChecklistFragment extends AbstractChildFragment
 implements ContextMenuFragment{
 
-	private MainActivity activity;
+	private MainActivity mActivity;
 	private AbstractChildFragment parent;
 	private View rootView;
 	private ChecklistAdapter mCLAdapter;
 	private DragSortListView mDslv;
 	private DragSortController mController;
-	private String mFragmentTitle;
 	private ContextMenuHandler mCMenuHandler;
+
+	private int mChecklistIndex;
+	private String mParentType;
+
+	private int mFragmentIconID;
+	private String mFragmentTitle;
 
 	private Checklist mChecklist;
 
@@ -73,6 +79,12 @@ implements ContextMenuFragment{
 	private final static boolean ENABLE_ANIMATION_NODE = true;
 	private final long ANIMATION_NODE_DURATION = 100;
 
+	public final static String KEY_BUNDLE_CLIST_INDEX = "clist_index";
+	public final static String KEY_BUNDLE_PARENT_TYPE = "parent_type";
+	public final static String VALUE_BUNDLE_PARENT_HOME = "home";
+	public final static String VALUE_BUNDLE_PARENT_STOCK = "stock";
+	public final static String VALUE_BUNDLE_PARENT_HISTORY = "history";
+
 	//	private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
 	//		@Override
 	//		public void remove(int which) {
@@ -88,18 +100,41 @@ implements ContextMenuFragment{
 		super();
 	}
 
-	public static ChecklistFragment newInstance
-	(Checklist clist, AbstractChildFragment parent){
-		ChecklistFragment instance = new ChecklistFragment();
-		instance.mChecklist = clist;
-		instance.parent = parent;
-		instance.mFragmentTitle = parent.getFragmenTitle();
-		return instance;
+//	public static ChecklistFragment newInstance
+//	(Checklist clist, AbstractChildFragment parent){
+//		ChecklistFragment instance = new ChecklistFragment();
+//		instance.mChecklist = clist;
+//		instance.parent = parent;
+//		instance.mFragmentTitle = parent.getFragmenTitle();
+//		return instance;
+//	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onAttach called");
+
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		this.mActivity = (MainActivity)getActivity();
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onCreate called");
+
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onCreateView called");
+
 		//使用するView・Activityをフィールドに格納
 		this.rootView = inflater.inflate(R.layout.fragment_checklist, container, false);
 		this.mDslv = (DragSortListView)rootView.findViewById(R.id.list_checklist);
@@ -111,6 +146,26 @@ implements ContextMenuFragment{
 		this.tv_summery2 = (TextView) rootView.findViewById(R.id.tv_summery2);
 
 		this.etx_checklist_add = (EditText)rootView.findViewById(R.id.etx_checklist_add);
+
+		mChecklistIndex = getArguments().getInt(KEY_BUNDLE_CLIST_INDEX);
+		mParentType = getArguments().getString(KEY_BUNDLE_PARENT_TYPE);
+
+		mChecklist = mActivity.getChecklistManager().getFragmentChecklist(mChecklistIndex);
+		if(mParentType.equals(VALUE_BUNDLE_PARENT_HOME)){
+			mFragmentTitle = HomeFragment.mFragmentTitle;
+			mFragmentIconID = HomeFragment.FRAGMENT_ICON_ID;
+
+		}else if(mParentType.equals(VALUE_BUNDLE_PARENT_STOCK)){
+			mFragmentTitle = StockFragment.mFragmentTitle;
+			mFragmentIconID = StockFragment.FRAGMENT_ICON_ID;
+
+		}else if(mParentType.equals(VALUE_BUNDLE_PARENT_HISTORY)){
+			mFragmentTitle = HistoryFragment.mFragmentTitle;
+			mFragmentIconID = HistoryFragment.FRAGMENT_ICON_ID;
+
+		}else{
+			//ここには入らない想定
+		}
 
 		registerForContextMenu(header);
 		header.setOnClickListener(new OnClickListener() {
@@ -134,7 +189,7 @@ implements ContextMenuFragment{
 					if (nodeTitle != null && nodeTitle.length() != 0) {
 						ChecklistNode node = new ChecklistNode(
 								nodeTitle, false);
-						ChecklistManager manager = activity.getChecklistManager();
+						ChecklistManager manager = mActivity.getChecklistManager();
 						manager.addNode(mChecklist, node);
 						manager.sortNode(mChecklist);
 						refreshList();
@@ -146,7 +201,6 @@ implements ContextMenuFragment{
 				return false;
 			}
 		});
-
 
 		//Adapterのインスタンスを生成してListViewにセット
 //		mCLAdapter = new ChecklistAdapter(getActivity(), R.layout.listrow_checklist,mChecklist);
@@ -178,13 +232,33 @@ implements ContextMenuFragment{
 		//		Button btn = (Button)rootView.findViewById(R.id.button_test);
 		//		registerForContextMenu(btn);
 
+		this.mActivity.getChecklistManager().sortNode(mChecklist);
+		this.mActivity.notifyChangeFragment(this);
 
-		activity.getChecklistManager().sortNode(mChecklist);
-		activity.notifyChangeFragment(this);
 
 		setHasOptionsMenu(true);
 
 		return rootView;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		refleshHeader();
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onResume called");
+
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO 自動生成されたメソッド・スタブ
+		super.onSaveInstanceState(outState);
+
+		//TODO 開発用ログ
+		Log.d("checklistbox_dev_log", this.toString() + ":onSaveInstanceState called");
+
 	}
 
 	@Override
@@ -193,7 +267,7 @@ implements ContextMenuFragment{
 
 		if(v.getId() == header.getId()){
 
-			mCMenuHandler = ContextMenuHandler.getHandler(activity, this, mChecklist.getType());
+			mCMenuHandler = ContextMenuHandler.getHandler(mActivity, this, mChecklist.getType());
 			mCMenuHandler.prepareContextMenu(menu);
 
 		}else{
@@ -221,9 +295,9 @@ implements ContextMenuFragment{
 
 			switch (item.getItemId()) {
 			case CONTEXT_MENUID_EDIT:
-				AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
-				final EditText editView = new EditText(activity);
+				final EditText editView = new EditText(mActivity);
 				editView.setText(contextNode.getTitle());
 				editView.setSelection(editView.getText().length());
 
@@ -233,7 +307,7 @@ implements ContextMenuFragment{
 					@Override
 					public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 						contextNode.setTitle(editView.getText().toString());
-						activity.getChecklistManager().nodeUpdated(mChecklist, contextNode);
+						mActivity.getChecklistManager().nodeUpdated(mChecklist, contextNode);
 						refreshList();
 					}
 				})
@@ -247,7 +321,7 @@ implements ContextMenuFragment{
 
 				break;
 			case CONTEXT_MENUID_DELETE:
-				AlertDialog.Builder builder_del = new AlertDialog.Builder(activity);
+				AlertDialog.Builder builder_del = new AlertDialog.Builder(mActivity);
 				builder_del.setTitle(R.string.dialog_title_node_delete);
 				builder_del.setMessage(R.string.dialog_message_node_delete);
 				builder_del.setPositiveButton(R.string.dialog_button_node_delete, new DialogInterface.OnClickListener() {
@@ -347,30 +421,13 @@ implements ContextMenuFragment{
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		this.activity = (MainActivity)activity;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		refleshHeader();
-	}
-
-	@Override
 	public String getFragmenTitle() {
 		return mFragmentTitle;
 	}
 
 	@Override
 	public int getFragmentIconID() {
-		return parent.getFragmentIconID();
+		return mFragmentIconID;
 	}
 
 	@Override
@@ -384,18 +441,18 @@ implements ContextMenuFragment{
 		if(mChecklist.getUncheckedQty() == 0){
 
 			boolean isConfirm = Boolean.valueOf(
-					activity.getPreference().getString(PREF_ID_CLIST_COMPLETE_COMFIRM, "true"));
+					mActivity.getPreference().getString(PREF_ID_CLIST_COMPLETE_COMFIRM, "true"));
 
 			//確認ポップアップを表示する設定になっている場合
 			if(isConfirm){
 
 				final ChecklistNode cnode = node;
-				final CheckBox cbox = new CheckBox(activity);
+				final CheckBox cbox = new CheckBox(mActivity);
 
 				cbox.setChecked(false);
 				cbox.setText(R.string.dialog_label_clist_complete_confirm);
 
-				AlertDialog.Builder builder_fin = new AlertDialog.Builder(activity);
+				AlertDialog.Builder builder_fin = new AlertDialog.Builder(mActivity);
 				builder_fin.setTitle(R.string.dialog_title_clist_complete);
 				builder_fin.setMessage(R.string.dialog_message_clist_complete);
 				builder_fin.setView(cbox);
@@ -404,11 +461,11 @@ implements ContextMenuFragment{
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						//チェックリスト完了処理
-						activity.getChecklistManager().completeChecklist(mChecklist);
+						mActivity.getChecklistManager().completeChecklist(mChecklist);
 
 						//設定変更処理
 						if(cbox.isChecked()){
-							SharedPreferences.Editor edit = activity.getPreference().edit();
+							SharedPreferences.Editor edit = mActivity.getPreference().edit();
 							edit.putString(PREF_ID_CLIST_COMPLETE_COMFIRM, "false");
 							edit.apply();
 						}
@@ -423,7 +480,7 @@ implements ContextMenuFragment{
 					public void onClick(DialogInterface dialog, int which) {
 						cnode.setChecked(false);
 						mCLAdapter.refleshDivPos();
-						activity.getChecklistManager().sortNode(mChecklist);
+						mActivity.getChecklistManager().sortNode(mChecklist);
 						refreshList();
 					}
 				});
@@ -432,7 +489,7 @@ implements ContextMenuFragment{
 				//確認ポップアップを表示しない場合
 			}else{
 				//チェックリスト完了処理
-				activity.getChecklistManager().completeChecklist(mChecklist);
+				mActivity.getChecklistManager().completeChecklist(mChecklist);
 				//TODO 画面遷移OK？
 				getFragmentManager().popBackStack();
 			}
@@ -445,7 +502,7 @@ implements ContextMenuFragment{
 		this.etx_checklist_add.setEnabled(true);
 		this.etx_checklist_add.requestFocus();
 		//入力フォーカスの設定
-		InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(
+		InputMethodManager inputMethodManager = (InputMethodManager)mActivity.getSystemService(
 				Context.INPUT_METHOD_SERVICE);
 		inputMethodManager.showSoftInput(etx_checklist_add, 0);
 	}
@@ -473,16 +530,16 @@ implements ContextMenuFragment{
 			break;
 		case MainActivity.MENU_SORT_ID:
 			//TODO ソート順ダイアログ表示処理
-			final ChecklistManager manager = activity.getChecklistManager();
+			final ChecklistManager manager = mActivity.getChecklistManager();
 			int sortType = manager.getNodeSortType(mChecklist.getType());
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
-			final RadioButton radioSortNo = new RadioButton(activity);
+			final RadioButton radioSortNo = new RadioButton(mActivity);
 			radioSortNo.setText(R.string.dialog_radio_sort_check_off);
-			final RadioButton radioCheckDown = new RadioButton(activity);
+			final RadioButton radioCheckDown = new RadioButton(mActivity);
 			radioCheckDown.setText(R.string.dialog_radio_sort_check_down);
-			final RadioGroup group = new RadioGroup(activity);
+			final RadioGroup group = new RadioGroup(mActivity);
 			group.addView(radioSortNo);
 			group.addView(radioCheckDown);
 
@@ -600,20 +657,20 @@ implements ContextMenuFragment{
 	private String getDateSummery(){
 
 		String summery = null;
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(activity);
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		String dateString = "";
 
 		switch (mChecklist.getType()) {
 		case Checklist.CHECKLIST_RUNNING:
-			dateString = activity.getString(R.string.checklist_row_expdate);
+			dateString = mActivity.getString(R.string.checklist_row_expdate);
 			break;
 
 		case Checklist.CHECKLIST_STORE:
-			dateString = activity.getString(R.string.checklist_row_credate);
+			dateString = mActivity.getString(R.string.checklist_row_credate);
 			break;
 
 		case Checklist.CHECKLIST_HISTORY:
-			dateString = activity.getString(R.string.checklist_row_findate);
+			dateString = mActivity.getString(R.string.checklist_row_findate);
 			break;
 
 		}
@@ -660,7 +717,7 @@ implements ContextMenuFragment{
 			this.mInstance = this;
 			//TODO テスト的に指定
 			//			mDivPos = mList.size() /2 ;
-			if(activity.getChecklistManager().getNodeSortType(mChecklist.getType())
+			if(mActivity.getChecklistManager().getNodeSortType(mChecklist.getType())
 					== ChecklistManager.SORTTYPE_SORTNO_CHECKED){
 				enableSection = true;
 				//仕切りのIndexを設定
@@ -733,7 +790,7 @@ implements ContextMenuFragment{
 						int nodePosition = Integer.parseInt(txv_position.getText().toString());
 						ChecklistNode node = mChecklist.getNodes().get(dataPosition(nodePosition));
 						node.setChecked(isChecked);
-						activity.getChecklistManager().nodeUpdated(mChecklist, node);
+						mActivity.getChecklistManager().nodeUpdated(mChecklist, node);
 						verifyFinished(node);
 						if(ENABLE_ANIMATION_NODE){
 							AlphaAnimation anim = new AlphaAnimation(1, 0);
@@ -741,7 +798,7 @@ implements ContextMenuFragment{
 							anim.setDuration(ANIMATION_NODE_DURATION);
 							view.startAnimation(anim);
 						}else{
-							activity.getChecklistManager().sortNode(mChecklist);
+							mActivity.getChecklistManager().sortNode(mChecklist);
 							refreshList();
 						}
 
@@ -792,7 +849,7 @@ implements ContextMenuFragment{
 			if (from != to) {
 				ChecklistNode node = mCLAdapter.getItem(from);
 
-				activity.getChecklistManager().moveNode(mChecklist, node, dataPosition(to));
+				mActivity.getChecklistManager().moveNode(mChecklist, node, dataPosition(to));
 				refreshList();
 
 			}
@@ -899,7 +956,7 @@ implements ContextMenuFragment{
 
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			activity.getChecklistManager().sortNode(mChecklist);
+			mActivity.getChecklistManager().sortNode(mChecklist);
 			refreshList();
 		}
 
