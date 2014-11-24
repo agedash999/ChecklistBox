@@ -3,6 +3,7 @@ package jp.agedash999.android.checklistbox;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -61,7 +62,14 @@ public class MainActivity extends Activity{
 		super.onCreate(savedInstanceState);
 
 		//TODO 開発用ログ
-		Log.d("checklistbox_dev_log", this.toString() + ":onCreate called");
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onCreate called");
+
+		int num = getFragmentManager().getBackStackEntryCount();
+		Log.w("checklistbox_dev_log", getClass().getSimpleName() + ": Fragment Count : " + num);
+		if(getFragmentManager().getBackStackEntryCount() != 0){
+			getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		}
+
 
 		setContentView(R.layout.activity_main);
 
@@ -155,6 +163,24 @@ public class MainActivity extends Activity{
 		//TODO 開発用ログ
 		Log.d("checklistbox_dev_log", this.toString() + ":onPause called");
 
+	}
+
+	@Override
+	protected void onStop() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onStop called");
+		super.onStop();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onSaveInstanceState called");
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onDestroy() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onDestroy called");
+		super.onDestroy();
 	}
 
 	public ChecklistManager getChecklistManager(){

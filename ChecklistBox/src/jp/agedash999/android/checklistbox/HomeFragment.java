@@ -85,7 +85,7 @@ implements ContextMenuFragment{
 			Bundle savedInstanceState) {
 
 		//TODO 開発用ログ
-		Log.d("checklistbox_dev_log", this.toString() + ":onCreateView called");
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onCreateView called");
 
 		//使用するView・Activityをフィールドに格納
 		this.rootView = inflater.inflate(R.layout.fragment_home, container, false);
@@ -159,7 +159,7 @@ implements ContextMenuFragment{
 		this.activity = (MainActivity) activity;
 
 		//TODO 開発用ログ
-		Log.d("checklistbox_dev_log", this.toString() + ":onAttach called");
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onAttach called");
 
 	}
 
@@ -170,8 +170,8 @@ implements ContextMenuFragment{
 		this.mDslv.invalidateViews();
 
 		//TODO 開発用ログ
-		Log.d("checklistbox_dev_log", this.toString() + ":onResume called");
-}
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onResume called");
+	}
 
 
 	@Override
@@ -179,8 +179,44 @@ implements ContextMenuFragment{
 		super.onCreate(savedInstanceState);
 
 		//TODO 開発用ログ
-		Log.d("checklistbox_dev_log", this.toString() + ":onCreate called");
-}
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onCreate called");
+	}
+
+	@Override
+	public void onStart() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onStart called");
+		super.onStart();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onSaveInstanceState called");
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onPause() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onPause called");
+		super.onPause();
+	}
+
+	@Override
+	public void onStop() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onStop called");
+		super.onStop();
+	}
+
+	@Override
+	public void onDestroyView() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onDestroyView called");
+		super.onDestroyView();
+	}
+
+	@Override
+	public void onDestroy() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onDestroy called");
+		super.onDestroy();
+	}
 
 	@Override
 	public void onContextMenuCanceled(int menuType){

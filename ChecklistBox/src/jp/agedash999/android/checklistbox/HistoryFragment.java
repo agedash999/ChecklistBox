@@ -95,7 +95,7 @@ implements ContextMenuFragment{
 
 		mCMenuHandler = ContextMenuHandler.getHandler(activity, this, Checklist.CHECKLIST_HISTORY);
 		mCMenuHandler.prepareContextMenu(menu);
-}
+	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
@@ -137,6 +137,12 @@ implements ContextMenuFragment{
 	}
 
 	@Override
+	public void onStart() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onStart called");
+		super.onStart();
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 		this.mCLAdapter.refleshAdapter();
@@ -155,6 +161,29 @@ implements ContextMenuFragment{
 		Log.d("checklistbox_dev_log", this.toString() + ":onSaveInstanceState called");
 	}
 
+	@Override
+	public void onPause() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onPause called");
+		super.onPause();
+	}
+
+	@Override
+	public void onStop() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onStop called");
+		super.onStop();
+	}
+
+	@Override
+	public void onDestroyView() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onDestroyView called");
+		super.onDestroyView();
+	}
+
+	@Override
+	public void onDestroy() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onDestroy called");
+		super.onDestroy();
+	}
 
 	@Override
 	public void onContextMenuCanceled(int menuType){

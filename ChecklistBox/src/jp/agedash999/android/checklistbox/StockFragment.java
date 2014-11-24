@@ -187,7 +187,7 @@ public class StockFragment extends AbstractChildFragment
 		this.activity = (MainActivity) activity;
 
 		//TODO 開発用ログ
-		Log.d("checklistbox_dev_log", this.toString() + ":onAttach called");
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onAttach called");
 	}
 
 	@Override
@@ -195,7 +195,13 @@ public class StockFragment extends AbstractChildFragment
 		super.onCreate(savedInstanceState);
 
 		//TODO 開発用ログ
-		Log.d("checklistbox_dev_log", this.toString() + ":onCreate called");
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onCreate called");
+	}
+
+	@Override
+	public void onStart() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onStart called");
+		super.onStart();
 	}
 
 	@Override
@@ -205,7 +211,7 @@ public class StockFragment extends AbstractChildFragment
 		this.listStock.invalidateViews();
 
 		//TODO 開発用ログ
-		Log.d("checklistbox_dev_log", this.toString() + ":onResume called");
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onResume called");
 	}
 
 	@Override
@@ -214,7 +220,31 @@ public class StockFragment extends AbstractChildFragment
 		super.onSaveInstanceState(outState);
 
 		//TODO 開発用ログ
-		Log.d("checklistbox_dev_log", this.toString() + ":onSaveInstanceState called");
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onSaveInstanceState called");
+	}
+
+	@Override
+	public void onPause() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onPause called");
+		super.onPause();
+	}
+
+	@Override
+	public void onStop() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onStop called");
+		super.onStop();
+	}
+
+	@Override
+	public void onDestroyView() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onDestroyView called");
+		super.onDestroyView();
+	}
+
+	@Override
+	public void onDestroy() {
+		Log.d("checklistbox_dev_log", getClass().getSimpleName() + ":onDestroy called");
+		super.onDestroy();
 	}
 
 	@Override
